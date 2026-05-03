@@ -1,0 +1,50 @@
+{
+  "id": "wp.clause.10.improvement",
+  "version": "1.0.0",
+  "title": "Clause 10 - Improvement",
+  "description": "Working paper template for ISO/IEC 42001 Clause 10: nonconformity, corrective action, continual improvement.",
+  "appliesTo": { "kind": "clause", "clauseId": "10" },
+  "sections": [
+    {
+      "id": "nonconformity-corrective-action",
+      "title": "Nonconformity and corrective action (10.1)",
+      "required": true,
+      "prompts": [
+        "Verify NC handling process: identification, root cause, action, effectiveness verification.",
+        "Confirm AI-incident classification distinguishes NCs from incidents.",
+        "Sample NCs and trace through to closure."
+      ]
+    },
+    {
+      "id": "continual-improvement",
+      "title": "Continual improvement (10.2)",
+      "required": true,
+      "prompts": [
+        "Identify systemic improvements implemented in the period.",
+        "Verify trend analysis informs improvement priorities."
+      ]
+    }
+  ],
+  "checklists": [
+    { "id": "c1", "text": "NC procedure documented." },
+    { "id": "c2", "text": "Sampled NCs have evidence of effectiveness verification." },
+    { "id": "c3", "text": "AI-specific incidents trigger root cause analysis." },
+    { "id": "c4", "text": "Continual-improvement opportunities are tracked." }
+  ],
+  "suggestedEvidenceTypes": [
+    "NC register",
+    "CAPA records",
+    "Trend reports",
+    "Improvement backlog",
+    "AI incident register"
+  ],
+  "suggestedProbes": [],
+  "suggestedInterviewQuestions": [
+    "Sample three closed NCs and walk us through the lifecycle.",
+    "How do AI-specific incidents feed your improvement programme?",
+    "What systemic improvement was made in the last 12 months and why?"
+  ],
+  "mappedClauses": ["10.1", "10.2"],
+  "mappedControls": ["A.5.5"],
+  "variables": ["auditee.name"]
+}

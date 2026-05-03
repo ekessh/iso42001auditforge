@@ -1,0 +1,59 @@
+{
+  "id": "wp.annexA.A5.impact-assessment",
+  "version": "1.0.0",
+  "title": "Annex A.5 - Assessing impacts of AI systems",
+  "description": "Working paper for Annex A.5: AI system impact assessment process, outcome documentation, individuals/groups assessment.",
+  "appliesTo": { "kind": "annexA", "controlId": "A.5" },
+  "sections": [
+    {
+      "id": "process",
+      "title": "Impact assessment process (A.5.2)",
+      "required": true,
+      "prompts": [
+        "Verify a documented impact assessment methodology exists.",
+        "Confirm the methodology covers fairness, accountability, transparency, environmental impact.",
+        "Check methodology references EU AI Act / NIST AI RMF where applicable."
+      ]
+    },
+    {
+      "id": "documentation",
+      "title": "Documented impact assessment (A.5.3)",
+      "required": true,
+      "prompts": [
+        "Sample three completed impact assessments.",
+        "Verify sign-off authority and review cadence.",
+        "Confirm documentation is retained for the documented period."
+      ]
+    },
+    {
+      "id": "individuals-groups-society",
+      "title": "Impacts on individuals, groups, society (A.5.4)",
+      "required": true,
+      "prompts": [
+        "Verify the impact analysis explicitly addresses affected populations.",
+        "Confirm bias / fairness considerations are documented."
+      ]
+    }
+  ],
+  "checklists": [
+    { "id": "c1", "text": "Impact assessment methodology approved." },
+    { "id": "c2", "text": "Impact assessments exist for each in-scope AI system." },
+    { "id": "c3", "text": "Impact assessment template covers groups + society." },
+    { "id": "c4", "text": "Impact assessments have sign-off and review dates." }
+  ],
+  "suggestedEvidenceTypes": [
+    "Impact assessment methodology",
+    "Completed impact assessments",
+    "Sign-off records",
+    "Stakeholder consultation logs"
+  ],
+  "suggestedProbes": ["P-BIAS-01", "P-BIAS-02", "P-CONS-01"],
+  "suggestedInterviewQuestions": [
+    "Walk us through your impact assessment for an in-scope AI system.",
+    "How do you involve affected stakeholders?",
+    "How do you decide an AI system needs an impact assessment?"
+  ],
+  "mappedClauses": ["6.1.4"],
+  "mappedControls": ["A.5.2", "A.5.3", "A.5.4", "A.5.5"],
+  "variables": []
+}

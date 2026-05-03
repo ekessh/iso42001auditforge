@@ -1,0 +1,55 @@
+{
+  "id": "wp.annexA.A9.use",
+  "version": "1.0.0",
+  "title": "Annex A.9 - Use of AI systems",
+  "description": "Working paper for Annex A.9: responsible use process, intended use, monitoring use.",
+  "appliesTo": { "kind": "annexA", "controlId": "A.9" },
+  "sections": [
+    {
+      "id": "responsible-use",
+      "title": "Responsible use process (A.9.2)",
+      "required": true,
+      "prompts": [
+        "Confirm a documented responsible-use process and approval gate before deployment.",
+        "Verify acceptable use policy is communicated to users / operators."
+      ]
+    },
+    {
+      "id": "intended-use",
+      "title": "Intended use of AI systems (A.9.3)",
+      "required": true,
+      "prompts": [
+        "Confirm intended-use definition is documented per system.",
+        "Verify out-of-scope use is detected (sample monitoring data)."
+      ]
+    },
+    {
+      "id": "monitoring-use",
+      "title": "Monitoring of AI system use (A.9.4)",
+      "required": true,
+      "prompts": [
+        "Confirm controls to detect misuse / off-spec usage.",
+        "Sample alerts and triage actions."
+      ]
+    }
+  ],
+  "checklists": [
+    { "id": "c1", "text": "Acceptable-use policy exists and is enforced." },
+    { "id": "c2", "text": "Intended-use statement per system." },
+    { "id": "c3", "text": "Misuse monitoring active." }
+  ],
+  "suggestedEvidenceTypes": [
+    "Acceptable use policy",
+    "Intended use statement",
+    "Misuse monitoring dashboard",
+    "Sample of alerts and actions"
+  ],
+  "suggestedProbes": ["P-CONS-01"],
+  "suggestedInterviewQuestions": [
+    "How do you detect a customer using your system out-of-spec?",
+    "Show us an alert that fired and the response taken."
+  ],
+  "mappedClauses": ["8.1"],
+  "mappedControls": ["A.9.2", "A.9.3", "A.9.4"],
+  "variables": []
+}

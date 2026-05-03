@@ -1,0 +1,55 @@
+{
+  "id": "wp.annexA.A2.policies",
+  "version": "1.0.0",
+  "title": "Annex A.2 - Policies related to AI",
+  "description": "Working paper for the Annex A.2 control family: AI policy, alignment with other policies, review of the AI policy.",
+  "appliesTo": { "kind": "annexA", "controlId": "A.2" },
+  "sections": [
+    {
+      "id": "policy-existence",
+      "title": "AI policy in place",
+      "required": true,
+      "prompts": [
+        "Confirm a documented AI policy exists, approved by accountable authority.",
+        "Confirm version control and approval evidence."
+      ]
+    },
+    {
+      "id": "policy-alignment",
+      "title": "Alignment with related policies",
+      "required": true,
+      "prompts": [
+        "Verify alignment with InfoSec policy, privacy policy, ethics charter.",
+        "Confirm conflicts with other policies are resolved."
+      ]
+    },
+    {
+      "id": "policy-review",
+      "title": "Review of AI policy",
+      "required": true,
+      "prompts": [
+        "Confirm scheduled reviews; verify last review date.",
+        "Confirm review triggers (regulatory change, incident, scope change)."
+      ]
+    }
+  ],
+  "checklists": [
+    { "id": "c1", "text": "Approved, in-date AI policy on file." },
+    { "id": "c2", "text": "Cross-policy linkage matrix maintained." },
+    { "id": "c3", "text": "Review log shows policy was reviewed in cycle." }
+  ],
+  "suggestedEvidenceTypes": [
+    "Signed AI policy",
+    "Policy register",
+    "Review minutes",
+    "Policy linkage matrix"
+  ],
+  "suggestedProbes": [],
+  "suggestedInterviewQuestions": [
+    "When was the AI policy last reviewed and what triggered the review?",
+    "How do you ensure consistency between AI policy and the privacy policy?"
+  ],
+  "mappedClauses": ["5.2", "7.5"],
+  "mappedControls": ["A.2.2", "A.2.3", "A.2.4"],
+  "variables": []
+}

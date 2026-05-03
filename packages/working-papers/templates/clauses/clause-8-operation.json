@@ -1,0 +1,58 @@
+{
+  "id": "wp.clause.8.operation",
+  "version": "1.0.0",
+  "title": "Clause 8 - Operation",
+  "description": "Working paper template for ISO/IEC 42001 Clause 8: operational planning and control of the AI lifecycle.",
+  "appliesTo": { "kind": "clause", "clauseId": "8" },
+  "sections": [
+    {
+      "id": "operational-planning",
+      "title": "Operational planning and control (8.1)",
+      "required": true,
+      "prompts": [
+        "Verify processes for the AI lifecycle (design, develop, deploy, operate, retire) are documented.",
+        "Confirm process owners and operational metrics."
+      ]
+    },
+    {
+      "id": "ai-risk-treatment",
+      "title": "AI risk treatment implementation (8.2 / 8.3)",
+      "required": true,
+      "prompts": [
+        "Confirm risk treatment actions are implemented as planned.",
+        "Verify residual risks are tracked and accepted by the right authority."
+      ]
+    },
+    {
+      "id": "supplier-management",
+      "title": "AI supplier and component management",
+      "required": true,
+      "prompts": [
+        "Identify suppliers of models, datasets, infrastructure.",
+        "Verify due diligence and contractual obligations cover AI risks (model cards, evals, IP)."
+      ]
+    }
+  ],
+  "checklists": [
+    { "id": "c1", "text": "Lifecycle process documented end-to-end." },
+    { "id": "c2", "text": "Risk treatments traceable to risks they mitigate." },
+    { "id": "c3", "text": "Supplier register identifies AI-related suppliers." },
+    { "id": "c4", "text": "Residual risk acceptance recorded with date and approver." }
+  ],
+  "suggestedEvidenceTypes": [
+    "AI lifecycle process diagrams",
+    "Risk treatment register",
+    "Supplier register",
+    "Model cards",
+    "Change records"
+  ],
+  "suggestedProbes": ["P-DRIFT-01"],
+  "suggestedInterviewQuestions": [
+    "Walk us through how a new AI use case moves from idea to production.",
+    "How do you assure AI-related supplier obligations?",
+    "Show us evidence that risk treatment plans are being executed."
+  ],
+  "mappedClauses": ["8.1", "8.2", "8.3", "8.4"],
+  "mappedControls": ["A.6.2", "A.6.2.5", "A.6.2.6", "A.10.2", "A.10.3"],
+  "variables": ["auditee.name"]
+}

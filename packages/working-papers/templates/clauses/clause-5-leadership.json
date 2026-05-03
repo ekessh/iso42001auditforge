@@ -1,0 +1,61 @@
+{
+  "id": "wp.clause.5.leadership",
+  "version": "1.0.0",
+  "title": "Clause 5 - Leadership",
+  "description": "Working paper template for ISO/IEC 42001 Clause 5: leadership, AI policy, organizational roles.",
+  "appliesTo": { "kind": "clause", "clauseId": "5" },
+  "sections": [
+    {
+      "id": "leadership-commitment",
+      "title": "Leadership and commitment (5.1)",
+      "required": true,
+      "prompts": [
+        "Identify evidence of top-management commitment to the AIMS.",
+        "Verify accountability for AI outcomes is assigned.",
+        "Check resourcing of the AIMS is documented."
+      ]
+    },
+    {
+      "id": "ai-policy",
+      "title": "AI policy (5.2)",
+      "required": true,
+      "prompts": [
+        "Confirm the AI policy is documented, approved, and communicated.",
+        "Verify the policy references trustworthy AI principles (fairness, accountability, transparency).",
+        "Check the policy is reviewed at defined intervals."
+      ]
+    },
+    {
+      "id": "roles-responsibilities",
+      "title": "Roles, responsibilities, authorities (5.3)",
+      "required": true,
+      "prompts": [
+        "Map AIMS-related roles to named individuals.",
+        "Verify the AI ethics / governance committee has charter, members, cadence.",
+        "Confirm escalation paths for incidents."
+      ]
+    }
+  ],
+  "checklists": [
+    { "id": "c1", "text": "AI policy approved and signed by top management." },
+    { "id": "c2", "text": "AI policy is communicated to the workforce." },
+    { "id": "c3", "text": "AI accountability is assigned at executive level." },
+    { "id": "c4", "text": "AI governance committee charter is current." }
+  ],
+  "suggestedEvidenceTypes": [
+    "Signed AI policy",
+    "Governance committee charter",
+    "Communication artifacts (intranet, training)",
+    "Org chart with AI roles",
+    "Resource plan"
+  ],
+  "suggestedProbes": [],
+  "suggestedInterviewQuestions": [
+    "Walk us through how the AI policy was developed and approved.",
+    "How does top management demonstrate commitment to the AIMS in practice?",
+    "Who is accountable for AI risk at the executive level?"
+  ],
+  "mappedClauses": ["5.1", "5.2", "5.3"],
+  "mappedControls": ["A.2.2", "A.2.3", "A.3.2"],
+  "variables": ["auditee.name"]
+}

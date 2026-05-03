@@ -1,0 +1,70 @@
+{
+  "id": "wp.clause.6.planning",
+  "version": "1.0.0",
+  "title": "Clause 6 - Planning",
+  "description": "Working paper template for ISO/IEC 42001 Clause 6: AI risk and impact assessments, objectives, planning of changes.",
+  "appliesTo": { "kind": "clause", "clauseId": "6" },
+  "sections": [
+    {
+      "id": "ai-risk-assessment",
+      "title": "AI risk assessment (6.1.2)",
+      "required": true,
+      "prompts": [
+        "Verify the AI risk assessment process is documented and applied.",
+        "Confirm coverage of risks to individuals, groups, society, and the organization.",
+        "Cross-check identified risks against MIT AI Risk Repository / AVID / MITRE ATLAS for completeness."
+      ]
+    },
+    {
+      "id": "ai-impact-assessment",
+      "title": "AI system impact assessment (6.1.4)",
+      "required": true,
+      "prompts": [
+        "Confirm AI impact assessments exist for each in-scope AI system.",
+        "Verify impact considers fundamental rights, fairness, environmental factors.",
+        "Confirm sign-off authority and review cadence."
+      ]
+    },
+    {
+      "id": "ai-objectives",
+      "title": "AI objectives and planning (6.2)",
+      "required": true,
+      "prompts": [
+        "Confirm AI objectives are measurable and time-bound.",
+        "Verify alignment with the AI policy and overall business strategy."
+      ]
+    },
+    {
+      "id": "planning-of-changes",
+      "title": "Planning of changes (6.3)",
+      "required": false,
+      "prompts": [
+        "Verify that material changes to AI systems trigger re-assessment.",
+        "Confirm change control evidence."
+      ]
+    }
+  ],
+  "checklists": [
+    { "id": "c1", "text": "AI risk methodology is documented." },
+    { "id": "c2", "text": "Risk assessments performed for each AI system in scope." },
+    { "id": "c3", "text": "AI impact assessments exist and are signed off." },
+    { "id": "c4", "text": "AI objectives are SMART and tracked." },
+    { "id": "c5", "text": "Risk treatment plans link to specific Annex A controls." }
+  ],
+  "suggestedEvidenceTypes": [
+    "AI risk register",
+    "AI impact assessments",
+    "AI objectives KPI dashboard",
+    "Risk treatment plan",
+    "SoA"
+  ],
+  "suggestedProbes": ["P-BIAS-01", "P-BIAS-02"],
+  "suggestedInterviewQuestions": [
+    "How do you scope an AI risk assessment for a new system?",
+    "Walk us through an impact assessment for a high-impact use case.",
+    "How are AI objectives linked to operational metrics?"
+  ],
+  "mappedClauses": ["6.1.2", "6.1.3", "6.1.4", "6.2", "6.3"],
+  "mappedControls": ["A.5.2", "A.5.3", "A.5.4"],
+  "variables": ["auditee.name"]
+}

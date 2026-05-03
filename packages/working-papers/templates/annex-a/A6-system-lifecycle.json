@@ -1,0 +1,102 @@
+{
+  "id": "wp.annexA.A6.system-lifecycle",
+  "version": "1.0.0",
+  "title": "Annex A.6 - AI system lifecycle",
+  "description": "Working paper for Annex A.6: requirements, design, V&V, deployment, operation/monitoring, decommissioning.",
+  "appliesTo": { "kind": "annexA", "controlId": "A.6" },
+  "sections": [
+    {
+      "id": "objectives-requirements",
+      "title": "AI system objectives and requirements (A.6.2.2)",
+      "required": true,
+      "prompts": [
+        "Verify documented objectives and acceptance criteria per AI system.",
+        "Confirm responsible-AI requirements are explicit (fairness, robustness, explainability)."
+      ]
+    },
+    {
+      "id": "documentation",
+      "title": "Documentation of AI system (A.6.2.3)",
+      "required": true,
+      "prompts": [
+        "Confirm system documentation includes architecture, datasets, training method, evaluation results.",
+        "Verify model card / system card is maintained."
+      ]
+    },
+    {
+      "id": "verification-validation",
+      "title": "Verification and validation (A.6.2.5)",
+      "required": true,
+      "prompts": [
+        "Confirm pre-release V&V steps are performed and results retained.",
+        "Verify adversarial / robustness testing where applicable.",
+        "Sample V&V evidence for an in-scope model."
+      ]
+    },
+    {
+      "id": "deployment",
+      "title": "Deployment (A.6.2.6)",
+      "required": true,
+      "prompts": [
+        "Verify deployment gate criteria.",
+        "Confirm rollout strategy (canary, A/B, kill-switch)."
+      ]
+    },
+    {
+      "id": "operation-monitoring",
+      "title": "Operation / monitoring (A.6.2.7 / A.6.2.8)",
+      "required": true,
+      "prompts": [
+        "Confirm production monitoring (drift, fairness, abuse).",
+        "Verify alert thresholds and incident triage."
+      ]
+    },
+    {
+      "id": "decommissioning",
+      "title": "Decommissioning",
+      "required": false,
+      "prompts": [
+        "Confirm decommissioning policy: data deletion, archive, communication to users."
+      ]
+    }
+  ],
+  "checklists": [
+    { "id": "c1", "text": "System documentation in place per system." },
+    { "id": "c2", "text": "V&V evidence retained for current production version." },
+    { "id": "c3", "text": "Deployment gates documented and respected." },
+    { "id": "c4", "text": "Production monitoring covers fairness + drift." },
+    { "id": "c5", "text": "Decommissioning playbook exists." }
+  ],
+  "suggestedEvidenceTypes": [
+    "System / model card",
+    "V&V reports",
+    "Deployment runbook",
+    "Monitoring dashboard",
+    "Incident response plan"
+  ],
+  "suggestedProbes": [
+    "P-ROB-01",
+    "P-ROB-02",
+    "P-INJ-01",
+    "P-INJ-02",
+    "P-LEAK-01",
+    "P-HALL-01",
+    "P-DRIFT-01"
+  ],
+  "suggestedInterviewQuestions": [
+    "Walk us through the V&V evidence for the current production model.",
+    "How is a deployment gate enforced — show us a recent failed gate.",
+    "Show us a production monitoring alert that resulted in action."
+  ],
+  "mappedClauses": ["8.1", "8.2"],
+  "mappedControls": [
+    "A.6.2.2",
+    "A.6.2.3",
+    "A.6.2.4",
+    "A.6.2.5",
+    "A.6.2.6",
+    "A.6.2.7",
+    "A.6.2.8"
+  ],
+  "variables": []
+}

@@ -1,0 +1,54 @@
+{
+  "id": "wp.annexA.A6.2.7.operation",
+  "version": "1.0.0",
+  "title": "Annex A.6.2.7 - AI system operation and monitoring",
+  "description": "Targeted working paper for AI operation/monitoring: drift, abuse, prompt-injection resilience, telemetry.",
+  "appliesTo": { "kind": "annexA", "controlId": "A.6.2.7" },
+  "sections": [
+    {
+      "id": "telemetry",
+      "title": "Production telemetry",
+      "required": true,
+      "prompts": [
+        "Verify telemetry covers latency, error, fairness, drift.",
+        "Confirm retention and access controls."
+      ]
+    },
+    {
+      "id": "drift",
+      "title": "Drift detection",
+      "required": true,
+      "prompts": [
+        "Verify drift detection method and thresholds.",
+        "Sample a recent drift alert and the action taken."
+      ]
+    },
+    {
+      "id": "abuse",
+      "title": "Abuse / prompt-injection monitoring (LLM/agent systems)",
+      "required": false,
+      "prompts": [
+        "Verify direct / indirect prompt-injection countermeasures.",
+        "Sample blocked attempts."
+      ]
+    }
+  ],
+  "checklists": [
+    { "id": "c1", "text": "Drift dashboard maintained." },
+    { "id": "c2", "text": "Prompt-injection monitoring active." },
+    { "id": "c3", "text": "Telemetry retention compliant with policy." }
+  ],
+  "suggestedEvidenceTypes": [
+    "Drift dashboard export",
+    "Sample alerts",
+    "Prompt-injection block logs"
+  ],
+  "suggestedProbes": ["P-DRIFT-01", "P-INJ-01", "P-INJ-02"],
+  "suggestedInterviewQuestions": [
+    "Show us drift alerts from the last 30 days.",
+    "Walk us through how you respond to a prompt-injection wave."
+  ],
+  "mappedClauses": ["9.1"],
+  "mappedControls": ["A.6.2.7", "A.6.2.8"],
+  "variables": []
+}
