@@ -1,0 +1,229 @@
+/* SPDX-License-Identifier: BUSL-1.1 */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/*
+ * AuditForge global styles
+ * - CSS variables map design tokens into Tailwind colors.
+ * - Default scheme is dark; auditors often work onsite with low ambient light.
+ * - prefers-color-scheme is respected when no explicit data-theme is set.
+ */
+
+@layer base {
+  :root,
+  [data-theme='light'] {
+    --af-bg: 248 249 251;
+    --af-fg: 17 20 26;
+    --af-muted: 241 243 247;
+    --af-muted-fg: 108 117 135;
+    --af-card: 255 255 255;
+    --af-card-fg: 17 20 26;
+    --af-popover: 255 255 255;
+    --af-popover-fg: 17 20 26;
+    --af-border: 227 231 238;
+    --af-input: 227 231 238;
+    --af-ring: 59 102 224;
+    --af-primary: 29 58 146;
+    --af-primary-fg: 248 249 251;
+    --af-secondary: 241 243 247;
+    --af-secondary-fg: 34 38 47;
+    --af-accent: 222 232 255;
+    --af-accent-fg: 16 35 82;
+    --af-destructive: 220 38 38;
+    --af-destructive-fg: 255 255 255;
+    --af-success: 22 163 74;
+    --af-success-fg: 255 255 255;
+    --af-warning: 217 119 6;
+    --af-warning-fg: 17 20 26;
+    --af-info: 37 99 235;
+    --af-info-fg: 255 255 255;
+  }
+
+  [data-theme='dark'],
+  .dark {
+    --af-bg: 11 14 20;
+    --af-fg: 233 236 242;
+    --af-muted: 25 28 35;
+    --af-muted-fg: 154 162 179;
+    --af-card: 17 20 26;
+    --af-card-fg: 233 236 242;
+    --af-popover: 22 26 33;
+    --af-popover-fg: 233 236 242;
+    --af-border: 34 38 47;
+    --af-input: 34 38 47;
+    --af-ring: 95 135 245;
+    --af-primary: 95 135 245;
+    --af-primary-fg: 8 10 14;
+    --af-secondary: 34 38 47;
+    --af-secondary-fg: 233 236 242;
+    --af-accent: 22 48 111;
+    --af-accent-fg: 222 232 255;
+    --af-destructive: 220 38 38;
+    --af-destructive-fg: 255 255 255;
+    --af-success: 34 197 94;
+    --af-success-fg: 8 10 14;
+    --af-warning: 245 158 11;
+    --af-warning-fg: 8 10 14;
+    --af-info: 96 165 250;
+    --af-info-fg: 8 10 14;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme]) {
+      --af-bg: 11 14 20;
+      --af-fg: 233 236 242;
+      --af-muted: 25 28 35;
+      --af-muted-fg: 154 162 179;
+      --af-card: 17 20 26;
+      --af-card-fg: 233 236 242;
+      --af-popover: 22 26 33;
+      --af-popover-fg: 233 236 242;
+      --af-border: 34 38 47;
+      --af-input: 34 38 47;
+      --af-ring: 95 135 245;
+      --af-primary: 95 135 245;
+      --af-primary-fg: 8 10 14;
+      --af-secondary: 34 38 47;
+      --af-secondary-fg: 233 236 242;
+      --af-accent: 22 48 111;
+      --af-accent-fg: 222 232 255;
+      --af-destructive: 220 38 38;
+      --af-destructive-fg: 255 255 255;
+      --af-success: 34 197 94;
+      --af-success-fg: 8 10 14;
+      --af-warning: 245 158 11;
+      --af-warning-fg: 8 10 14;
+      --af-info: 96 165 250;
+      --af-info-fg: 8 10 14;
+    }
+  }
+
+  * {
+    border-color: rgb(var(--af-border));
+  }
+
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+  }
+
+  body {
+    background-color: rgb(var(--af-bg));
+    color: rgb(var(--af-fg));
+    font-family: 'Inter', 'Inter Variable', -apple-system, BlinkMacSystemFont,
+      'Segoe UI', system-ui, sans-serif;
+    font-size: 0.875rem;
+    line-height: 1.5;
+  }
+
+  /* Tabular numerics across data surfaces. */
+  table,
+  .tabular,
+  .font-mono,
+  [data-tabular='true'] {
+    font-variant-numeric: tabular-nums lining-nums;
+  }
+
+  /* Density-aware row heights. */
+  [data-density='compact'] {
+    --af-row-height: 32px;
+  }
+  [data-density='comfortable'] {
+    --af-row-height: 40px;
+  }
+
+  /* Reduced motion. */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 1ms !important;
+      transition-duration: 1ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+
+  /* High-visibility focus ring. */
+  :focus-visible {
+    outline: 2px solid rgb(var(--af-ring));
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  /* Print stylesheet — auditors print findings + reports. */
+  @media print {
+    body {
+      background: #fff;
+      color: #000;
+      font-size: 10pt;
+    }
+    .no-print,
+    nav,
+    aside,
+    header[role='banner'] {
+      display: none !important;
+    }
+    .print-block {
+      page-break-inside: avoid;
+    }
+    a[href]::after {
+      content: ' (' attr(href) ')';
+      font-size: 9pt;
+    }
+  }
+
+  /* Selection. */
+  ::selection {
+    background: rgb(var(--af-primary) / 0.25);
+    color: rgb(var(--af-fg));
+  }
+
+  /* Scrollbars (subtle, modern). */
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: rgb(var(--af-border));
+    border-radius: 999px;
+    border: 2px solid transparent;
+    background-clip: padding-box;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgb(var(--af-muted-fg) / 0.4);
+    background-clip: padding-box;
+    border: 2px solid transparent;
+  }
+}
+
+@layer utilities {
+  .bg-shimmer {
+    background-image: linear-gradient(
+      90deg,
+      rgb(var(--af-muted)) 0%,
+      rgb(var(--af-muted-fg) / 0.12) 50%,
+      rgb(var(--af-muted)) 100%
+    );
+    background-size: 200% 100%;
+  }
+
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .ledger-grid-bg {
+    background-image: linear-gradient(
+        to right,
+        rgb(var(--af-border) / 0.6) 1px,
+        transparent 1px
+      ),
+      linear-gradient(to bottom, rgb(var(--af-border) / 0.6) 1px, transparent 1px);
+    background-size: 24px 24px;
+  }
+}
