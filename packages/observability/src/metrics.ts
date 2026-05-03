@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: BUSL-1.1
 /**
  * Canonical AuditForge prom-client registry and the 19 named metrics used across the platform.
  *

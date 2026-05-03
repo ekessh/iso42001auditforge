@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: BUSL-1.1
 import { describe, expect, it } from 'vitest';
 
 import { createLogger, DEFAULT_REDACT_PATHS } from '../src/logger.js';
