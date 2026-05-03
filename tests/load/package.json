@@ -1,0 +1,14 @@
+{
+  "name": "@auditforge/load",
+  "version": "0.0.0",
+  "license": "BUSL-1.1",
+  "private": true,
+  "scripts": {
+    "test": "k6 run scenarios/wp-edit-100.js",
+    "test:uploads": "k6 run scenarios/file-uploads-50.js",
+    "test:probes": "k6 run scenarios/probes-200.js",
+    "test:reports": "k6 run scenarios/report-gen.js",
+    "test:traces": "k6 run scenarios/trace-100k.js",
+    "test:soak": "k6 run scenarios/soak-24h.js"
+  }
+}
