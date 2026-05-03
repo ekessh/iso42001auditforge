@@ -16,6 +16,7 @@
     "build": "tsc -p tsconfig.json",
     "migrate": "drizzle-kit migrate",
     "migrate:up": "drizzle-kit migrate",
+    "migrate:generate": "drizzle-kit generate",
     "generate": "drizzle-kit generate",
     "studio": "drizzle-kit studio",
     "seed": "tsx src/seed/index.ts",
@@ -24,6 +25,7 @@
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "dependencies": {
+    "@auditforge/auth-core": "workspace:*",
     "@auditforge/catalogues": "workspace:*",
     "@auditforge/shared": "workspace:*",
     "drizzle-orm": "^0.36.0",

@@ -1,0 +1,41 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1714694400000,
+      "tag": "0000_extensions",
+      "breakpoints": false
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1714694401000,
+      "tag": "0001_roles_and_tenancy_helpers",
+      "breakpoints": false
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1714694402000,
+      "tag": "0002_rls_business_tables",
+      "breakpoints": false
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1714694403000,
+      "tag": "0003_indexes_for_perf",
+      "breakpoints": false
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1714694404000,
+      "tag": "0004_append_only_triggers",
+      "breakpoints": false
+    }
+  ]
+}
