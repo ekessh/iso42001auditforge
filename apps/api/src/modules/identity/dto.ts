@@ -11,6 +11,8 @@ export type OidcStartDto = z.infer<typeof OidcStartSchema>;
 export const OidcCallbackSchema = z.object({
   code: z.string().min(1),
   state: z.string().min(1),
+  /** Full callback URL is needed to complete PKCE flow. */
+  callbackUrl: z.string().url().optional(),
 });
 export type OidcCallbackDto = z.infer<typeof OidcCallbackSchema>;
 

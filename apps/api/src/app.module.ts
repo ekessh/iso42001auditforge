@@ -109,6 +109,16 @@ import type { AppConfig } from './config/config.schema.js';
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer): void {
-    consumer.apply(DevAuthMiddleware, RlsContextMiddleware).forRoutes('*');
+    const isProduction = process.env.NODE_ENV === 'production';
+    const devAuthDisabled = process.env.AUDITFORGE_DISABLE_DEV_AUTH === '1';
+
+    if (!isProduction && !devAuthDisabled) {
+      // DevAuthMiddleware is only registered in non-production builds.
+      // Any attempt to instantiate it in production will throw at construction
+      // (see dev-auth.middleware.ts), so we never reach apply() there.
+      consumer.apply(DevAuthMiddleware, RlsContextMiddleware).forRoutes('*');
+    } else {
+      consumer.apply(RlsContextMiddleware).forRoutes('*');
+    }
   }
 }
