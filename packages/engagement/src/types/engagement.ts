@@ -7,6 +7,68 @@ import type {
 } from '@auditforge/shared';
 
 /**
+ * Engagement mode (ADR-0013).
+ *
+ * `audit`     — formal third-party / second-party conformity audit driven
+ *               by an accredited certification programme. Findings are
+ *               candidate Findings/NCs that may be promoted into a formal
+ *               nonconformity.
+ * `readiness` — self-assessment using ISO/IEC 42001 as a reference
+ *               framework. Findings are Improvement Items added to an
+ *               action plan. The output is NOT a certificate and the
+ *               disclaimer in the workspace must make this explicit.
+ *
+ * Mode is decided at engagement creation and is *immutable* for the life
+ * of the engagement. Switching mid-engagement would violate evidence
+ * provenance (audit ledger references) and the readiness disclaimer
+ * surface.
+ *
+ * Reference: docs/adr/0013-mode-separation.md (audit vs readiness).
+ */
+export const ENGAGEMENT_MODES = ['audit', 'readiness'] as const;
+export type EngagementMode = (typeof ENGAGEMENT_MODES)[number];
+
+/**
+ * Lightweight runtime guard for `EngagementMode`. Mirrors the surface of
+ * a `z.enum(['audit', 'readiness'])` schema (`safeParse`/`parse`) so that
+ * callers can validate untrusted input (e.g. API DTOs) without pulling
+ * Zod into this package's runtime closure.
+ */
+export const EngagementModeSchema = Object.freeze({
+  values: ENGAGEMENT_MODES,
+  /** Type guard form. */
+  is(value: unknown): value is EngagementMode {
+    return (
+      typeof value === 'string' &&
+      (ENGAGEMENT_MODES as readonly string[]).includes(value)
+    );
+  },
+  /** Returns the value if valid, otherwise throws `TypeError`. */
+  parse(value: unknown): EngagementMode {
+    if (!EngagementModeSchema.is(value)) {
+      throw new TypeError(
+        `EngagementMode must be one of [${ENGAGEMENT_MODES.join(', ')}], received: ${String(value)}`,
+      );
+    }
+    return value;
+  },
+  /** Zod-style discriminated result. */
+  safeParse(
+    value: unknown,
+  ): { success: true; data: EngagementMode } | { success: false; error: TypeError } {
+    if (EngagementModeSchema.is(value)) {
+      return { success: true, data: value };
+    }
+    return {
+      success: false,
+      error: new TypeError(
+        `EngagementMode must be one of [${ENGAGEMENT_MODES.join(', ')}], received: ${String(value)}`,
+      ),
+    };
+  },
+} as const);
+
+/**
  * The lifecycle stage of an engagement (one per certification cycle).
  *
  * S1   — Stage 1 (documentation review, readiness assessment)
@@ -89,6 +151,12 @@ export interface Engagement {
   readonly id: EngagementId;
   readonly firmId: FirmId;
   readonly clientId: ClientId;
+  /**
+   * Engagement mode (ADR-0013). Decided at creation. **Immutable.** Any
+   * mutation that would change `mode` after creation must be rejected by
+   * the service layer with `ModeImmutableError`.
+   */
+  readonly mode: EngagementMode;
   readonly scope: AimsScope;
   /**
    * The current stage in the certification cycle. The full sequence is

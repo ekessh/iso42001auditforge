@@ -17,6 +17,7 @@
 
 import { create } from 'zustand';
 
+import { t as defaultT, type Translator } from '@/lib/i18n';
 import type {
   CandidateFinding,
   ConversationMessage,
@@ -131,9 +132,18 @@ export const useWorkspaceStore = create<WorkspaceState>((set) => ({
 }));
 
 /**
- * Right-pane labels are mode-aware per v3 §15.13.
+ * Right-pane labels are mode-aware per v3 §15.13 (ADR-0013).
  *   Audit Mode      → "Candidate Findings", "Promote to Finding"
  *   Readiness Mode  → "Improvement Items",  "Add to Action Plan"
+ *
+ * Public API preserved (`modeLabels(mode)` still returns a `ModeLabels`)
+ * but the function is now a pure adapter over the i18n catalogue. Pass a
+ * locale-aware `Translator` from React context (or any `t` function) and
+ * the labels will be resolved against that locale; without a translator
+ * argument the default English translator from `@/lib/i18n` is used.
+ *
+ * Code-quality review I18N-01 / I18N-06: every flagged hardcoded English
+ * string is now sourced from `@/lib/i18n/messages`.
  */
 export interface ModeLabels {
   rightPaneTitle: string;
@@ -143,21 +153,17 @@ export interface ModeLabels {
   modePill: string;
 }
 
-export function modeLabels(mode: EngagementMode): ModeLabels {
-  if (mode === 'readiness') {
-    return {
-      rightPaneTitle: 'Improvement Items',
-      promoteAction: 'Add to Action Plan',
-      promoteShort: 'Add',
-      parkLabel: 'Park',
-      modePill: 'Readiness Mode',
-    };
-  }
+export function modeLabels(
+  mode: EngagementMode,
+  translator: Translator = defaultT,
+): ModeLabels {
+  // Both audit and readiness use the same key-suffix pattern; resolution
+  // is purely a string lookup so the function stays pure.
   return {
-    rightPaneTitle: 'Candidate Findings',
-    promoteAction: 'Promote to Finding',
-    promoteShort: 'Add',
-    parkLabel: 'Park',
-    modePill: 'Audit Mode',
+    rightPaneTitle: translator(`workspace.rightPane.title.${mode}`),
+    promoteAction: translator(`workspace.actions.promote.${mode}`),
+    promoteShort: translator('workspace.actions.promote.short'),
+    parkLabel: translator('workspace.actions.park'),
+    modePill: translator(`workspace.modeBadge.${mode}`),
   };
 }

@@ -14,6 +14,31 @@ const ALLOWED_TRANSITIONS: Record<string, readonly string[]> = {
   cancelled: [],
 };
 
+const VALID_MODES = new Set<string>(['audit', 'readiness']);
+
+/**
+ * Reject any update payload that carries `mode` (ADR-0013 — mode is
+ * immutable after creation). Mapped to RFC 7807 / HTTP 409 Conflict via
+ * `ConflictError`. The Zod `UpdateEngagementSchema` is `.strict()` so this
+ * is a defence-in-depth check for any caller that bypasses the pipe.
+ */
+function assertNoModeChange(dto: UpdateEngagementDto, current: EngagementDto): void {
+  const incoming = dto as { mode?: string };
+  if (Object.prototype.hasOwnProperty.call(incoming, 'mode') && incoming.mode !== undefined) {
+    if (incoming.mode !== current.mode) {
+      throw new ConflictError(
+        `Engagement mode is immutable after creation: cannot change ${current.mode} -> ${incoming.mode}`,
+        {
+          code: 'MODE_IMMUTABLE',
+          engagementId: current.id,
+          fromMode: current.mode,
+          toMode: incoming.mode,
+        },
+      );
+    }
+  }
+}
+
 @Injectable()
 export class EngagementsService {
   constructor(private readonly repo: EngagementsRepository) {}
@@ -21,6 +46,15 @@ export class EngagementsService {
   create(firmId: string, dto: CreateEngagementDto): Promise<EngagementDto> {
     if (new Date(dto.endsOn) < new Date(dto.startsOn)) {
       throw new ConflictError('endsOn must be on or after startsOn');
+    }
+    // ADR-0013: mode is required at creation. The Zod pipe enforces this
+    // at the controller boundary; the assertion here is defence-in-depth
+    // for any non-HTTP caller.
+    if (!dto.mode || !VALID_MODES.has(dto.mode)) {
+      throw new ConflictError('Engagement mode must be one of [audit, readiness]', {
+        code: 'INVALID_MODE',
+        receivedMode: dto.mode ?? null,
+      });
     }
     return this.repo.create(firmId, dto);
   }
@@ -33,7 +67,9 @@ export class EngagementsService {
     return this.repo.list(firmId, opts);
   }
 
-  update(firmId: string, id: string, dto: UpdateEngagementDto): Promise<EngagementDto> {
+  async update(firmId: string, id: string, dto: UpdateEngagementDto): Promise<EngagementDto> {
+    const current = await this.repo.findById(firmId, id);
+    assertNoModeChange(dto, current);
     return this.repo.update(firmId, id, dto);
   }
 
