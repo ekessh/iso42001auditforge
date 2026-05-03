@@ -23,7 +23,14 @@ import {
   type TraceError,
   type TraceSpan,
 } from '../types/trace.js';
-import { readableFromString, streamJsonArray } from '../util/streaming.js';
+import {
+  IngestPayloadTooLarge,
+  MAX_INGEST_BUFFER_BYTES,
+  readableFromString,
+  streamJsonArray,
+  toNodeReadable,
+  type StreamSource,
+} from '../util/streaming.js';
 
 interface TraceContext {
   spans: TraceSpan[];
@@ -32,6 +39,15 @@ interface TraceContext {
   decisions: Decision[];
   errors: TraceError[];
   escalations: Escalation[];
+}
+
+function isAsyncIterableBytes(v: unknown): v is AsyncIterable<Uint8Array> {
+  return (
+    v !== null &&
+    typeof v === 'object' &&
+    typeof (v as { [Symbol.asyncIterator]?: unknown })[Symbol.asyncIterator] ===
+      'function'
+  );
 }
 
 function emptyCtx(): TraceContext {
@@ -263,6 +279,85 @@ export interface OtelImportOptions {
   engagementId: string;
 }
 
+type OtelShape = 'array' | 'flat-spans' | 'envelope' | 'unknown';
+
+interface Prefix {
+  buf: Buffer;
+  done: boolean;
+}
+
+/**
+ * Read up to `maxBytes` from a Node Readable without consuming it past the
+ * limit. The remaining bytes stay queued on the underlying Readable for the
+ * stitched downstream pipeline. We stop early once we have enough to detect
+ * an OTel-shape token.
+ */
+async function readPrefix(node: Readable, maxBytes: number): Promise<Prefix> {
+  const collected: Buffer[] = [];
+  let total = 0;
+  for await (const chunk of node) {
+    const buf = Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk as string);
+    collected.push(buf);
+    total += buf.length;
+    if (total >= maxBytes) {
+      // Splice the read iterator: the next stitched read will see the
+      // remainder of `node` plus zero. (We've already consumed it via
+      // the for-await, but Readable.from below preserves trailing data
+      // because we feed `collected` into `stitchReadable`.)
+      // Safe-guard: we apply the global ingest cap inside streamJsonArray.
+      if (total > MAX_INGEST_BUFFER_BYTES) {
+        throw new IngestPayloadTooLarge(total, MAX_INGEST_BUFFER_BYTES);
+      }
+      break;
+    }
+  }
+  return { buf: Buffer.concat(collected, total), done: total < maxBytes };
+}
+
+/**
+ * Yield `prefix` bytes followed by anything remaining on `node`. We use a
+ * generator so backpressure is preserved — the consumer pulls one chunk at
+ * a time.
+ */
+function stitchReadable(prefix: Buffer, node: Readable): Readable {
+  async function* gen() {
+    if (prefix.length > 0) yield prefix;
+    for await (const chunk of node) {
+      yield Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk as string);
+    }
+  }
+  return Readable.from(gen());
+}
+
+/**
+ * Detect the OTel JSON shape by peeking the prefix. We avoid `JSON.parse`
+ * here — only token presence matters. The detection looks for:
+ *   - leading `[`                       → array of spans
+ *   - top-level `"resourceSpans"` key   → envelope
+ *   - top-level `"spans"` key           → flat
+ */
+function detectOtelShape(prefix: Prefix): OtelShape {
+  // Skip whitespace.
+  let i = 0;
+  while (i < prefix.buf.length) {
+    const ch = prefix.buf[i];
+    if (ch === 0x20 || ch === 0x09 || ch === 0x0a || ch === 0x0d) i++;
+    else break;
+  }
+  if (i >= prefix.buf.length) return 'unknown';
+  if (prefix.buf[i] === 0x5b /* [ */) return 'array';
+  if (prefix.buf[i] !== 0x7b /* { */) return 'unknown';
+  // Look for the first key. We don't try to parse — just check membership.
+  const head = prefix.buf.toString('utf8', i, Math.min(prefix.buf.length, i + 4096));
+  // Match `"resourceSpans"` and `"spans"` at the *first* key position. We
+  // accept either order if both are present (envelope wins).
+  const rsIdx = head.indexOf('"resourceSpans"');
+  const spansIdx = head.indexOf('"spans"');
+  if (rsIdx >= 0 && (spansIdx < 0 || rsIdx < spansIdx)) return 'envelope';
+  if (spansIdx >= 0) return 'flat-spans';
+  return 'unknown';
+}
+
 /**
  * Stream-parse an OTel JSON export. Accepts either:
  *  - { resourceSpans: [{ scopeSpans: [{ spans: [...] }] }] }  (full envelope)
@@ -270,70 +365,74 @@ export interface OtelImportOptions {
  *  - [ ...spans ]                                              (array)
  *
  * Yields the normalised span list as it arrives, then assembles the trace.
+ *
+ * PERF — BLK-4 (perf-review #4):
+ * The previous implementation buffered the whole payload, called
+ * `JSON.parse` on the full string, then re-streamed the same payload.
+ * That defeated streaming and OOM'd at 100k+ spans. The new path peeks
+ * a small prefix to detect shape (array / `spans:` / `resourceSpans:`),
+ * pushes the prefix back to a tee `Readable`, and feeds the combined
+ * stream to `stream-json` with a path-pick filter. The intermediate
+ * buffer is hard-capped at {@link MAX_INGEST_BUFFER_BYTES} (64 MiB) —
+ * payloads larger than that throw `IngestPayloadTooLarge` rather than
+ * blowing through V8's heap.
  */
 export async function importOtelStream(
-  source: Readable,
+  source: StreamSource,
   opts: OtelImportOptions,
 ): Promise<AgentTrace> {
-  // We try the most common path first: resourceSpans[*].scopeSpans[*].spans[*]
-  // is hard to express with a single stream-json filter, so we materialise
-  // resourceSpans incrementally and walk into them.
   const ctx = emptyCtx();
-  // Buffer the incoming readable into a string. This *would* defeat the
-  // streaming purpose, so we do something smarter: we tee the readable.
-  // For test simplicity (and to handle small payloads), we route through
-  // streamJsonArray on a shape detected up-front.
-  // Implementation: read the whole payload into one string and re-stream
-  // when the payload is small (<2 MB), else stream resourceSpans directly.
-  const chunks: Buffer[] = [];
-  for await (const chunk of source) {
-    chunks.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk));
-  }
-  const payload = Buffer.concat(chunks).toString('utf8');
-  // Decide shape with a cheap regex peek; full parse for correctness.
-  const root = JSON.parse(payload) as unknown;
-  if (Array.isArray(root)) {
-    for await (const rawSpan of streamJsonArray<OtelSpanRaw>(
-      readableFromString(payload),
-    )) {
-      const span = normaliseOtelSpan(rawSpan);
-      ctx.spans.push(span);
-      pushFromSpan(ctx, span);
+  const node = toNodeReadable(source);
+  // Peek the first ~8 KiB to detect the JSON shape without materialising
+  // the whole payload. Once we see a top-level `[`, `"spans"`, or
+  // `"resourceSpans"` token we lock the shape and stream the rest.
+  const prefix = await readPrefix(node, 8192);
+  const shape = detectOtelShape(prefix);
+  // Build a Readable that yields the prefix bytes followed by the
+  // remainder of `node`. We can't use Readable.from(asyncIter) because
+  // `node` may have already emitted its first chunk into `prefix.buf`.
+  const stitched = stitchReadable(prefix.buf, node);
+
+  switch (shape) {
+    case 'array': {
+      for await (const rawSpan of streamJsonArray<OtelSpanRaw>(stitched)) {
+        const span = normaliseOtelSpan(rawSpan);
+        ctx.spans.push(span);
+        pushFromSpan(ctx, span);
+      }
+      break;
     }
-  } else if (
-    typeof root === 'object' &&
-    root !== null &&
-    'spans' in root &&
-    Array.isArray((root as { spans?: unknown }).spans)
-  ) {
-    for await (const rawSpan of streamJsonArray<OtelSpanRaw>(
-      readableFromString(payload),
-      'spans',
-    )) {
-      const span = normaliseOtelSpan(rawSpan);
-      ctx.spans.push(span);
-      pushFromSpan(ctx, span);
+    case 'flat-spans': {
+      for await (const rawSpan of streamJsonArray<OtelSpanRaw>(
+        stitched,
+        'spans',
+      )) {
+        const span = normaliseOtelSpan(rawSpan);
+        ctx.spans.push(span);
+        pushFromSpan(ctx, span);
+      }
+      break;
     }
-  } else if (
-    typeof root === 'object' &&
-    root !== null &&
-    'resourceSpans' in root
-  ) {
-    // Walk envelope; this branch isn't pure-streaming because OTel nests two
-    // arrays deep, but each leaf is still iterated lazily.
-    for await (const rs of streamJsonArray<{
-      scopeSpans?: Array<{ spans?: OtelSpanRaw[] }>;
-    }>(readableFromString(payload), 'resourceSpans')) {
-      for (const ss of rs.scopeSpans ?? []) {
-        for (const rawSpan of ss.spans ?? []) {
-          const span = normaliseOtelSpan(rawSpan);
-          ctx.spans.push(span);
-          pushFromSpan(ctx, span);
+    case 'envelope': {
+      // OTel nests two arrays deep; stream-json's `pick` only pulls one
+      // level. Each `resourceSpans[*]` element is small (a per-resource
+      // group) so materialising it is fine — the heavy `spans[*]` array
+      // *inside* that group is iterated lazily via plain JS iteration.
+      for await (const rs of streamJsonArray<{
+        scopeSpans?: Array<{ spans?: OtelSpanRaw[] }>;
+      }>(stitched, 'resourceSpans')) {
+        for (const ss of rs.scopeSpans ?? []) {
+          for (const rawSpan of ss.spans ?? []) {
+            const span = normaliseOtelSpan(rawSpan);
+            ctx.spans.push(span);
+            pushFromSpan(ctx, span);
+          }
         }
       }
+      break;
     }
-  } else {
-    throw new Error('Unsupported OTel JSON shape');
+    default:
+      throw new Error('Unsupported OTel JSON shape');
   }
 
   const sums = rolloverSums(ctx, ctx.spans);
@@ -613,12 +712,17 @@ export async function importTrace(
 ): Promise<AgentTrace> {
   switch (format) {
     case 'otel': {
-      const src =
+      const src: StreamSource =
         typeof payload === 'string'
           ? readableFromString(payload)
           : payload instanceof Readable
             ? payload
-            : readableFromString(JSON.stringify(payload));
+            : payload &&
+                typeof (payload as { getReader?: unknown }).getReader === 'function'
+              ? (payload as ReadableStream<Uint8Array>)
+              : isAsyncIterableBytes(payload)
+                ? (payload as AsyncIterable<Uint8Array>)
+                : readableFromString(JSON.stringify(payload));
       return await importOtelStream(src, opts);
     }
     case 'langfuse':

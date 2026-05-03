@@ -194,18 +194,44 @@ export class ClaimGraph {
       visited.set(id, 0);
       frontier.add(id);
     }
+    if (cap === 0 || frontier.size === 0) {
+      return [...visited.entries()].map(([claimId, depth]) => ({ claimId, depth }));
+    }
+    // PERF — BLK-5 (perf-review #5):
+    // The previous implementation called `listClaimRelations(ctx)` once per
+    // seed *per depth level*, producing thousands of full-table relation
+    // scans on a populated engagement. Hoist the fetch outside both loops
+    // and index by source/target id so BFS is O(visited) lookups.
+    const relations = await this.deps.store.listClaimRelations(ctx);
+    const byA = new Map<string, ClaimRelation[]>();
+    const byB = new Map<string, ClaimRelation[]>();
+    for (const r of relations) {
+      const a = byA.get(r.claimAId);
+      if (a) a.push(r);
+      else byA.set(r.claimAId, [r]);
+      const b = byB.get(r.claimBId);
+      if (b) b.push(r);
+      else byB.set(r.claimBId, [r]);
+    }
     for (let depth = 0; depth < cap; depth++) {
       const next = new Set<string>();
       for (const id of frontier) {
-        const relations = await this.deps.store.listClaimRelations(ctx);
-        for (const r of relations) {
-          if (r.claimAId === id && !visited.has(r.claimBId)) {
-            visited.set(r.claimBId, depth + 1);
-            next.add(r.claimBId);
+        const outgoing = byA.get(id);
+        if (outgoing) {
+          for (const r of outgoing) {
+            if (!visited.has(r.claimBId)) {
+              visited.set(r.claimBId, depth + 1);
+              next.add(r.claimBId);
+            }
           }
-          if (r.claimBId === id && !visited.has(r.claimAId)) {
-            visited.set(r.claimAId, depth + 1);
-            next.add(r.claimAId);
+        }
+        const incoming = byB.get(id);
+        if (incoming) {
+          for (const r of incoming) {
+            if (!visited.has(r.claimAId)) {
+              visited.set(r.claimAId, depth + 1);
+              next.add(r.claimAId);
+            }
           }
         }
       }
