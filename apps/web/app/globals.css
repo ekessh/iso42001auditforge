@@ -1,0 +1,21 @@
+/* SPDX-License-Identifier: BUSL-1.1 */
+@import 'tailwindcss';
+@import '@auditforge/ui-kit/styles/globals.css';
+
+:root {
+  color-scheme: light dark;
+}
+
+html {
+  font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  @apply bg-background text-foreground antialiased;
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}
