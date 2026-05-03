@@ -1,0 +1,965 @@
+[
+  {
+    "id": "Q-CL4-001",
+    "version": 1,
+    "text": "Walk me through how you determined the scope boundary of the AI Management System and which AI systems are explicitly in or out.",
+    "intent": "Establish that scope boundaries are documented, defensible, and enumerate AI systems.",
+    "mappedClauses": ["4.3"],
+    "applicableKinds": ["llm", "predictive-ml", "agent", "rag", "multi-agent", "training-pipeline", "mcp-server", "vector-db"],
+    "applicablePhases": ["S1", "S2", "Recert", "Readiness"],
+    "expectedEvidenceTypes": ["policy", "procedure", "record"],
+    "commonDeflections": ["it's whatever IT considers AI", "we'll define it later"],
+    "followUps": [
+      { "id": "fu-cl4-001-a", "trigger": { "kind": "claim-shape", "pattern": "we have a (process|policy)" }, "questionId": "Q-CL4-001-DOC", "mappedClauses": ["4.3"], "expectedEvidenceTypes": ["policy"] },
+      { "id": "fu-cl4-001-b", "trigger": { "kind": "claim-shape", "pattern": "shadow" }, "text": "How do you discover AI systems that bypass formal procurement (shadow AI)?", "mappedClauses": ["4.3", "6.1"], "expectedEvidenceTypes": ["procedure", "record"] }
+    ],
+    "tags": ["clause:4.3", "scope", "boundary", "all-kinds"]
+  },
+  {
+    "id": "Q-CL4-001-DOC",
+    "version": 1,
+    "text": "Show me the current scope statement document and when it was last reviewed.",
+    "intent": "Verify document existence and review cadence.",
+    "mappedClauses": ["4.3"],
+    "applicableKinds": ["llm", "predictive-ml", "agent", "rag", "multi-agent", "training-pipeline", "mcp-server", "vector-db"],
+    "applicablePhases": ["S1", "S2", "Surv", "Recert"],
+    "expectedEvidenceTypes": ["policy", "review-record"],
+    "commonDeflections": [],
+    "followUps": [],
+    "tags": ["clause:4.3", "documented-info", "follow-up"]
+  },
+  {
+    "id": "Q-CL4-002",
+    "version": 1,
+    "text": "How do you identify and document interested parties relevant to the AIMS, and what AI-specific concerns have they raised?",
+    "intent": "Confirm interested-parties identification covers AI-specific stakeholders (data subjects, regulators, affected groups).",
+    "mappedClauses": ["4.2"],
+    "applicableKinds": ["llm", "predictive-ml", "agent", "rag", "multi-agent"],
+    "applicablePhases": ["S1", "S2", "Recert", "Readiness"],
+    "expectedEvidenceTypes": ["record", "meeting-minutes"],
+    "commonDeflections": ["just our customers", "legal handles regulators"],
+    "followUps": [
+      { "id": "fu-cl4-002-a", "trigger": { "kind": "claim-shape", "pattern": "data subjects?" }, "text": "When was the most recent engagement with affected data subjects, and how were their concerns recorded?", "mappedClauses": ["4.2"], "expectedEvidenceTypes": ["meeting-minutes", "record"] }
+    ],
+    "tags": ["clause:4.2", "interested-parties"]
+  },
+  {
+    "id": "Q-CL4-003",
+    "version": 1,
+    "text": "Describe how the organisation's role in the AI value chain (provider, deployer, user, importer, distributor) was determined for each in-scope AI system.",
+    "intent": "Verify role assignment per AI system, especially under EU AI Act overlap.",
+    "mappedClauses": ["4.1", "A.2.2"],
+    "applicableKinds": ["llm", "predictive-ml", "agent", "rag", "multi-agent", "mcp-server"],
+    "applicablePhases": ["S1", "S2", "Recert", "Readiness"],
+    "expectedEvidenceTypes": ["policy", "record"],
+    "commonDeflections": ["we're just users", "the vendor handles it"],
+    "followUps": [
+      { "id": "fu-cl4-003-a", "trigger": { "kind": "claim-shape", "pattern": "vendor handles" }, "text": "What contractual evidence binds the vendor to the AI obligations you are delegating?", "mappedClauses": ["A.10.2"], "expectedEvidenceTypes": ["sla", "external-attestation"] }
+    ],
+    "tags": ["clause:4.1", "role", "value-chain"]
+  },
+  {
+    "id": "Q-CL5-001",
+    "version": 1,
+    "text": "How does top management demonstrate leadership and commitment to the AIMS, with examples from the last six months?",
+    "intent": "Establish active, evidenced leadership rather than nominal sign-off.",
+    "mappedClauses": ["5.1"],
+    "applicableKinds": ["llm", "predictive-ml", "agent", "rag", "multi-agent", "training-pipeline", "mcp-server", "vector-db"],
+    "applicablePhases": ["S1", "S2", "Surv", "Recert", "Readiness"],
+    "expectedEvidenceTypes": ["meeting-minutes", "review-record", "sign-off"],
+    "commonDeflections": ["the CEO signed the policy"],
+    "followUps": [
+      { "id": "fu-cl5-001-a", "trigger": { "kind": "claim-shape", "pattern": "(signed|approved) the policy" }, "text": "Beyond the signature, what management decisions on AI risks are recorded in the last two management reviews?", "mappedClauses": ["5.1", "9.3"], "expectedEvidenceTypes": ["review-record"] }
+    ],
+    "tags": ["clause:5.1", "leadership"]
+  },
+  {
+    "id": "Q-CL5-002",
+    "version": 1,
+    "text": "Walk me through the AI policy: how it was approved, when it was last reviewed, and how it was communicated to staff.",
+    "intent": "Verify policy lifecycle (existence, approval, review, communication).",
+    "mappedClauses": ["5.2"],
+    "applicableKinds": ["llm", "predictive-ml", "agent", "rag", "multi-agent", "training-pipeline", "mcp-server", "vector-db"],
+    "applicablePhases": ["S1", "S2", "Surv", "Recert", "Readiness"],
+    "expectedEvidenceTypes": ["policy", "training-record", "review-record"],
+    "commonDeflections": ["it's on the intranet"],
+    "followUps": [
+      { "id": "fu-cl5-002-a", "trigger": { "kind": "claim-shape", "pattern": "(intranet|wiki)" }, "text": "Show me the page acknowledgement records for staff in AI-impacted roles.", "mappedClauses": ["5.2", "7.3"], "expectedEvidenceTypes": ["training-record"] }
+    ],
+    "tags": ["clause:5.2", "policy"]
+  },
+  {
+    "id": "Q-CL5-003",
+    "version": 1,
+    "text": "Show me the AI roles and responsibilities matrix and how it maps to the AIMS RACI for each in-scope AI system.",
+    "intent": "Verify clear ownership across AI lifecycle phases.",
+    "mappedClauses": ["5.3", "A.3.2"],
+    "applicableKinds": ["llm", "predictive-ml", "agent", "rag", "multi-agent", "training-pipeline"],
+    "applicablePhases": ["S1", "S2", "Recert", "Readiness"],
+    "expectedEvidenceTypes": ["policy", "record"],
+    "commonDeflections": ["the AI team owns it"],
+    "followUps": [
+      { "id": "fu-cl5-003-a", "trigger": { "kind": "claim-shape", "pattern": "(team|group) owns" }, "text": "Who is the named accountable individual for safety incidents in this AI system?", "mappedClauses": ["A.3.2"], "expectedEvidenceTypes": ["record"] }
+    ],
+    "tags": ["clause:5.3", "raci", "annex:A.3.2"]
+  },
+  {
+    "id": "Q-CL6-001",
+    "version": 1,
+    "text": "Walk me through the AI risk assessment for one in-scope system end-to-end: identification, analysis, evaluation, treatment.",
+    "intent": "Verify a complete risk-management workflow exists, not just a register.",
+    "mappedClauses": ["6.1.2"],
+    "applicableKinds": ["llm", "predictive-ml", "agent", "rag", "multi-agent", "training-pipeline"],
+    "applicablePhases": ["S1", "S2", "Recert", "Readiness"],
+    "expectedEvidenceTypes": ["risk-register-entry", "procedure", "record"],
+    "commonDeflections": ["we did it during onboarding", "it's in the spreadsheet"],
+    "followUps": [
+      { "id": "fu-cl6-001-a", "trigger": { "kind": "claim-shape", "pattern": "we have a (process|register)" }, "text": "When was this risk last re-evaluated, and what changed in the system or environment that triggered it?", "mappedClauses": ["6.1.2", "8.2"], "expectedEvidenceTypes": ["record", "review-record"] },
+      { "id": "fu-cl6-001-b", "trigger": { "kind": "claim-shape", "pattern": "(spreadsheet|excel)" }, "text": "How is version control and change history of the risk register preserved?", "mappedClauses": ["7.5"], "expectedEvidenceTypes": ["log", "config"] }
+    ],
+    "tags": ["clause:6.1.2", "risk"]
+  },
+  {
+    "id": "Q-CL6-002",
+    "version": 1,
+    "text": "How is an AI System Impact Assessment (AISIA) triggered, and where is the most recent one for this system?",
+    "intent": "Verify Annex B impact-assessment integration.",
+    "mappedClauses": ["6.1.4", "A.5.2"],
+    "applicableKinds": ["llm", "predictive-ml", "agent", "rag", "multi-agent"],
+    "applicablePhases": ["S1", "S2", "Recert", "Readiness"],
+    "expectedEvidenceTypes": ["procedure", "record"],
+    "commonDeflections": ["we did the GDPR DPIA, that's enough"],
+    "followUps": [
+      { "id": "fu-cl6-002-a", "trigger": { "kind": "claim-shape", "pattern": "DPIA" }, "text": "Where in the DPIA do you cover AI-specific harms (e.g., bias amplification, automation bias, hallucination consequences)?", "mappedClauses": ["A.5.2"], "expectedEvidenceTypes": ["record"] }
+    ],
+    "tags": ["clause:6.1.4", "annex:A.5.2", "aisia"]
+  },
+  {
+    "id": "Q-CL6-003",
+    "version": 1,
+    "text": "Show me your AI objectives for this fiscal period, and how progress is measured.",
+    "intent": "Verify SMART AI objectives with measurement.",
+    "mappedClauses": ["6.2"],
+    "applicableKinds": ["llm", "predictive-ml", "agent", "rag", "multi-agent"],
+    "applicablePhases": ["S1", "S2", "Recert", "Readiness"],
+    "expectedEvidenceTypes": ["policy", "metric-report"],
+    "commonDeflections": ["our objective is to use AI responsibly"],
+    "followUps": [
+      { "id": "fu-cl6-003-a", "trigger": { "kind": "claim-shape", "pattern": "responsibl(e|y)" }, "text": "What is the measurable indicator behind that objective and what is the current value?", "mappedClauses": ["6.2", "9.1"], "expectedEvidenceTypes": ["metric-report"] }
+    ],
+    "tags": ["clause:6.2", "objectives"]
+  },
+  {
+    "id": "Q-CL7-001",
+    "version": 1,
+    "text": "How is competence determined for staff working on this AI system, and what records prove the competence is current?",
+    "intent": "Validate competence assessment per role.",
+    "mappedClauses": ["7.2"],
+    "applicableKinds": ["llm", "predictive-ml", "agent", "rag", "multi-agent", "training-pipeline"],
+    "applicablePhases": ["S1", "S2", "Surv", "Recert", "Readiness"],
+    "expectedEvidenceTypes": ["training-record", "record"],
+    "commonDeflections": ["everyone is qualified"],
+    "followUps": [
+      { "id": "fu-cl7-001-a", "trigger": { "kind": "claim-shape", "pattern": "(qualified|trained)" }, "text": "Show me the most recent competence-assessment record for an ML engineer in this team.", "mappedClauses": ["7.2"], "expectedEvidenceTypes": ["training-record"] }
+    ],
+    "tags": ["clause:7.2", "competence"]
+  },
+  {
+    "id": "Q-CL7-002",
+    "version": 1,
+    "text": "What awareness training do staff outside the AI team receive about your AI policies and AI-specific risks?",
+    "intent": "Verify Clause 7.3 awareness program reaches non-AI staff.",
+    "mappedClauses": ["7.3"],
+    "applicableKinds": ["llm", "predictive-ml", "agent", "rag", "multi-agent"],
+    "applicablePhases": ["S1", "S2", "Surv", "Recert", "Readiness"],
+    "expectedEvidenceTypes": ["training-record", "policy"],
+    "commonDeflections": ["only the AI team needs to know"],
+    "followUps": [
+      { "id": "fu-cl7-002-a", "trigger": { "kind": "claim-shape", "pattern": "AI team" }, "text": "How are customer-facing or support staff trained to recognise and route AI-related complaints?", "mappedClauses": ["7.3", "A.6.2.8"], "expectedEvidenceTypes": ["training-record"] }
+    ],
+    "tags": ["clause:7.3", "awareness"]
+  },
+  {
+    "id": "Q-CL7-003",
+    "version": 1,
+    "text": "Walk me through how documented information for this AIMS is controlled, including version, approval, and obsolete-document handling.",
+    "intent": "Verify documented-information control.",
+    "mappedClauses": ["7.5"],
+    "applicableKinds": ["llm", "predictive-ml", "agent", "rag", "multi-agent", "training-pipeline", "mcp-server", "vector-db"],
+    "applicablePhases": ["S1", "S2", "Surv", "Recert", "Readiness"],
+    "expectedEvidenceTypes": ["procedure", "record", "config"],
+    "commonDeflections": ["it's all in SharePoint"],
+    "followUps": [
+      { "id": "fu-cl7-003-a", "trigger": { "kind": "claim-shape", "pattern": "(SharePoint|drive|wiki)" }, "text": "Show me the version history and approval audit trail for the AI policy.", "mappedClauses": ["7.5"], "expectedEvidenceTypes": ["log", "record"] }
+    ],
+    "tags": ["clause:7.5", "documented-info"]
+  },
+  {
+    "id": "Q-CL8-001",
+    "version": 1,
+    "text": "Walk me through the operational planning and control for this AI system: how changes flow from request to production.",
+    "intent": "Verify Clause 8.1 operational change control.",
+    "mappedClauses": ["8.1"],
+    "applicableKinds": ["llm", "predictive-ml", "agent", "rag", "multi-agent", "training-pipeline"],
+    "applicablePhases": ["S2", "Surv", "Recert", "Readiness"],
+    "expectedEvidenceTypes": ["procedure", "log", "record"],
+    "commonDeflections": ["the team just deploys when needed"],
+    "followUps": [
+      { "id": "fu-cl8-001-a", "trigger": { "kind": "claim-shape", "pattern": "deploy" }, "text": "Show me the change-management ticket and approval record for the most recent production deployment.", "mappedClauses": ["8.1"], "expectedEvidenceTypes": ["log", "sign-off"] },
+      { "id": "fu-cl8-001-b", "trigger": { "kind": "claim-shape", "pattern": "(emergency|hotfix)" }, "text": "How are emergency changes documented, reviewed, and replayed against the AISIA?", "mappedClauses": ["8.1", "6.1.4"], "expectedEvidenceTypes": ["record"] }
+    ],
+    "tags": ["clause:8.1", "change-control"]
+  },
+  {
+    "id": "Q-CL8-002",
+    "version": 1,
+    "text": "How do you carry out AI risk treatment for this system, and where is the latest risk-treatment plan?",
+    "intent": "Verify Clause 8.3 treatment execution.",
+    "mappedClauses": ["8.3"],
+    "applicableKinds": ["llm", "predictive-ml", "agent", "rag", "multi-agent"],
+    "applicablePhases": ["S2", "Surv", "Recert", "Readiness"],
+    "expectedEvidenceTypes": ["risk-register-entry", "record"],
+    "commonDeflections": ["we accepted the risks"],
+    "followUps": [
+      { "id": "fu-cl8-002-a", "trigger": { "kind": "claim-shape", "pattern": "accept" }, "text": "Who authorised acceptance of these residual risks, with what justification, and against which Annex A controls?", "mappedClauses": ["8.3"], "expectedEvidenceTypes": ["sign-off", "record"] }
+    ],
+    "tags": ["clause:8.3", "risk-treatment"]
+  },
+  {
+    "id": "Q-CL8-003",
+    "version": 1,
+    "text": "Walk me through the most recent AI System Impact Assessment for this system: scope, methodology, output, and approver.",
+    "intent": "Verify Clause 8.4 AISIA execution.",
+    "mappedClauses": ["8.4", "A.5.4", "A.5.5"],
+    "applicableKinds": ["llm", "predictive-ml", "agent", "rag", "multi-agent"],
+    "applicablePhases": ["S2", "Surv", "Recert", "Readiness"],
+    "expectedEvidenceTypes": ["procedure", "record", "sign-off"],
+    "commonDeflections": ["we'll do it before go-live"],
+    "followUps": [
+      { "id": "fu-cl8-003-a", "trigger": { "kind": "claim-shape", "pattern": "go-live" }, "text": "If the system is already live, where is the AISIA that justified that go-live decision?", "mappedClauses": ["8.4"], "expectedEvidenceTypes": ["record", "sign-off"] }
+    ],
+    "tags": ["clause:8.4", "annex:A.5.4", "aisia"]
+  },
+  {
+    "id": "Q-CL9-001",
+    "version": 1,
+    "text": "What metrics do you monitor for this AI system, who reviews them, and on what cadence?",
+    "intent": "Verify Clause 9.1 monitoring program.",
+    "mappedClauses": ["9.1"],
+    "applicableKinds": ["llm", "predictive-ml", "agent", "rag", "multi-agent"],
+    "applicablePhases": ["S2", "Surv", "Recert", "Readiness"],
+    "expectedEvidenceTypes": ["metric-report", "log", "review-record"],
+    "commonDeflections": ["the dashboard is on Grafana"],
+    "followUps": [
+      { "id": "fu-cl9-001-a", "trigger": { "kind": "claim-shape", "pattern": "(Grafana|dashboard)" }, "text": "Show me a recent monthly review where dashboard outputs led to a documented decision.", "mappedClauses": ["9.1", "9.3"], "expectedEvidenceTypes": ["review-record"] }
+    ],
+    "tags": ["clause:9.1", "monitoring"]
+  },
+  {
+    "id": "Q-CL9-002",
+    "version": 1,
+    "text": "Show me the most recent internal audit of the AIMS: scope, findings, and follow-up.",
+    "intent": "Verify Clause 9.2 internal-audit programme.",
+    "mappedClauses": ["9.2"],
+    "applicableKinds": ["llm", "predictive-ml", "agent", "rag", "multi-agent", "training-pipeline", "mcp-server", "vector-db"],
+    "applicablePhases": ["S2", "Surv", "Recert"],
+    "expectedEvidenceTypes": ["record", "review-record"],
+    "commonDeflections": ["our QMS audits cover it"],
+    "followUps": [
+      { "id": "fu-cl9-002-a", "trigger": { "kind": "claim-shape", "pattern": "(QMS|ISMS) (audit|covers)" }, "text": "Show me the AI-specific audit checklist used and the AI-specific findings raised.", "mappedClauses": ["9.2"], "expectedEvidenceTypes": ["record"] }
+    ],
+    "tags": ["clause:9.2", "internal-audit"]
+  },
+  {
+    "id": "Q-CL9-003",
+    "version": 1,
+    "text": "Show me the latest management review minutes covering the AIMS: inputs, decisions, action items, owners, due dates.",
+    "intent": "Verify Clause 9.3 management review.",
+    "mappedClauses": ["9.3"],
+    "applicableKinds": ["llm", "predictive-ml", "agent", "rag", "multi-agent", "training-pipeline", "mcp-server", "vector-db"],
+    "applicablePhases": ["S2", "Surv", "Recert", "Readiness"],
+    "expectedEvidenceTypes": ["meeting-minutes", "review-record"],
+    "commonDeflections": ["it's in our standing exec meeting"],
+    "followUps": [
+      { "id": "fu-cl9-003-a", "trigger": { "kind": "claim-shape", "pattern": "exec (meeting|stand)" }, "text": "Pull up the agenda and minutes from that meeting where AIMS was specifically reviewed.", "mappedClauses": ["9.3"], "expectedEvidenceTypes": ["meeting-minutes"] }
+    ],
+    "tags": ["clause:9.3", "management-review"]
+  },
+  {
+    "id": "Q-CL10-001",
+    "version": 1,
+    "text": "Walk me through how a non-conformity in this AI system flows from detection to corrective action to verified closure.",
+    "intent": "Verify Clause 10.2 NC/CAPA workflow.",
+    "mappedClauses": ["10.2"],
+    "applicableKinds": ["llm", "predictive-ml", "agent", "rag", "multi-agent", "training-pipeline"],
+    "applicablePhases": ["S2", "Surv", "Recert", "Readiness"],
+    "expectedEvidenceTypes": ["procedure", "record"],
+    "commonDeflections": ["we have a Jira workflow"],
+    "followUps": [
+      { "id": "fu-cl10-001-a", "trigger": { "kind": "claim-shape", "pattern": "Jira" }, "text": "Show me a recent Jira ticket for an AI-specific NC, including root-cause analysis and effectiveness verification.", "mappedClauses": ["10.2"], "expectedEvidenceTypes": ["record", "log"] }
+    ],
+    "tags": ["clause:10.2", "nc-capa"]
+  },
+  {
+    "id": "Q-CL10-002",
+    "version": 1,
+    "text": "What evidence do you have of continual improvement of the AIMS over the last 12 months?",
+    "intent": "Verify Clause 10.1 continual improvement.",
+    "mappedClauses": ["10.1"],
+    "applicableKinds": ["llm", "predictive-ml", "agent", "rag", "multi-agent"],
+    "applicablePhases": ["Surv", "Recert", "Readiness"],
+    "expectedEvidenceTypes": ["record", "review-record"],
+    "commonDeflections": ["we keep getting better"],
+    "followUps": [
+      { "id": "fu-cl10-002-a", "trigger": { "kind": "claim-shape", "pattern": "better" }, "text": "Point to a specific AIMS process change in the last year and the metric that improved as a result.", "mappedClauses": ["10.1", "9.1"], "expectedEvidenceTypes": ["metric-report"] }
+    ],
+    "tags": ["clause:10.1", "continual-improvement"]
+  },
+  {
+    "id": "Q-A2-001",
+    "version": 1,
+    "text": "Show me the policies for AI system development and use, including the document tree and last review.",
+    "intent": "Verify Annex A.2 (Policies related to AI).",
+    "mappedClauses": ["A.2.2", "A.2.3"],
+    "applicableKinds": ["llm", "predictive-ml", "agent", "rag", "multi-agent"],
+    "applicablePhases": ["S1", "S2", "Recert", "Readiness"],
+    "expectedEvidenceTypes": ["policy", "review-record"],
+    "commonDeflections": ["we just have one AI policy"],
+    "followUps": [
+      { "id": "fu-a2-001-a", "trigger": { "kind": "claim-shape", "pattern": "one AI policy" }, "text": "Where are sub-policies for acceptable use, model lifecycle, and third-party AI procurement?", "mappedClauses": ["A.2.4"], "expectedEvidenceTypes": ["policy"] }
+    ],
+    "tags": ["annex:A.2.2", "annex:A.2.3", "policies"]
+  },
+  {
+    "id": "Q-A3-001",
+    "version": 1,
+    "text": "How is accountability assigned for AI outcomes — including harms — in this system?",
+    "intent": "Verify Annex A.3 accountability assignment.",
+    "mappedClauses": ["A.3.2", "A.3.3"],
+    "applicableKinds": ["llm", "predictive-ml", "agent", "rag", "multi-agent"],
+    "applicablePhases": ["S1", "S2", "Recert", "Readiness"],
+    "expectedEvidenceTypes": ["policy", "record"],
+    "commonDeflections": ["the model is responsible", "the user is responsible"],
+    "followUps": [
+      { "id": "fu-a3-001-a", "trigger": { "kind": "claim-shape", "pattern": "(model|AI) is responsible" }, "text": "Models cannot bear accountability. Who is the named human-accountable individual when this system causes harm?", "mappedClauses": ["A.3.2"], "expectedEvidenceTypes": ["record"] }
+    ],
+    "tags": ["annex:A.3", "accountability"]
+  },
+  {
+    "id": "Q-A4-001",
+    "version": 1,
+    "text": "Walk me through how computing, data, and tooling resources for this AI system are planned, allocated, and reviewed.",
+    "intent": "Verify Annex A.4 resource management.",
+    "mappedClauses": ["A.4.2", "A.4.3", "A.4.4"],
+    "applicableKinds": ["llm", "predictive-ml", "agent", "rag", "multi-agent", "training-pipeline", "vector-db"],
+    "applicablePhases": ["S2", "Surv", "Recert", "Readiness"],
+    "expectedEvidenceTypes": ["procedure", "record", "config"],
+    "commonDeflections": ["DevOps handles it"],
+    "followUps": [
+      { "id": "fu-a4-001-a", "trigger": { "kind": "claim-shape", "pattern": "DevOps" }, "text": "Show me the AI-specific resource plan that documents GPU/data/tool dependencies for this system.", "mappedClauses": ["A.4.3"], "expectedEvidenceTypes": ["record", "config"] }
+    ],
+    "tags": ["annex:A.4", "resources"]
+  },
+  {
+    "id": "Q-A4-002",
+    "version": 1,
+    "text": "What documented information exists for the data resources used by this system: provenance, quality, and licensing?",
+    "intent": "Verify Annex A.4.4 data-resource controls.",
+    "mappedClauses": ["A.4.4", "A.7.4", "A.7.5"],
+    "applicableKinds": ["predictive-ml", "training-pipeline", "rag", "vector-db", "llm"],
+    "applicablePhases": ["S2", "Surv", "Recert", "Readiness"],
+    "expectedEvidenceTypes": ["record", "data-flow-diagram", "external-attestation"],
+    "commonDeflections": ["the vendor curated the dataset"],
+    "followUps": [
+      { "id": "fu-a4-002-a", "trigger": { "kind": "claim-shape", "pattern": "vendor (curated|provided)" }, "text": "What data-licence and provenance attestation did the vendor provide, and how did you validate it?", "mappedClauses": ["A.10.2", "A.7.4"], "expectedEvidenceTypes": ["external-attestation"] },
+      { "id": "fu-a4-002-b", "trigger": { "kind": "claim-shape", "pattern": "(scraped|web|crawl)" }, "text": "How did you assess the legal basis and rights-clearance for scraped training data?", "mappedClauses": ["A.7.4"], "expectedEvidenceTypes": ["record"] }
+    ],
+    "tags": ["annex:A.4.4", "data-resource"]
+  },
+  {
+    "id": "Q-A5-001",
+    "version": 1,
+    "text": "Walk me through the AISIA process from trigger to sign-off, and show me where it is integrated into project gating.",
+    "intent": "Verify Annex A.5 AI System Impact Assessment integration.",
+    "mappedClauses": ["A.5.2", "A.5.3", "A.5.4"],
+    "applicableKinds": ["llm", "predictive-ml", "agent", "rag", "multi-agent"],
+    "applicablePhases": ["S1", "S2", "Recert", "Readiness"],
+    "expectedEvidenceTypes": ["procedure", "record"],
+    "commonDeflections": ["we do it once at the start"],
+    "followUps": [
+      { "id": "fu-a5-001-a", "trigger": { "kind": "claim-shape", "pattern": "once at the start" }, "text": "What triggers an AISIA refresh — model retraining, data drift, scope expansion, regulatory change?", "mappedClauses": ["A.5.5"], "expectedEvidenceTypes": ["procedure"] }
+    ],
+    "tags": ["annex:A.5", "aisia"]
+  },
+  {
+    "id": "Q-A5-002",
+    "version": 1,
+    "text": "Show me how affected individuals and societal harm potentials were identified in the most recent AISIA.",
+    "intent": "Verify Annex A.5.4 harms-to-individuals analysis.",
+    "mappedClauses": ["A.5.4"],
+    "applicableKinds": ["llm", "predictive-ml", "agent", "rag", "multi-agent"],
+    "applicablePhases": ["S2", "Recert", "Readiness"],
+    "expectedEvidenceTypes": ["record"],
+    "commonDeflections": ["no individuals are affected"],
+    "followUps": [
+      { "id": "fu-a5-002-a", "trigger": { "kind": "claim-shape", "pattern": "no individuals" }, "text": "How does this system make automated or recommended decisions, and who downstream is affected by those?", "mappedClauses": ["A.5.4", "A.6.2.6"], "expectedEvidenceTypes": ["record"] }
+    ],
+    "tags": ["annex:A.5.4", "harms"]
+  },
+  {
+    "id": "Q-A6-001",
+    "version": 1,
+    "text": "Walk me through the AI system development lifecycle for this system, from problem definition through deployment.",
+    "intent": "Verify Annex A.6.2 lifecycle controls.",
+    "mappedClauses": ["A.6.2.2", "A.6.2.3", "A.6.2.4", "A.6.2.5"],
+    "applicableKinds": ["predictive-ml", "training-pipeline", "llm", "agent", "rag", "multi-agent"],
+    "applicablePhases": ["S2", "Recert", "Readiness"],
+    "expectedEvidenceTypes": ["procedure", "record", "config"],
+    "commonDeflections": ["we follow MLOps best practices"],
+    "followUps": [
+      { "id": "fu-a6-001-a", "trigger": { "kind": "claim-shape", "pattern": "MLOps" }, "text": "Where is your MLOps lifecycle defined, and which control gates require AISIA or human sign-off?", "mappedClauses": ["A.6.2.2"], "expectedEvidenceTypes": ["procedure"] }
+    ],
+    "tags": ["annex:A.6.2", "lifecycle"]
+  },
+  {
+    "id": "Q-A6-002",
+    "version": 1,
+    "text": "Show me how training, validation, and test data were assembled for this model, including representativeness analysis.",
+    "intent": "Verify Annex A.6.2.4 data preparation.",
+    "mappedClauses": ["A.6.2.4", "A.7.4", "A.7.5"],
+    "applicableKinds": ["predictive-ml", "training-pipeline", "llm"],
+    "applicablePhases": ["S2", "Recert", "Readiness"],
+    "expectedEvidenceTypes": ["record", "metric-report", "data-flow-diagram"],
+    "commonDeflections": ["we used what was available"],
+    "followUps": [
+      { "id": "fu-a6-002-a", "trigger": { "kind": "claim-shape", "pattern": "what was available" }, "text": "What is the documented assessment of representativeness, bias, and gaps in this data?", "mappedClauses": ["A.7.4"], "expectedEvidenceTypes": ["metric-report"] }
+    ],
+    "tags": ["annex:A.6.2.4", "data-prep"]
+  },
+  {
+    "id": "Q-A6-003",
+    "version": 1,
+    "text": "Walk me through verification and validation activities for this model: methodology, acceptance criteria, results.",
+    "intent": "Verify Annex A.6.2.5 V&V.",
+    "mappedClauses": ["A.6.2.5"],
+    "applicableKinds": ["predictive-ml", "training-pipeline", "llm", "agent", "rag", "multi-agent"],
+    "applicablePhases": ["S2", "Surv", "Recert", "Readiness"],
+    "expectedEvidenceTypes": ["metric-report", "record", "sign-off"],
+    "commonDeflections": ["we tested it"],
+    "followUps": [
+      { "id": "fu-a6-003-a", "trigger": { "kind": "claim-shape", "pattern": "tested" }, "text": "Show me the test plan, the documented acceptance criteria, and pass/fail evidence per criterion.", "mappedClauses": ["A.6.2.5"], "expectedEvidenceTypes": ["metric-report", "record"] },
+      { "id": "fu-a6-003-b", "trigger": { "kind": "claim-shape", "pattern": "(red[- ]team|adversarial)" }, "text": "What red-team and adversarial-robustness tests were run, and what residual risks were accepted?", "mappedClauses": ["A.6.2.5", "A.8.4"], "expectedEvidenceTypes": ["metric-report"] }
+    ],
+    "tags": ["annex:A.6.2.5", "verification"]
+  },
+  {
+    "id": "Q-A6-004",
+    "version": 1,
+    "text": "Walk me through the deployment process: pre-deployment checks, rollout, and rollback for this system.",
+    "intent": "Verify Annex A.6.2.6 deployment controls.",
+    "mappedClauses": ["A.6.2.6", "A.6.2.7"],
+    "applicableKinds": ["predictive-ml", "llm", "agent", "rag", "multi-agent", "mcp-server"],
+    "applicablePhases": ["S2", "Surv", "Recert", "Readiness"],
+    "expectedEvidenceTypes": ["procedure", "log", "record"],
+    "commonDeflections": ["it auto-deploys"],
+    "followUps": [
+      { "id": "fu-a6-004-a", "trigger": { "kind": "claim-shape", "pattern": "auto-deploys?" }, "text": "What automated gates run before promotion to production, and what triggers an automatic rollback?", "mappedClauses": ["A.6.2.6"], "expectedEvidenceTypes": ["config", "log"] }
+    ],
+    "tags": ["annex:A.6.2.6", "deployment"]
+  },
+  {
+    "id": "Q-A6-005",
+    "version": 1,
+    "text": "Walk me through the post-deployment operation and monitoring for this AI system.",
+    "intent": "Verify Annex A.6.2.7/8 operation and decommissioning.",
+    "mappedClauses": ["A.6.2.7", "A.6.2.8"],
+    "applicableKinds": ["predictive-ml", "llm", "agent", "rag", "multi-agent"],
+    "applicablePhases": ["S2", "Surv", "Recert", "Readiness"],
+    "expectedEvidenceTypes": ["log", "metric-report", "incident-report"],
+    "commonDeflections": ["nothing has gone wrong"],
+    "followUps": [
+      { "id": "fu-a6-005-a", "trigger": { "kind": "claim-shape", "pattern": "nothing has gone wrong" }, "text": "What is the threshold that defines 'wrong' here, and how is the system monitored against it?", "mappedClauses": ["A.6.2.8", "9.1"], "expectedEvidenceTypes": ["metric-report"] }
+    ],
+    "tags": ["annex:A.6.2.7", "annex:A.6.2.8", "operation"]
+  },
+  {
+    "id": "Q-A7-001",
+    "version": 1,
+    "text": "Show me the data-management plan for this AI system, including roles, retention, and access controls.",
+    "intent": "Verify Annex A.7.2/A.7.3 data management.",
+    "mappedClauses": ["A.7.2", "A.7.3"],
+    "applicableKinds": ["predictive-ml", "training-pipeline", "llm", "rag", "vector-db"],
+    "applicablePhases": ["S2", "Recert", "Readiness"],
+    "expectedEvidenceTypes": ["procedure", "data-flow-diagram", "record"],
+    "commonDeflections": ["data engineering owns the data"],
+    "followUps": [
+      { "id": "fu-a7-001-a", "trigger": { "kind": "claim-shape", "pattern": "data engineering" }, "text": "Show me the AI-specific data-handling responsibilities formally assigned to that team for this system.", "mappedClauses": ["A.7.2"], "expectedEvidenceTypes": ["policy", "record"] }
+    ],
+    "tags": ["annex:A.7.2", "data-mgmt"]
+  },
+  {
+    "id": "Q-A7-002",
+    "version": 1,
+    "text": "How is data quality assessed for this AI system, and what is the most recent quality report?",
+    "intent": "Verify Annex A.7.4 quality of data.",
+    "mappedClauses": ["A.7.4"],
+    "applicableKinds": ["predictive-ml", "training-pipeline", "llm", "rag", "vector-db"],
+    "applicablePhases": ["S2", "Surv", "Recert", "Readiness"],
+    "expectedEvidenceTypes": ["metric-report", "record"],
+    "commonDeflections": ["the data is clean"],
+    "followUps": [
+      { "id": "fu-a7-002-a", "trigger": { "kind": "claim-shape", "pattern": "clean" }, "text": "Show me the documented data-quality metrics and the latest measurements for this system.", "mappedClauses": ["A.7.4"], "expectedEvidenceTypes": ["metric-report"] }
+    ],
+    "tags": ["annex:A.7.4", "data-quality"]
+  },
+  {
+    "id": "Q-A7-003",
+    "version": 1,
+    "text": "Show me how data provenance for training and operational inputs is tracked end-to-end.",
+    "intent": "Verify Annex A.7.5 data provenance.",
+    "mappedClauses": ["A.7.5"],
+    "applicableKinds": ["predictive-ml", "training-pipeline", "llm", "rag", "vector-db"],
+    "applicablePhases": ["S2", "Recert", "Readiness"],
+    "expectedEvidenceTypes": ["record", "data-flow-diagram", "log"],
+    "commonDeflections": ["it comes from our data lake"],
+    "followUps": [
+      { "id": "fu-a7-003-a", "trigger": { "kind": "claim-shape", "pattern": "data lake" }, "text": "Where is the data-lineage tooling that traces specific datasets back to their source systems?", "mappedClauses": ["A.7.5"], "expectedEvidenceTypes": ["config", "data-flow-diagram"] }
+    ],
+    "tags": ["annex:A.7.5", "provenance"]
+  },
+  {
+    "id": "Q-A7-004",
+    "version": 1,
+    "text": "How is personally identifiable information used by this AI system identified, minimised, and protected?",
+    "intent": "Verify Annex A.7.6 PII handling.",
+    "mappedClauses": ["A.7.6"],
+    "applicableKinds": ["llm", "predictive-ml", "rag", "agent", "vector-db"],
+    "applicablePhases": ["S2", "Surv", "Recert", "Readiness"],
+    "expectedEvidenceTypes": ["procedure", "data-flow-diagram", "record"],
+    "commonDeflections": ["GDPR covers it"],
+    "followUps": [
+      { "id": "fu-a7-004-a", "trigger": { "kind": "claim-shape", "pattern": "GDPR" }, "text": "Show me the AI-specific PII inventory and the minimisation steps documented for this system.", "mappedClauses": ["A.7.6"], "expectedEvidenceTypes": ["record"] }
+    ],
+    "tags": ["annex:A.7.6", "pii"]
+  },
+  {
+    "id": "Q-A8-001",
+    "version": 1,
+    "text": "What information is provided to users and affected parties about this AI system, and how is it kept current?",
+    "intent": "Verify Annex A.8 information for interested parties.",
+    "mappedClauses": ["A.8.2", "A.8.3"],
+    "applicableKinds": ["llm", "predictive-ml", "agent", "rag", "multi-agent"],
+    "applicablePhases": ["S2", "Surv", "Recert", "Readiness"],
+    "expectedEvidenceTypes": ["policy", "record"],
+    "commonDeflections": ["it's in the privacy policy"],
+    "followUps": [
+      { "id": "fu-a8-001-a", "trigger": { "kind": "claim-shape", "pattern": "privacy policy" }, "text": "Show me the AI-specific disclosures about model role, limitations, and human-oversight options.", "mappedClauses": ["A.8.3"], "expectedEvidenceTypes": ["policy", "screenshot"] }
+    ],
+    "tags": ["annex:A.8", "transparency"]
+  },
+  {
+    "id": "Q-A8-002",
+    "version": 1,
+    "text": "Show me the registered concerns or complaints from external parties about this AI system in the last 12 months.",
+    "intent": "Verify Annex A.8.4 reporting concerns.",
+    "mappedClauses": ["A.8.4"],
+    "applicableKinds": ["llm", "predictive-ml", "agent", "rag", "multi-agent"],
+    "applicablePhases": ["S2", "Surv", "Recert", "Readiness"],
+    "expectedEvidenceTypes": ["record", "incident-report"],
+    "commonDeflections": ["no one has complained"],
+    "followUps": [
+      { "id": "fu-a8-002-a", "trigger": { "kind": "claim-shape", "pattern": "no one has complained" }, "text": "Where is the channel that receives such complaints, and what evidence shows it is reachable?", "mappedClauses": ["A.8.4"], "expectedEvidenceTypes": ["screenshot", "config"] }
+    ],
+    "tags": ["annex:A.8.4", "complaints"]
+  },
+  {
+    "id": "Q-A8-003",
+    "version": 1,
+    "text": "What communication is provided to users when this AI system makes or supports a decision that affects them?",
+    "intent": "Verify Annex A.8.5 communication of incidents.",
+    "mappedClauses": ["A.8.5"],
+    "applicableKinds": ["llm", "predictive-ml", "agent", "rag", "multi-agent"],
+    "applicablePhases": ["S2", "Recert", "Readiness"],
+    "expectedEvidenceTypes": ["screenshot", "record"],
+    "commonDeflections": ["the user clicks accept"],
+    "followUps": [
+      { "id": "fu-a8-003-a", "trigger": { "kind": "claim-shape", "pattern": "user clicks accept" }, "text": "Show me the actual disclosure copy that the user sees and how it explains the AI's role.", "mappedClauses": ["A.8.5"], "expectedEvidenceTypes": ["screenshot"] }
+    ],
+    "tags": ["annex:A.8.5", "communication"]
+  },
+  {
+    "id": "Q-A9-001",
+    "version": 1,
+    "text": "How does this AI system support human oversight in operation, including override and intervention capabilities?",
+    "intent": "Verify Annex A.9.2 human oversight.",
+    "mappedClauses": ["A.9.2"],
+    "applicableKinds": ["llm", "predictive-ml", "agent", "rag", "multi-agent"],
+    "applicablePhases": ["S2", "Surv", "Recert", "Readiness"],
+    "expectedEvidenceTypes": ["procedure", "screenshot", "config"],
+    "commonDeflections": ["the model is supervised"],
+    "followUps": [
+      { "id": "fu-a9-001-a", "trigger": { "kind": "claim-shape", "pattern": "supervised" }, "text": "Walk me through the operator console, the override action, and the audit log entry it produces.", "mappedClauses": ["A.9.2"], "expectedEvidenceTypes": ["screenshot", "log"] }
+    ],
+    "tags": ["annex:A.9.2", "human-oversight"]
+  },
+  {
+    "id": "Q-A9-002",
+    "version": 1,
+    "text": "Show me the documented intended uses and prohibited uses of this AI system.",
+    "intent": "Verify Annex A.9.3 use definition.",
+    "mappedClauses": ["A.9.3"],
+    "applicableKinds": ["llm", "predictive-ml", "agent", "rag", "multi-agent"],
+    "applicablePhases": ["S1", "S2", "Recert", "Readiness"],
+    "expectedEvidenceTypes": ["policy", "record"],
+    "commonDeflections": ["users can do anything"],
+    "followUps": [
+      { "id": "fu-a9-002-a", "trigger": { "kind": "claim-shape", "pattern": "anything" }, "text": "Where are the prohibited use cases (e.g., legal advice, medical diagnosis) explicitly listed and enforced?", "mappedClauses": ["A.9.3"], "expectedEvidenceTypes": ["policy"] }
+    ],
+    "tags": ["annex:A.9.3", "use-policy"]
+  },
+  {
+    "id": "Q-A9-003",
+    "version": 1,
+    "text": "What logging and audit trails capture the AI system's operation, decisions, and human interventions?",
+    "intent": "Verify Annex A.9.4 logging.",
+    "mappedClauses": ["A.9.4"],
+    "applicableKinds": ["llm", "predictive-ml", "agent", "rag", "multi-agent", "mcp-server", "vector-db"],
+    "applicablePhases": ["S2", "Surv", "Recert", "Readiness"],
+    "expectedEvidenceTypes": ["log", "config"],
+    "commonDeflections": ["we log everything"],
+    "followUps": [
+      { "id": "fu-a9-003-a", "trigger": { "kind": "claim-shape", "pattern": "log everything" }, "text": "Show me a sample log entry for an AI decision and explain what each field captures and how long it is retained.", "mappedClauses": ["A.9.4"], "expectedEvidenceTypes": ["log", "config"] }
+    ],
+    "tags": ["annex:A.9.4", "logging"]
+  },
+  {
+    "id": "Q-A10-001",
+    "version": 1,
+    "text": "Show me the third-party AI components in this system and the agreements that govern them.",
+    "intent": "Verify Annex A.10.2 third-party relationships.",
+    "mappedClauses": ["A.10.2", "A.10.3"],
+    "applicableKinds": ["llm", "predictive-ml", "agent", "rag", "multi-agent", "mcp-server", "vector-db"],
+    "applicablePhases": ["S1", "S2", "Surv", "Recert", "Readiness"],
+    "expectedEvidenceTypes": ["sla", "external-attestation", "policy"],
+    "commonDeflections": ["we have a vendor agreement"],
+    "followUps": [
+      { "id": "fu-a10-001-a", "trigger": { "kind": "claim-shape", "pattern": "vendor agreement" }, "text": "Which clauses of that agreement specifically address AI obligations, residual liability, and incident reporting?", "mappedClauses": ["A.10.2"], "expectedEvidenceTypes": ["sla"] }
+    ],
+    "tags": ["annex:A.10.2", "third-party"]
+  },
+  {
+    "id": "Q-A10-002",
+    "version": 1,
+    "text": "How is responsibility allocated between you and your AI providers/customers across the AI value chain?",
+    "intent": "Verify Annex A.10.3/A.10.4 customer/end-user responsibilities.",
+    "mappedClauses": ["A.10.3", "A.10.4"],
+    "applicableKinds": ["llm", "predictive-ml", "agent", "rag", "multi-agent", "mcp-server"],
+    "applicablePhases": ["S1", "S2", "Recert", "Readiness"],
+    "expectedEvidenceTypes": ["sla", "policy", "record"],
+    "commonDeflections": ["that's the customer's responsibility"],
+    "followUps": [
+      { "id": "fu-a10-002-a", "trigger": { "kind": "claim-shape", "pattern": "customer's responsibility" }, "text": "Where is that responsibility explicitly assigned in writing to the customer, and what evidence confirms acceptance?", "mappedClauses": ["A.10.3"], "expectedEvidenceTypes": ["sla", "sign-off"] }
+    ],
+    "tags": ["annex:A.10.3", "value-chain"]
+  },
+  {
+    "id": "Q-LLM-001",
+    "version": 1,
+    "text": "Walk me through the prompt-injection defences for this LLM-based system.",
+    "intent": "Verify defence-in-depth against OWASP LLM01 prompt injection.",
+    "mappedClauses": ["A.6.2.5", "A.9.4"],
+    "applicableKinds": ["llm", "rag", "agent", "multi-agent", "mcp-server"],
+    "applicablePhases": ["S2", "Surv", "Recert", "Readiness"],
+    "expectedEvidenceTypes": ["procedure", "metric-report", "config"],
+    "commonDeflections": ["the model handles it"],
+    "followUps": [
+      { "id": "fu-llm-001-a", "trigger": { "kind": "claim-shape", "pattern": "model handles" }, "text": "Show me the input/output filters and the latest red-team results against prompt-injection attempts.", "mappedClauses": ["A.6.2.5"], "expectedEvidenceTypes": ["metric-report", "config"] }
+    ],
+    "tags": ["llm-only", "prompt-injection", "kind:llm"]
+  },
+  {
+    "id": "Q-LLM-002",
+    "version": 1,
+    "text": "How is hallucination risk for user-facing outputs managed in this LLM system?",
+    "intent": "Verify hallucination governance.",
+    "mappedClauses": ["A.6.2.5", "A.8.3"],
+    "applicableKinds": ["llm", "rag", "agent", "multi-agent"],
+    "applicablePhases": ["S2", "Surv", "Recert", "Readiness"],
+    "expectedEvidenceTypes": ["procedure", "metric-report"],
+    "commonDeflections": ["we tell users to verify"],
+    "followUps": [
+      { "id": "fu-llm-002-a", "trigger": { "kind": "claim-shape", "pattern": "tell users to verify" }, "text": "Show me the user-facing disclosure copy and the measured hallucination rate that disclosure is calibrated against.", "mappedClauses": ["A.8.3"], "expectedEvidenceTypes": ["screenshot", "metric-report"] }
+    ],
+    "tags": ["llm-only", "hallucination", "kind:llm"]
+  },
+  {
+    "id": "Q-LLM-003",
+    "version": 1,
+    "text": "Show me the system prompt(s) and how changes to them are reviewed and version-controlled.",
+    "intent": "Verify system-prompt change control.",
+    "mappedClauses": ["8.1", "A.6.2.6", "A.9.4"],
+    "applicableKinds": ["llm", "rag", "agent", "multi-agent", "mcp-server"],
+    "applicablePhases": ["S2", "Surv", "Recert", "Readiness"],
+    "expectedEvidenceTypes": ["config", "log", "sign-off"],
+    "commonDeflections": ["it's in the code"],
+    "followUps": [
+      { "id": "fu-llm-003-a", "trigger": { "kind": "claim-shape", "pattern": "in the code" }, "text": "Show me the diff and approval record for the most recent change to the system prompt.", "mappedClauses": ["8.1"], "expectedEvidenceTypes": ["log", "sign-off"] }
+    ],
+    "tags": ["llm-only", "system-prompt", "kind:llm"]
+  },
+  {
+    "id": "Q-RAG-001",
+    "version": 1,
+    "text": "Walk me through how documents are ingested, chunked, embedded, and indexed for this RAG system, including provenance tracking.",
+    "intent": "Verify RAG ingestion controls.",
+    "mappedClauses": ["A.7.4", "A.7.5", "A.6.2.4"],
+    "applicableKinds": ["rag", "vector-db"],
+    "applicablePhases": ["S2", "Surv", "Recert", "Readiness"],
+    "expectedEvidenceTypes": ["procedure", "data-flow-diagram", "config"],
+    "commonDeflections": ["langchain handles it"],
+    "followUps": [
+      { "id": "fu-rag-001-a", "trigger": { "kind": "claim-shape", "pattern": "(langchain|llamaindex)" }, "text": "Show me the documented ingestion pipeline owned by your team, not the framework defaults.", "mappedClauses": ["A.7.5"], "expectedEvidenceTypes": ["procedure", "data-flow-diagram"] }
+    ],
+    "tags": ["rag-only", "kind:rag", "kind:vector-db"]
+  },
+  {
+    "id": "Q-RAG-002",
+    "version": 1,
+    "text": "How do you prevent injection of untrusted retrieved content from steering the model (indirect prompt injection)?",
+    "intent": "Verify A.6.2.5 protections against indirect prompt injection via retrieval.",
+    "mappedClauses": ["A.6.2.5", "A.9.4"],
+    "applicableKinds": ["rag", "agent", "multi-agent", "mcp-server"],
+    "applicablePhases": ["S2", "Surv", "Recert", "Readiness"],
+    "expectedEvidenceTypes": ["procedure", "metric-report", "config"],
+    "commonDeflections": ["it's just retrieval"],
+    "followUps": [
+      { "id": "fu-rag-002-a", "trigger": { "kind": "claim-shape", "pattern": "just retrieval" }, "text": "How is retrieved content sandboxed or signed before being injected into the model context?", "mappedClauses": ["A.6.2.5"], "expectedEvidenceTypes": ["config", "procedure"] }
+    ],
+    "tags": ["rag-only", "kind:rag", "indirect-injection"]
+  },
+  {
+    "id": "Q-AGT-001",
+    "version": 1,
+    "text": "Walk me through the agent's tool-use authorisation model: which tools, who approved, and how scope is enforced.",
+    "intent": "Verify agent tool-use governance.",
+    "mappedClauses": ["A.6.2.6", "A.9.2", "A.9.4"],
+    "applicableKinds": ["agent", "multi-agent", "mcp-server"],
+    "applicablePhases": ["S2", "Surv", "Recert", "Readiness"],
+    "expectedEvidenceTypes": ["policy", "config", "log"],
+    "commonDeflections": ["the agent is sandboxed"],
+    "followUps": [
+      { "id": "fu-agt-001-a", "trigger": { "kind": "claim-shape", "pattern": "sandboxed" }, "text": "Show me the sandbox configuration and the most recent test that confirmed it blocks out-of-scope actions.", "mappedClauses": ["A.6.2.5"], "expectedEvidenceTypes": ["config", "metric-report"] }
+    ],
+    "tags": ["agent-only", "kind:agent", "kind:multi-agent", "kind:mcp-server"]
+  },
+  {
+    "id": "Q-AGT-002",
+    "version": 1,
+    "text": "How is human-in-the-loop confirmation enforced for high-impact agent actions?",
+    "intent": "Verify Annex A.9.2 human oversight for agents.",
+    "mappedClauses": ["A.9.2"],
+    "applicableKinds": ["agent", "multi-agent"],
+    "applicablePhases": ["S2", "Surv", "Recert", "Readiness"],
+    "expectedEvidenceTypes": ["procedure", "screenshot", "log"],
+    "commonDeflections": ["the agent is autonomous"],
+    "followUps": [
+      { "id": "fu-agt-002-a", "trigger": { "kind": "claim-shape", "pattern": "autonomous" }, "text": "What classes of action are blocked from full autonomy and require human confirmation? Show the policy.", "mappedClauses": ["A.9.2", "A.9.3"], "expectedEvidenceTypes": ["policy", "config"] }
+    ],
+    "tags": ["agent-only", "kind:agent", "kind:multi-agent", "human-in-loop"]
+  },
+  {
+    "id": "Q-MA-001",
+    "version": 1,
+    "text": "Walk me through the multi-agent topology: which agents communicate with which, what protocols they use, and how isolation is enforced.",
+    "intent": "Verify multi-agent isolation and communication controls.",
+    "mappedClauses": ["A.6.2.6", "A.9.4"],
+    "applicableKinds": ["multi-agent"],
+    "applicablePhases": ["S2", "Recert", "Readiness"],
+    "expectedEvidenceTypes": ["data-flow-diagram", "config", "procedure"],
+    "commonDeflections": ["they share state"],
+    "followUps": [
+      { "id": "fu-ma-001-a", "trigger": { "kind": "claim-shape", "pattern": "share state" }, "text": "How is privilege separation enforced between agents that share state, and what tests confirm one agent cannot escalate via another?", "mappedClauses": ["A.6.2.5"], "expectedEvidenceTypes": ["metric-report", "config"] }
+    ],
+    "tags": ["multi-agent-only", "kind:multi-agent", "isolation"]
+  },
+  {
+    "id": "Q-PML-001",
+    "version": 1,
+    "text": "Show me the model card / data sheet for this predictive ML model, and confirm it covers performance, intended use, and limitations.",
+    "intent": "Verify model documentation per Annex A.6.2.5/A.8.3.",
+    "mappedClauses": ["A.6.2.5", "A.8.3"],
+    "applicableKinds": ["predictive-ml", "training-pipeline", "llm"],
+    "applicablePhases": ["S2", "Surv", "Recert", "Readiness"],
+    "expectedEvidenceTypes": ["record", "metric-report"],
+    "commonDeflections": ["the model is well known"],
+    "followUps": [
+      { "id": "fu-pml-001-a", "trigger": { "kind": "claim-shape", "pattern": "well known" }, "text": "Show me your own organisation's documented limitations and acceptance criteria for this specific deployment.", "mappedClauses": ["A.8.3"], "expectedEvidenceTypes": ["record"] }
+    ],
+    "tags": ["predictive-ml-only", "kind:predictive-ml", "model-card"]
+  },
+  {
+    "id": "Q-PML-002",
+    "version": 1,
+    "text": "Walk me through bias and fairness assessment for this model: which subgroups, which metrics, what thresholds, what results.",
+    "intent": "Verify Annex A.7.4 / A.5.4 bias controls.",
+    "mappedClauses": ["A.5.4", "A.7.4"],
+    "applicableKinds": ["predictive-ml", "training-pipeline", "llm"],
+    "applicablePhases": ["S2", "Surv", "Recert", "Readiness"],
+    "expectedEvidenceTypes": ["metric-report", "record"],
+    "commonDeflections": ["our data is balanced"],
+    "followUps": [
+      { "id": "fu-pml-002-a", "trigger": { "kind": "claim-shape", "pattern": "balanced" }, "text": "Show me the per-subgroup performance breakdown and the action you took for any subgroup falling below threshold.", "mappedClauses": ["A.5.4"], "expectedEvidenceTypes": ["metric-report"] }
+    ],
+    "tags": ["predictive-ml-only", "kind:predictive-ml", "bias"]
+  },
+  {
+    "id": "Q-TP-001",
+    "version": 1,
+    "text": "Walk me through reproducibility controls for the training pipeline: code, data, hyperparameters, and environment.",
+    "intent": "Verify training-pipeline reproducibility.",
+    "mappedClauses": ["A.6.2.4", "A.7.5"],
+    "applicableKinds": ["training-pipeline"],
+    "applicablePhases": ["S2", "Recert", "Readiness"],
+    "expectedEvidenceTypes": ["config", "record", "log"],
+    "commonDeflections": ["it works on Friday's checkpoint"],
+    "followUps": [
+      { "id": "fu-tp-001-a", "trigger": { "kind": "claim-shape", "pattern": "checkpoint" }, "text": "Show me the experiment-tracking record that pins data version, code commit, and environment for that checkpoint.", "mappedClauses": ["A.6.2.4"], "expectedEvidenceTypes": ["log", "config"] }
+    ],
+    "tags": ["training-pipeline-only", "kind:training-pipeline", "reproducibility"]
+  },
+  {
+    "id": "Q-MCP-001",
+    "version": 1,
+    "text": "Walk me through how MCP server tool definitions are validated and how tool-poisoning is prevented.",
+    "intent": "Verify MCP server tool-poisoning controls (probe P-MCP-01).",
+    "mappedClauses": ["A.6.2.5", "A.10.2"],
+    "applicableKinds": ["mcp-server"],
+    "applicablePhases": ["S2", "Surv", "Recert", "Readiness"],
+    "expectedEvidenceTypes": ["procedure", "config", "metric-report"],
+    "commonDeflections": ["we trust upstream"],
+    "followUps": [
+      { "id": "fu-mcp-001-a", "trigger": { "kind": "claim-shape", "pattern": "trust upstream" }, "text": "What signing and pinning controls verify upstream MCP tool definitions before they are exposed to the agent?", "mappedClauses": ["A.6.2.5"], "expectedEvidenceTypes": ["config"] }
+    ],
+    "tags": ["mcp-only", "kind:mcp-server", "tool-poisoning"]
+  },
+  {
+    "id": "Q-MCP-002",
+    "version": 1,
+    "text": "Show me the audit trail for tool invocations through the MCP server, including who, what, when, and outcome.",
+    "intent": "Verify MCP audit-trail completeness (probe P-MCP-03).",
+    "mappedClauses": ["A.9.4"],
+    "applicableKinds": ["mcp-server"],
+    "applicablePhases": ["S2", "Surv", "Recert", "Readiness"],
+    "expectedEvidenceTypes": ["log", "config"],
+    "commonDeflections": ["the agent logs it"],
+    "followUps": [
+      { "id": "fu-mcp-002-a", "trigger": { "kind": "claim-shape", "pattern": "agent logs" }, "text": "Show me a server-side audit log entry that captures the call independent of the agent process.", "mappedClauses": ["A.9.4"], "expectedEvidenceTypes": ["log"] }
+    ],
+    "tags": ["mcp-only", "kind:mcp-server", "audit-trail"]
+  },
+  {
+    "id": "Q-VDB-001",
+    "version": 1,
+    "text": "Walk me through access control on the vector database, especially for tenant or user-scoped retrieval.",
+    "intent": "Verify vector-DB access control.",
+    "mappedClauses": ["A.7.6", "A.9.4"],
+    "applicableKinds": ["vector-db", "rag"],
+    "applicablePhases": ["S2", "Surv", "Recert", "Readiness"],
+    "expectedEvidenceTypes": ["config", "procedure", "log"],
+    "commonDeflections": ["everyone with the key sees everything"],
+    "followUps": [
+      { "id": "fu-vdb-001-a", "trigger": { "kind": "claim-shape", "pattern": "everyone .* sees everything" }, "text": "How are tenant or sensitivity boundaries enforced at retrieval time?", "mappedClauses": ["A.7.6"], "expectedEvidenceTypes": ["config"] }
+    ],
+    "tags": ["vdb-only", "kind:vector-db", "kind:rag", "access-control"]
+  },
+  {
+    "id": "Q-VDB-002",
+    "version": 1,
+    "text": "How is embedding drift detected and handled for this vector store?",
+    "intent": "Verify embedding-drift monitoring.",
+    "mappedClauses": ["A.6.2.7", "9.1"],
+    "applicableKinds": ["vector-db", "rag"],
+    "applicablePhases": ["Surv", "Recert", "Readiness"],
+    "expectedEvidenceTypes": ["metric-report", "procedure"],
+    "commonDeflections": ["embeddings are stable"],
+    "followUps": [
+      { "id": "fu-vdb-002-a", "trigger": { "kind": "claim-shape", "pattern": "stable" }, "text": "Show me the drift metric you monitor and the action triggered when it crosses the threshold.", "mappedClauses": ["9.1"], "expectedEvidenceTypes": ["metric-report"] }
+    ],
+    "tags": ["vdb-only", "kind:vector-db", "kind:rag", "drift"]
+  },
+  {
+    "id": "Q-CROSS-001",
+    "version": 1,
+    "text": "Show me the most recent incident or near-miss involving this AI system and how it flowed through your incident-management process.",
+    "intent": "Verify incident management for AI specifically.",
+    "mappedClauses": ["10.2", "A.6.2.8"],
+    "applicableKinds": ["llm", "predictive-ml", "agent", "rag", "multi-agent", "training-pipeline", "mcp-server", "vector-db"],
+    "applicablePhases": ["S2", "Surv", "Recert", "Readiness"],
+    "expectedEvidenceTypes": ["incident-report", "record"],
+    "commonDeflections": ["nothing has happened"],
+    "followUps": [
+      { "id": "fu-cross-001-a", "trigger": { "kind": "claim-shape", "pattern": "nothing has happened" }, "text": "Has any AI behaviour been flagged for investigation in monitoring? Show me the triage records.", "mappedClauses": ["A.6.2.8"], "expectedEvidenceTypes": ["log", "record"] }
+    ],
+    "tags": ["cross-kind", "incident"]
+  },
+  {
+    "id": "Q-CROSS-002",
+    "version": 1,
+    "text": "How are AI-specific changes communicated through the management of change process, and what cross-functional approvals are mandatory?",
+    "intent": "Verify cross-functional MoC for AI.",
+    "mappedClauses": ["8.1", "A.6.2.6"],
+    "applicableKinds": ["llm", "predictive-ml", "agent", "rag", "multi-agent", "training-pipeline"],
+    "applicablePhases": ["S2", "Surv", "Recert", "Readiness"],
+    "expectedEvidenceTypes": ["procedure", "sign-off"],
+    "commonDeflections": ["engineering approves"],
+    "followUps": [
+      { "id": "fu-cross-002-a", "trigger": { "kind": "claim-shape", "pattern": "engineering approves" }, "text": "Where are risk, legal, and AI-governance approvals captured for material AI changes?", "mappedClauses": ["8.1"], "expectedEvidenceTypes": ["sign-off"] }
+    ],
+    "tags": ["cross-kind", "moc"]
+  },
+  {
+    "id": "Q-CROSS-003",
+    "version": 1,
+    "text": "Show me how this AI system's residual risks are reviewed and re-accepted on a defined cadence.",
+    "intent": "Verify periodic risk review.",
+    "mappedClauses": ["8.3", "9.3", "A.5.5"],
+    "applicableKinds": ["llm", "predictive-ml", "agent", "rag", "multi-agent"],
+    "applicablePhases": ["Surv", "Recert", "Readiness"],
+    "expectedEvidenceTypes": ["review-record", "sign-off"],
+    "commonDeflections": ["we reviewed it last year"],
+    "followUps": [
+      { "id": "fu-cross-003-a", "trigger": { "kind": "claim-shape", "pattern": "last year" }, "text": "What is the policy-defined re-review cadence, and is the next review on the calendar?", "mappedClauses": ["A.5.5"], "expectedEvidenceTypes": ["procedure", "screenshot"] }
+    ],
+    "tags": ["cross-kind", "residual-risk"]
+  },
+  {
+    "id": "Q-CROSS-004",
+    "version": 1,
+    "text": "How do you confirm objective evidence exists for each in-scope Annex A control declared applicable in the SoA?",
+    "intent": "Verify SoA-evidence linkage.",
+    "mappedClauses": ["6.1.3", "8.3"],
+    "applicableKinds": ["llm", "predictive-ml", "agent", "rag", "multi-agent", "training-pipeline", "mcp-server", "vector-db"],
+    "applicablePhases": ["S1", "S2", "Surv", "Recert"],
+    "expectedEvidenceTypes": ["record"],
+    "commonDeflections": ["it's all referenced"],
+    "followUps": [
+      { "id": "fu-cross-004-a", "trigger": { "kind": "claim-shape", "pattern": "all referenced" }, "text": "Pick a control at random — show me the SoA entry, the implementation, and the evidence that ties them together.", "mappedClauses": ["6.1.3"], "expectedEvidenceTypes": ["record"] }
+    ],
+    "tags": ["cross-kind", "soa"]
+  },
+  {
+    "id": "Q-CROSS-005",
+    "version": 1,
+    "text": "Show me how you decommission an AI system, including data, model artefact, and dependency cleanup.",
+    "intent": "Verify Annex A.6.2.8 retirement controls.",
+    "mappedClauses": ["A.6.2.8"],
+    "applicableKinds": ["llm", "predictive-ml", "agent", "rag", "multi-agent", "training-pipeline", "mcp-server", "vector-db"],
+    "applicablePhases": ["S2", "Recert", "Readiness"],
+    "expectedEvidenceTypes": ["procedure", "record"],
+    "commonDeflections": ["we just turn it off"],
+    "followUps": [
+      { "id": "fu-cross-005-a", "trigger": { "kind": "claim-shape", "pattern": "turn it off" }, "text": "What about model artefacts, embeddings, and downstream dependencies — what is the documented cleanup checklist?", "mappedClauses": ["A.6.2.8"], "expectedEvidenceTypes": ["procedure"] }
+    ],
+    "tags": ["cross-kind", "decommission"]
+  }
+]

@@ -1,0 +1,37 @@
+{
+  "name": "@auditforge/conversational-engine",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "description": "Conversational Audit Engine: Question Generator, Answer Attribution, Coverage Tracker, Question Library. v3 Phase 7.6.",
+  "license": "BUSL-1.1",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./types": "./src/types/index.ts",
+    "./question-generator": "./src/question-generator/index.ts",
+    "./attribution": "./src/attribution/index.ts",
+    "./coverage-tracker": "./src/coverage-tracker/index.ts",
+    "./question-library": "./src/question-library/index.ts",
+    "./db/schema": "./src/db/schema.ts"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "lint": "eslint src tests",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "@auditforge/shared": "workspace:*",
+    "drizzle-orm": "^0.33.0",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/node": "^22.7.0",
+    "@vitest/coverage-v8": "^2.1.1",
+    "typescript": "^5.6.2",
+    "vitest": "^2.1.1"
+  }
+}
