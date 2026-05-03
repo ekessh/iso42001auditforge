@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: BUSL-1.1
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
 import { getMetrics, getRegistry, hashIdToBucket, resetMetricsForTests } from '../src/metrics.js';

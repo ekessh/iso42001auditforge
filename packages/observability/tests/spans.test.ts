@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: BUSL-1.1
 import { describe, expect, it } from 'vitest';
 
 import { SpanNames, withCriticalSpan, withSpan } from '../src/spans.js';

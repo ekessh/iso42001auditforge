@@ -20,6 +20,10 @@ const CHECK_EXTS = new Set([
 ]);
 
 const EXEMPT_PATHS = ['node_modules', 'dist', 'build', '.next', 'coverage', '.turbo', '.git'];
+const EXEMPT_FILE_PATTERNS = [
+  /next-env\.d\.ts$/,
+  /\.d\.ts$/,
+];
 
 const repoRoot = process.cwd();
 const tracked = execSync('git ls-files', { encoding: 'utf8' }).split('\n').filter(Boolean);
@@ -27,6 +31,7 @@ const tracked = execSync('git ls-files', { encoding: 'utf8' }).split('\n').filte
 const errors = [];
 for (const file of tracked) {
   if (EXEMPT_PATHS.some((p) => file.split('/').includes(p))) continue;
+  if (EXEMPT_FILE_PATTERNS.some((rx) => rx.test(file))) continue;
   const ext = '.' + file.split('.').pop();
   if (!CHECK_EXTS.has(ext)) continue;
 

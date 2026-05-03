@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: BUSL-1.1
 /**
  * Span helpers used at the four SLO-critical call sites:
  *   1. audit-ledger emit (`packages/audit-engine`)
