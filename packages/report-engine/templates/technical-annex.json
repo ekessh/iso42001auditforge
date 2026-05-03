@@ -1,0 +1,46 @@
+{
+  "id": "technical-annex.v1",
+  "type": "technical_annex",
+  "isoAnchor": "9.4.8.f",
+  "version": "1.0.0",
+  "defaultLocale": "en",
+  "variables": {
+    "auditee": { "type": "object", "required": true },
+    "aiSystem": { "type": "object", "required": true },
+    "probes": { "type": "array", "required": true, "itemShape": { "id": "string", "name": "string", "kind": "string", "result": "string", "metric": "string", "threshold": "string", "verdict": "string", "artifacts": "array" } },
+    "traces": { "type": "array", "required": false, "itemShape": { "id": "string", "summary": "string", "ref": "string" } },
+    "rawArtifacts": { "type": "array", "required": false, "itemShape": { "name": "string", "ref": "string", "sha256": "string" } }
+  },
+  "sections": [
+    {
+      "id": "cover",
+      "title": "Cover",
+      "body": "# Technical Assessment Annex\n\n**Auditee**: {{auditee.legalName}}\n**AI System**: {{aiSystem.name}} ({{aiSystem.kind}})\n**Version**: {{aiSystem.version}}\n",
+      "required": true
+    },
+    {
+      "id": "probes",
+      "title": "Probe Results",
+      "body": "## Probe Results\n\n| ID | Name | Kind | Metric | Threshold | Result | Verdict |\n| --- | --- | --- | --- | --- | --- | --- |\n{{#each probes}}| {{id}} | {{name}} | {{kind}} | {{metric}} | {{threshold}} | {{result}} | {{verdictPill verdict}} |\n{{/each}}",
+      "required": true
+    },
+    {
+      "id": "probe-detail",
+      "title": "Probe Detail",
+      "body": "## Probe Detail\n\n{{#each probes}}### {{id}} — {{name}}\n\n- Kind: {{kind}}\n- Metric: {{metric}}\n- Threshold: {{threshold}}\n- Result: {{result}}\n- Verdict: {{verdictPill verdict}}\n- Artifacts:\n  {{#each artifacts}}- {{this}}\n  {{else}}  _None._\n  {{/each}}\n{{/each}}",
+      "required": true
+    },
+    {
+      "id": "traces",
+      "title": "Trace Analysis",
+      "body": "## Trace Analysis\n\n{{#each traces}}- **{{id}}** — {{summary}} ({{ref}})\n{{else}}_No traces analyzed for this annex._\n{{/each}}",
+      "required": false
+    },
+    {
+      "id": "raw",
+      "title": "Raw Artifacts",
+      "body": "## Raw Artifacts\n\n{{#each rawArtifacts}}- {{name}} `sha256:{{sha256}}` ({{ref}})\n{{else}}_None linked._\n{{/each}}",
+      "required": false
+    }
+  ]
+}
