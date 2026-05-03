@@ -1,0 +1,57 @@
+{
+  "id": "wp.annexA.A4.resources",
+  "version": "1.0.0",
+  "title": "Annex A.4 - Resources for AI systems",
+  "description": "Working paper for Annex A.4: data, tooling, system and computing resources, human resources for AI systems.",
+  "appliesTo": { "kind": "annexA", "controlId": "A.4" },
+  "sections": [
+    {
+      "id": "data-resources",
+      "title": "Data resources (A.4.3)",
+      "required": true,
+      "prompts": [
+        "Verify data inventories exist with provenance, licensing, sensitivity.",
+        "Confirm data quality controls per stage (collection, labeling, validation)."
+      ]
+    },
+    {
+      "id": "tooling-resources",
+      "title": "Tooling and system resources (A.4.4 / A.4.5)",
+      "required": true,
+      "prompts": [
+        "Confirm tool register including approved development frameworks.",
+        "Verify infrastructure capacity planning for training and inference."
+      ]
+    },
+    {
+      "id": "human-resources",
+      "title": "Human resources (A.4.6)",
+      "required": true,
+      "prompts": [
+        "Confirm AI-specific competencies are recruited or trained.",
+        "Verify a roster of independent reviewers (red team, ethicists)."
+      ]
+    }
+  ],
+  "checklists": [
+    { "id": "c1", "text": "Dataset register includes lineage and sensitivity labels." },
+    { "id": "c2", "text": "Tool register identifies approved versions." },
+    { "id": "c3", "text": "Compute capacity sized for current workloads." },
+    { "id": "c4", "text": "Independent review roster exists." }
+  ],
+  "suggestedEvidenceTypes": [
+    "Dataset register",
+    "Tool register",
+    "Capacity plan",
+    "Reviewer roster",
+    "Competence matrix"
+  ],
+  "suggestedProbes": ["P-CAP-01"],
+  "suggestedInterviewQuestions": [
+    "How do you manage dataset lineage and licensing?",
+    "Show us how you size training infrastructure for a new model."
+  ],
+  "mappedClauses": ["7.1", "7.2"],
+  "mappedControls": ["A.4.2", "A.4.3", "A.4.4", "A.4.5", "A.4.6"],
+  "variables": []
+}

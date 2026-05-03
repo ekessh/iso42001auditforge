@@ -1,0 +1,73 @@
+{
+  "id": "wp.clause.7.support",
+  "version": "1.0.0",
+  "title": "Clause 7 - Support",
+  "description": "Working paper template for ISO/IEC 42001 Clause 7: resources, competence, awareness, communication, documented information.",
+  "appliesTo": { "kind": "clause", "clauseId": "7" },
+  "sections": [
+    {
+      "id": "resources",
+      "title": "Resources (7.1)",
+      "required": true,
+      "prompts": [
+        "Verify allocation of human, financial, and technical resources to the AIMS.",
+        "Confirm specialised AI competencies (data science, ML ops, ethics) are resourced."
+      ]
+    },
+    {
+      "id": "competence",
+      "title": "Competence (7.2)",
+      "required": true,
+      "prompts": [
+        "Verify AI-related role competence requirements are documented.",
+        "Confirm training records cover AI-specific topics for in-scope personnel."
+      ]
+    },
+    {
+      "id": "awareness",
+      "title": "Awareness (7.3)",
+      "required": true,
+      "prompts": [
+        "Confirm staff are aware of the AI policy, their responsibilities, incident reporting paths."
+      ]
+    },
+    {
+      "id": "communication",
+      "title": "Communication (7.4)",
+      "required": false,
+      "prompts": [
+        "Confirm internal and external AI communication processes (incidents, transparency notices)."
+      ]
+    },
+    {
+      "id": "documented-information",
+      "title": "Documented information (7.5)",
+      "required": true,
+      "prompts": [
+        "Verify the AIMS document register; check version control and retention."
+      ]
+    }
+  ],
+  "checklists": [
+    { "id": "c1", "text": "Competence matrix exists for AI roles." },
+    { "id": "c2", "text": "Awareness training completed by relevant staff (sample)." },
+    { "id": "c3", "text": "AIMS document register has owners and review dates." },
+    { "id": "c4", "text": "Communication plan covers AI-related incidents." }
+  ],
+  "suggestedEvidenceTypes": [
+    "Competence matrix",
+    "Training records (LMS export)",
+    "Awareness materials",
+    "Communication plan",
+    "Document register"
+  ],
+  "suggestedProbes": [],
+  "suggestedInterviewQuestions": [
+    "How do you assess AI-specific competencies before assigning a role?",
+    "Walk us through how an AI incident would be communicated externally.",
+    "Sample: show training completion records for three in-scope developers."
+  ],
+  "mappedClauses": ["7.1", "7.2", "7.3", "7.4", "7.5"],
+  "mappedControls": ["A.4.2", "A.4.3", "A.4.6"],
+  "variables": ["auditee.name"]
+}

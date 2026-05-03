@@ -1,0 +1,47 @@
+{
+  "id": "wp.annexA.A3.internal-organization",
+  "version": "1.0.0",
+  "title": "Annex A.3 - Internal organization",
+  "description": "Working paper for Annex A.3: AI roles and responsibilities, reporting of concerns.",
+  "appliesTo": { "kind": "annexA", "controlId": "A.3" },
+  "sections": [
+    {
+      "id": "ai-roles",
+      "title": "AI roles and responsibilities (A.3.2)",
+      "required": true,
+      "prompts": [
+        "Verify AI-specific roles are defined with explicit accountabilities.",
+        "Confirm separation of duties for high-risk AI changes."
+      ]
+    },
+    {
+      "id": "reporting-concerns",
+      "title": "Reporting of concerns (A.3.3)",
+      "required": true,
+      "prompts": [
+        "Confirm a reporting channel exists for AI ethical/safety concerns.",
+        "Verify whistleblower protection.",
+        "Sample whether reported concerns were investigated."
+      ]
+    }
+  ],
+  "checklists": [
+    { "id": "c1", "text": "Role descriptions name AI-specific responsibilities." },
+    { "id": "c2", "text": "Whistleblower channel exists and is communicated." },
+    { "id": "c3", "text": "Sampled concern reports show investigation and outcome." }
+  ],
+  "suggestedEvidenceTypes": [
+    "Role descriptions",
+    "RACI",
+    "Concern reporting policy",
+    "Investigation log"
+  ],
+  "suggestedProbes": [],
+  "suggestedInterviewQuestions": [
+    "Walk us through what happens when a developer reports an ethical concern about an AI system.",
+    "Show us anonymized records of recent concerns and how they were resolved."
+  ],
+  "mappedClauses": ["5.3"],
+  "mappedControls": ["A.3.2", "A.3.3"],
+  "variables": []
+}

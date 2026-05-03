@@ -1,0 +1,70 @@
+{
+  "id": "wp.clause.4.context",
+  "version": "1.0.0",
+  "title": "Clause 4 - Context of the Organization",
+  "description": "Working paper template for ISO/IEC 42001 Clause 4: AIMS context, interested parties, scope, and AI roles.",
+  "appliesTo": { "kind": "clause", "clauseId": "4" },
+  "sections": [
+    {
+      "id": "external-internal-issues",
+      "title": "External and internal issues (4.1)",
+      "required": true,
+      "prompts": [
+        "List the auditee's external and internal issues relevant to its purpose and AIMS direction.",
+        "Identify which issues materially affect AI risk posture (e.g., regulatory shift, market exit).",
+        "Confirm the issues register is reviewed at planned intervals."
+      ]
+    },
+    {
+      "id": "interested-parties",
+      "title": "Interested parties (4.2)",
+      "required": true,
+      "prompts": [
+        "Enumerate interested parties (regulators, customers, data subjects, downstream users, society at large).",
+        "Confirm requirements of each party are documented.",
+        "Verify obligations from EU AI Act / sector regulators are captured if applicable."
+      ]
+    },
+    {
+      "id": "aims-scope",
+      "title": "AIMS scope (4.3)",
+      "required": true,
+      "prompts": [
+        "Quote the boundary of the AIMS (organizational, functional, geographic).",
+        "Confirm the scope statement names the AI systems in scope.",
+        "Identify exclusions and verify justification."
+      ]
+    },
+    {
+      "id": "ai-roles",
+      "title": "AI roles, processes, and AIMS (4.4)",
+      "required": true,
+      "prompts": [
+        "Document the auditee's role for each AI system: provider, deployer, AI subject, etc.",
+        "Map AI lifecycle processes and confirm AIMS coverage."
+      ]
+    }
+  ],
+  "checklists": [
+    { "id": "c1", "text": "AIMS scope statement is documented and current." },
+    { "id": "c2", "text": "Interested-party register references AI-specific obligations." },
+    { "id": "c3", "text": "AI role(s) are explicit per system." },
+    { "id": "c4", "text": "Issues register review cadence is defined and respected." }
+  ],
+  "suggestedEvidenceTypes": [
+    "AIMS scope document",
+    "Interested-party register",
+    "Issues register / SWOT",
+    "Org chart / RACI",
+    "Regulatory horizon scan"
+  ],
+  "suggestedProbes": [],
+  "suggestedInterviewQuestions": [
+    "Which AI systems are in your AIMS scope today, and which are deliberately excluded?",
+    "How is the interested-party register kept current?",
+    "Who decides the AI role classification for each system?"
+  ],
+  "mappedClauses": ["4.1", "4.2", "4.3", "4.4"],
+  "mappedControls": [],
+  "variables": ["auditee.name", "engagement.id"]
+}

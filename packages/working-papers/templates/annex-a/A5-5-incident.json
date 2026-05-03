@@ -1,0 +1,45 @@
+{
+  "id": "wp.annexA.A5.5.incident",
+  "version": "1.0.0",
+  "title": "Annex A.5.5 - AI incident management",
+  "description": "Targeted working paper for AI incident management: registry, severity, RCA, customer communications.",
+  "appliesTo": { "kind": "annexA", "controlId": "A.5.5" },
+  "sections": [
+    {
+      "id": "incident-process",
+      "title": "Incident process",
+      "required": true,
+      "prompts": [
+        "Confirm AI incident registry, severity, owner.",
+        "Verify trigger criteria differ from operational incidents."
+      ]
+    },
+    {
+      "id": "rca",
+      "title": "Root cause analysis",
+      "required": true,
+      "prompts": [
+        "Sample three closed AI incidents and verify RCA depth.",
+        "Verify systemic actions emerge from RCA."
+      ]
+    }
+  ],
+  "checklists": [
+    { "id": "c1", "text": "AI incident registry distinct from operational." },
+    { "id": "c2", "text": "RCA template covers AI-specific factors (data, model, prompt)." },
+    { "id": "c3", "text": "Closure approval recorded." }
+  ],
+  "suggestedEvidenceTypes": [
+    "Incident registry",
+    "Closed RCA reports",
+    "Customer notifications"
+  ],
+  "suggestedProbes": [],
+  "suggestedInterviewQuestions": [
+    "Walk us through three AI incidents from the last quarter.",
+    "How do you decide when to notify customers?"
+  ],
+  "mappedClauses": ["10.1"],
+  "mappedControls": ["A.5.5"],
+  "variables": []
+}

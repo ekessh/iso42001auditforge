@@ -1,0 +1,68 @@
+{
+  "id": "wp.annexA.A7.data",
+  "version": "1.0.0",
+  "title": "Annex A.7 - Data for AI systems",
+  "description": "Working paper for Annex A.7: data management, data quality, data acquisition, data preparation, privacy.",
+  "appliesTo": { "kind": "annexA", "controlId": "A.7" },
+  "sections": [
+    {
+      "id": "data-management",
+      "title": "Data for AI systems (A.7.2)",
+      "required": true,
+      "prompts": [
+        "Verify data management process across AI lifecycle.",
+        "Confirm data accountability owners."
+      ]
+    },
+    {
+      "id": "data-quality",
+      "title": "Data quality (A.7.3)",
+      "required": true,
+      "prompts": [
+        "Verify data quality dimensions are measured (accuracy, completeness, representativeness, freshness).",
+        "Confirm acceptance thresholds and remediation paths."
+      ]
+    },
+    {
+      "id": "data-provenance",
+      "title": "Data provenance and acquisition (A.7.4)",
+      "required": true,
+      "prompts": [
+        "Verify data provenance records.",
+        "Confirm legal basis for data acquisition; check licensing.",
+        "Verify PII handling and minimisation."
+      ]
+    },
+    {
+      "id": "data-preparation",
+      "title": "Data preparation (A.7.5)",
+      "required": true,
+      "prompts": [
+        "Confirm preprocessing steps are reproducible (versioned scripts).",
+        "Sample dataset versions and verify lineage."
+      ]
+    }
+  ],
+  "checklists": [
+    { "id": "c1", "text": "Dataset registry tracks lineage and provenance." },
+    { "id": "c2", "text": "Quality KPIs measured per dataset." },
+    { "id": "c3", "text": "Preprocessing pipeline is versioned (e.g., DVC, MLflow)." },
+    { "id": "c4", "text": "PII minimisation checks documented." }
+  ],
+  "suggestedEvidenceTypes": [
+    "Dataset registry",
+    "Data quality reports",
+    "Data licensing agreements",
+    "Pipeline configuration",
+    "PII review records"
+  ],
+  "suggestedProbes": ["P-LEAK-01", "P-LEAK-02"],
+  "suggestedInterviewQuestions": [
+    "Pick a dataset and show us the lineage from raw to model-ready.",
+    "How do you handle a dataset with revoked consent?",
+    "Show us a recent PII review."
+  ],
+  "mappedClauses": ["8.2", "8.3"],
+  "mappedControls": ["A.7.2", "A.7.3", "A.7.4", "A.7.5", "A.7.6"],
+  "variables": []
+}

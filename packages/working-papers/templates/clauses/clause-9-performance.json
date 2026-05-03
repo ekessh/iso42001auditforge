@@ -1,0 +1,60 @@
+{
+  "id": "wp.clause.9.performance",
+  "version": "1.0.0",
+  "title": "Clause 9 - Performance evaluation",
+  "description": "Working paper template for ISO/IEC 42001 Clause 9: monitoring, measurement, internal audit, management review.",
+  "appliesTo": { "kind": "clause", "clauseId": "9" },
+  "sections": [
+    {
+      "id": "monitoring-measurement",
+      "title": "Monitoring, measurement, analysis, evaluation (9.1)",
+      "required": true,
+      "prompts": [
+        "Confirm AI performance and assurance metrics are defined and collected.",
+        "Verify metric thresholds trigger investigation or escalation.",
+        "Cross-check measurement frequency against documented policy."
+      ]
+    },
+    {
+      "id": "internal-audit",
+      "title": "Internal audit (9.2)",
+      "required": true,
+      "prompts": [
+        "Verify the AIMS internal audit programme exists and is risk-based.",
+        "Confirm auditor independence/competence.",
+        "Check NCs from internal audits are tracked to closure."
+      ]
+    },
+    {
+      "id": "management-review",
+      "title": "Management review (9.3)",
+      "required": true,
+      "prompts": [
+        "Confirm management review covers all required inputs (incidents, KPIs, risk changes).",
+        "Verify outputs are actionable with owners and dates."
+      ]
+    }
+  ],
+  "checklists": [
+    { "id": "c1", "text": "Monitoring KPIs defined per AI system." },
+    { "id": "c2", "text": "Internal audit programme covers all in-scope clauses/controls." },
+    { "id": "c3", "text": "Management review minutes show AIMS topics discussed." },
+    { "id": "c4", "text": "Action items from review have owners and target dates." }
+  ],
+  "suggestedEvidenceTypes": [
+    "KPI dashboards",
+    "Internal audit plan",
+    "Internal audit reports",
+    "Management review minutes",
+    "Action tracker"
+  ],
+  "suggestedProbes": ["P-DRIFT-01"],
+  "suggestedInterviewQuestions": [
+    "How is the internal audit programme prioritized?",
+    "What KPIs surface AI risk to management?",
+    "Show us the most recent management review pack."
+  ],
+  "mappedClauses": ["9.1", "9.2", "9.3"],
+  "mappedControls": ["A.6.2.8"],
+  "variables": ["auditee.name"]
+}

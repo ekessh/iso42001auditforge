@@ -1,0 +1,44 @@
+{
+  "id": "wp.annexA.A7.4.provenance",
+  "version": "1.0.0",
+  "title": "Annex A.7.4 - Data acquisition and provenance",
+  "description": "Targeted working paper for data acquisition and provenance: licensing, consent, leakage testing.",
+  "appliesTo": { "kind": "annexA", "controlId": "A.7.4" },
+  "sections": [
+    {
+      "id": "acquisition",
+      "title": "Acquisition",
+      "required": true,
+      "prompts": [
+        "Confirm legal basis (consent, contract, legitimate interest, public).",
+        "Verify provenance metadata stored alongside data."
+      ]
+    },
+    {
+      "id": "leakage",
+      "title": "PII leakage controls",
+      "required": true,
+      "prompts": [
+        "Verify training-data extraction tests in V&V.",
+        "Sample leakage probe outcomes."
+      ]
+    }
+  ],
+  "checklists": [
+    { "id": "c1", "text": "Provenance metadata stored per dataset." },
+    { "id": "c2", "text": "Leakage probes run pre-release." }
+  ],
+  "suggestedEvidenceTypes": [
+    "Dataset license register",
+    "Consent records",
+    "Leakage probe reports"
+  ],
+  "suggestedProbes": ["P-LEAK-01", "P-LEAK-02"],
+  "suggestedInterviewQuestions": [
+    "Show us provenance metadata for the most recent dataset.",
+    "Walk us through a leakage probe."
+  ],
+  "mappedClauses": ["8.2"],
+  "mappedControls": ["A.7.4"],
+  "variables": []
+}

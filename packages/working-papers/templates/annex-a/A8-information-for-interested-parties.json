@@ -1,0 +1,56 @@
+{
+  "id": "wp.annexA.A8.information",
+  "version": "1.0.0",
+  "title": "Annex A.8 - Information for interested parties",
+  "description": "Working paper for Annex A.8: system information for users and other interested parties; reporting; communication of incidents.",
+  "appliesTo": { "kind": "annexA", "controlId": "A.8" },
+  "sections": [
+    {
+      "id": "system-info-users",
+      "title": "System information for users (A.8.2)",
+      "required": true,
+      "prompts": [
+        "Verify user-facing AI documentation (purpose, limitations, opt-out).",
+        "Confirm content matches the actual system behaviour (no overclaiming)."
+      ]
+    },
+    {
+      "id": "external-reporting",
+      "title": "External reporting (A.8.3)",
+      "required": true,
+      "prompts": [
+        "Confirm transparency notices, where required by law.",
+        "Verify regulator-reportable events procedure."
+      ]
+    },
+    {
+      "id": "incident-communication",
+      "title": "Communication of incidents (A.8.4)",
+      "required": true,
+      "prompts": [
+        "Sample an AI incident; verify external communication followed policy.",
+        "Confirm timing meets regulatory and contractual obligations."
+      ]
+    }
+  ],
+  "checklists": [
+    { "id": "c1", "text": "User-facing AI notice exists and is current." },
+    { "id": "c2", "text": "Regulator reporting playbook documented." },
+    { "id": "c3", "text": "Sampled incident communication matches policy." }
+  ],
+  "suggestedEvidenceTypes": [
+    "User-facing AI notice",
+    "Transparency report",
+    "Regulator submissions",
+    "Incident communications"
+  ],
+  "suggestedProbes": ["P-XPLN-01"],
+  "suggestedInterviewQuestions": [
+    "Show us the AI notice on the live product surface.",
+    "Walk us through a recent regulator notification.",
+    "How do you decide if an AI incident is externally reportable?"
+  ],
+  "mappedClauses": ["7.4"],
+  "mappedControls": ["A.8.2", "A.8.3", "A.8.4"],
+  "variables": []
+}

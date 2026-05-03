@@ -1,0 +1,55 @@
+{
+  "id": "wp.annexA.A6.2.6.deployment",
+  "version": "1.0.0",
+  "title": "Annex A.6.2.6 - AI system deployment",
+  "description": "Targeted working paper for AI deployment control: gate criteria, rollout strategy, kill-switch.",
+  "appliesTo": { "kind": "annexA", "controlId": "A.6.2.6" },
+  "sections": [
+    {
+      "id": "deployment-gates",
+      "title": "Deployment gates",
+      "required": true,
+      "prompts": [
+        "Confirm gating criteria; sample a denied gate.",
+        "Verify approval authority."
+      ]
+    },
+    {
+      "id": "rollout",
+      "title": "Rollout strategy",
+      "required": true,
+      "prompts": [
+        "Confirm canary or staged rollout.",
+        "Verify rollback plan and last drill."
+      ]
+    },
+    {
+      "id": "kill-switch",
+      "title": "Kill-switch",
+      "required": true,
+      "prompts": [
+        "Confirm a tested kill-switch exists.",
+        "Sample exercise records."
+      ]
+    }
+  ],
+  "checklists": [
+    { "id": "c1", "text": "Gate criteria documented." },
+    { "id": "c2", "text": "Rollback drill performed in past 12 months." },
+    { "id": "c3", "text": "Kill-switch tested." }
+  ],
+  "suggestedEvidenceTypes": [
+    "Deployment runbook",
+    "Gate approval records",
+    "Rollback drill report",
+    "Kill-switch test log"
+  ],
+  "suggestedProbes": ["P-HALL-01"],
+  "suggestedInterviewQuestions": [
+    "Show us a deployment that was blocked at the gate.",
+    "When was the kill-switch last tested?"
+  ],
+  "mappedClauses": ["8.1"],
+  "mappedControls": ["A.6.2.6"],
+  "variables": []
+}

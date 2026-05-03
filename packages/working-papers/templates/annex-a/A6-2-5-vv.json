@@ -1,0 +1,55 @@
+{
+  "id": "wp.annexA.A6.2.5.verification-validation",
+  "version": "1.0.0",
+  "title": "Annex A.6.2.5 - AI system V&V",
+  "description": "Targeted working paper for the V&V control: pre-release testing, robustness, fairness, regression suites.",
+  "appliesTo": { "kind": "annexA", "controlId": "A.6.2.5" },
+  "sections": [
+    {
+      "id": "vv-plan",
+      "title": "V&V plan",
+      "required": true,
+      "prompts": [
+        "Confirm a V&V plan exists per system version.",
+        "Verify acceptance criteria align with stated intended use."
+      ]
+    },
+    {
+      "id": "robustness",
+      "title": "Robustness testing",
+      "required": true,
+      "prompts": [
+        "Confirm adversarial / paraphrase consistency tests for LLMs.",
+        "Confirm FGSM/PGD or equivalent for vision systems."
+      ]
+    },
+    {
+      "id": "fairness",
+      "title": "Fairness testing",
+      "required": true,
+      "prompts": [
+        "Verify demographic parity / equalized odds for classifiers where applicable.",
+        "Confirm protected attributes are documented."
+      ]
+    }
+  ],
+  "checklists": [
+    { "id": "c1", "text": "V&V plan includes acceptance criteria." },
+    { "id": "c2", "text": "Robustness probe results retained." },
+    { "id": "c3", "text": "Fairness probe results retained." }
+  ],
+  "suggestedEvidenceTypes": [
+    "V&V plan",
+    "Robustness test report",
+    "Fairness test report",
+    "Probe execution logs"
+  ],
+  "suggestedProbes": ["P-ROB-01", "P-ROB-02", "P-BIAS-01", "P-BIAS-02"],
+  "suggestedInterviewQuestions": [
+    "Show us the V&V evidence for the current production model.",
+    "How do you select the robustness suites?"
+  ],
+  "mappedClauses": ["8.1"],
+  "mappedControls": ["A.6.2.5"],
+  "variables": []
+}

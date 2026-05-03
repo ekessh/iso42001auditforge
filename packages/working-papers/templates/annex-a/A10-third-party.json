@@ -1,0 +1,57 @@
+{
+  "id": "wp.annexA.A10.third-party",
+  "version": "1.0.0",
+  "title": "Annex A.10 - Third-party and customer relationships",
+  "description": "Working paper for Annex A.10: supplier relationships, customer responsibilities, allocation of responsibilities.",
+  "appliesTo": { "kind": "annexA", "controlId": "A.10" },
+  "sections": [
+    {
+      "id": "supplier-management",
+      "title": "Supplier management (A.10.2)",
+      "required": true,
+      "prompts": [
+        "Confirm AI suppliers are identified and onboarded with due diligence.",
+        "Verify contractual flow-down of AIMS obligations.",
+        "Sample supplier review records."
+      ]
+    },
+    {
+      "id": "customer-responsibilities",
+      "title": "Customer responsibilities (A.10.3)",
+      "required": true,
+      "prompts": [
+        "Confirm communication of customer responsibilities (e.g., not to misuse, to provide quality data).",
+        "Verify acceptance evidence."
+      ]
+    },
+    {
+      "id": "allocation-responsibilities",
+      "title": "Allocation of responsibilities (A.10.4)",
+      "required": true,
+      "prompts": [
+        "Verify a responsibilities matrix between auditee and customers / suppliers.",
+        "Sample two contracts and confirm matrix alignment."
+      ]
+    }
+  ],
+  "checklists": [
+    { "id": "c1", "text": "AI supplier register up to date." },
+    { "id": "c2", "text": "Contracts include AIMS-relevant clauses." },
+    { "id": "c3", "text": "Customer responsibilities documented and acknowledged." }
+  ],
+  "suggestedEvidenceTypes": [
+    "Supplier register",
+    "Sample contracts",
+    "Customer terms / DPAs",
+    "Responsibility matrix"
+  ],
+  "suggestedProbes": [],
+  "suggestedInterviewQuestions": [
+    "Walk us through onboarding a new AI model supplier.",
+    "Show us where customer responsibilities are stated.",
+    "How are responsibilities allocated when an incident spans you and a customer?"
+  ],
+  "mappedClauses": ["8.4"],
+  "mappedControls": ["A.10.2", "A.10.3", "A.10.4"],
+  "variables": []
+}
