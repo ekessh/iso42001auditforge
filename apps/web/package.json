@@ -39,6 +39,7 @@
     "typescript": "^5.6.2",
     "autoprefixer": "^10.4.20",
     "postcss": "^8.4.47",
-    "@axe-core/playwright": "^4.10.0"
+    "@axe-core/playwright": "^4.10.0",
+    "@storybook/react": "^8.3.5"
   }
 }
