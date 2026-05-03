@@ -1,0 +1,44 @@
+{
+  "name": "@auditforge/llm-provider",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "description": "AuditForge LLM provider abstraction: Ollama, vLLM, llama.cpp, Anthropic, OpenAI. Tier router, invocation ledger, cost controller, consent guard, prompt template registry. BUSL-1.1.",
+  "license": "BUSL-1.1",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./providers": "./src/providers/index.ts",
+    "./routing": "./src/routing/index.ts",
+    "./templates": "./src/templates/index.ts",
+    "./db": "./src/db/schema.ts"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "lint": "eslint src tests",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "@auditforge/shared": "workspace:*",
+    "drizzle-orm": "^0.36.0",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@anthropic-ai/sdk": "^0.32.1",
+    "@types/node": "^22.7.0",
+    "openai": "^4.76.0",
+    "typescript": "^5.6.2",
+    "vitest": "^2.1.1"
+  },
+  "peerDependencies": {
+    "@anthropic-ai/sdk": "^0.32.1",
+    "openai": "^4.76.0"
+  },
+  "peerDependenciesMeta": {
+    "@anthropic-ai/sdk": { "optional": true },
+    "openai": { "optional": true }
+  }
+}
