@@ -1,0 +1,36 @@
+{
+  "name": "@auditforge/nc-drafter",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "description": "Parallel NC Drafter: detector pipeline + candidate finding lifecycle for the Conversational Audit Engine. v3 Phase 7.7. BUSL-1.1.",
+  "license": "BUSL-1.1",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./domain": "./src/domain/index.ts",
+    "./detectors": "./src/detectors/index.ts",
+    "./services": "./src/services/index.ts",
+    "./api": "./src/api/index.ts",
+    "./db/schema": "./src/db/schema.ts"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "lint": "eslint src tests",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "@auditforge/shared": "workspace:*",
+    "drizzle-orm": "^0.36.0",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/node": "^22.7.0",
+    "@vitest/coverage-v8": "^2.1.1",
+    "typescript": "^5.6.2",
+    "vitest": "^2.1.1"
+  }
+}

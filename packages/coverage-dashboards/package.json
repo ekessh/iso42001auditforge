@@ -1,0 +1,34 @@
+{
+  "name": "@auditforge/coverage-dashboards",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "description": "Readiness + Audit dashboard data services. Transparent weighted readiness calculator + real-time push interface. v3 Phase 7.7. BUSL-1.1.",
+  "license": "BUSL-1.1",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./readiness": "./src/readiness/index.ts",
+    "./audit": "./src/audit/index.ts",
+    "./realtime": "./src/realtime/index.ts",
+    "./domain": "./src/domain/index.ts"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "lint": "eslint src tests",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "@auditforge/shared": "workspace:*",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/node": "^22.7.0",
+    "@vitest/coverage-v8": "^2.1.1",
+    "typescript": "^5.6.2",
+    "vitest": "^2.1.1"
+  }
+}
