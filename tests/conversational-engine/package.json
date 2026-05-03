@@ -1,0 +1,23 @@
+{
+  "name": "@auditforge/conversational-corpus",
+  "version": "0.0.0",
+  "private": true,
+  "license": "BUSL-1.1",
+  "type": "module",
+  "description": "Corpus regression harness for the AuditForge Conversational Audit Engine. Runs extraction, attribution, contradiction, and release-gate benches over the labeled corpus and fails CI on >5% regression vs baseline.json.",
+  "scripts": {
+    "test": "vitest run",
+    "bench:extraction": "tsx runners/extraction-bench.ts",
+    "bench:attribution": "tsx runners/attribution-bench.ts",
+    "bench:contradiction": "tsx runners/contradiction-bench.ts",
+    "bench:release-gate": "tsx runners/release-gate.ts",
+    "bench:release-gate:update-baseline": "tsx runners/release-gate.ts --update-baseline"
+  },
+  "devDependencies": {
+    "vitest": "^2.1.1",
+    "typescript": "^5.6.2",
+    "tsx": "^4.19.1",
+    "@types/node": "^22.7.0",
+    "zod": "^3.23.8"
+  }
+}
