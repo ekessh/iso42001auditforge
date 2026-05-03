@@ -1,44 +1,42 @@
 // SPDX-License-Identifier: BUSL-1.1
 import { Injectable } from '@nestjs/common';
-import { randomUUID } from 'node:crypto';
 import { BaseRepository } from '../../db/base.repository.js';
-import { NotFoundError } from '../../common/errors.js';
 import type { AgentWorkflowsDto, CreateAgentWorkflowsDto, UpdateAgentWorkflowsDto } from './dto.js';
+import { TraceAnalyzerAdapter } from '../../adapters/trace-analyzer.adapter.js';
 
 @Injectable()
 export class AgentWorkflowsRepository extends BaseRepository {
-  private readonly memory = new Map<string, AgentWorkflowsDto>();
+  private adapter: TraceAnalyzerAdapter | null;
+
+  constructor(...args: unknown[]) {
+    super(args[0] as never, args[1] as never);
+    this.adapter = (args[2] as TraceAnalyzerAdapter | undefined) ?? null;
+  }
+
+  private async ensureAdapter(): Promise<TraceAnalyzerAdapter> {
+    if (this.adapter) return this.adapter;
+    const { AuditEngineAdapter } = await import('../../adapters/audit-engine.adapter.js');
+    const { TraceAnalyzerAdapter } = await import('../../adapters/trace-analyzer.adapter.js');
+    this.adapter = new TraceAnalyzerAdapter(new AuditEngineAdapter());
+    return this.adapter;
+  }
 
   async create(firmId: string, dto: CreateAgentWorkflowsDto): Promise<AgentWorkflowsDto> {
-    const now = new Date().toISOString();
-    const row: AgentWorkflowsDto = { id: randomUUID(), firmId, name: dto.name, metadata: dto.metadata, createdAt: now, updatedAt: now };
-    this.memory.set(row.id, row);
-    return row;
+    return (await this.ensureAdapter()).workflowsRegistry.create(firmId, dto);
   }
-
   async findById(firmId: string, id: string): Promise<AgentWorkflowsDto> {
-    const r = this.memory.get(id);
-    if (!r || r.firmId !== firmId) throw new NotFoundError('AgentWorkflows', id);
-    return r;
+    return (await this.ensureAdapter()).workflowsRegistry.findById(firmId, id);
   }
-
-  async list(firmId: string, opts: { cursor?: string; limit: number }): Promise<{ items: AgentWorkflowsDto[]; nextCursor: string | null }> {
-    const all = Array.from(this.memory.values()).filter((r) => r.firmId === firmId);
-    const startIdx = opts.cursor ? all.findIndex((r) => r.id === opts.cursor) + 1 : 0;
-    const slice = all.slice(startIdx, startIdx + opts.limit);
-    const next = startIdx + opts.limit < all.length ? slice[slice.length - 1]?.id ?? null : null;
-    return { items: slice, nextCursor: next };
+  async list(
+    firmId: string,
+    opts: { cursor?: string; limit: number },
+  ): Promise<{ items: AgentWorkflowsDto[]; nextCursor: string | null }> {
+    return (await this.ensureAdapter()).workflowsRegistry.list(firmId, opts);
   }
-
   async update(firmId: string, id: string, dto: UpdateAgentWorkflowsDto): Promise<AgentWorkflowsDto> {
-    const cur = await this.findById(firmId, id);
-    const updated: AgentWorkflowsDto = { ...cur, ...dto, updatedAt: new Date().toISOString() };
-    this.memory.set(id, updated);
-    return updated;
+    return (await this.ensureAdapter()).workflowsRegistry.update(firmId, id, dto);
   }
-
   async remove(firmId: string, id: string): Promise<void> {
-    await this.findById(firmId, id);
-    this.memory.delete(id);
+    return (await this.ensureAdapter()).workflowsRegistry.remove(firmId, id);
   }
 }

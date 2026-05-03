@@ -1,44 +1,42 @@
 // SPDX-License-Identifier: BUSL-1.1
 import { Injectable } from '@nestjs/common';
-import { randomUUID } from 'node:crypto';
 import { BaseRepository } from '../../db/base.repository.js';
-import { NotFoundError } from '../../common/errors.js';
 import type { CrossFrameworkDto, CreateCrossFrameworkDto, UpdateCrossFrameworkDto } from './dto.js';
+import { CrossFrameworkAdapter } from '../../adapters/cross-framework.adapter.js';
 
 @Injectable()
 export class CrossFrameworkRepository extends BaseRepository {
-  private readonly memory = new Map<string, CrossFrameworkDto>();
+  private adapter: CrossFrameworkAdapter | null;
+
+  constructor(...args: unknown[]) {
+    super(args[0] as never, args[1] as never);
+    this.adapter = (args[2] as CrossFrameworkAdapter | undefined) ?? null;
+  }
+
+  private async ensureAdapter(): Promise<CrossFrameworkAdapter> {
+    if (this.adapter) return this.adapter;
+    const { AuditEngineAdapter } = await import('../../adapters/audit-engine.adapter.js');
+    const { CrossFrameworkAdapter } = await import('../../adapters/cross-framework.adapter.js');
+    this.adapter = new CrossFrameworkAdapter(new AuditEngineAdapter());
+    return this.adapter;
+  }
 
   async create(firmId: string, dto: CreateCrossFrameworkDto): Promise<CrossFrameworkDto> {
-    const now = new Date().toISOString();
-    const row: CrossFrameworkDto = { id: randomUUID(), firmId, name: dto.name, metadata: dto.metadata, createdAt: now, updatedAt: now };
-    this.memory.set(row.id, row);
-    return row;
+    return (await this.ensureAdapter()).registry.create(firmId, dto);
   }
-
   async findById(firmId: string, id: string): Promise<CrossFrameworkDto> {
-    const r = this.memory.get(id);
-    if (!r || r.firmId !== firmId) throw new NotFoundError('CrossFramework', id);
-    return r;
+    return (await this.ensureAdapter()).registry.findById(firmId, id);
   }
-
-  async list(firmId: string, opts: { cursor?: string; limit: number }): Promise<{ items: CrossFrameworkDto[]; nextCursor: string | null }> {
-    const all = Array.from(this.memory.values()).filter((r) => r.firmId === firmId);
-    const startIdx = opts.cursor ? all.findIndex((r) => r.id === opts.cursor) + 1 : 0;
-    const slice = all.slice(startIdx, startIdx + opts.limit);
-    const next = startIdx + opts.limit < all.length ? slice[slice.length - 1]?.id ?? null : null;
-    return { items: slice, nextCursor: next };
+  async list(
+    firmId: string,
+    opts: { cursor?: string; limit: number },
+  ): Promise<{ items: CrossFrameworkDto[]; nextCursor: string | null }> {
+    return (await this.ensureAdapter()).registry.list(firmId, opts);
   }
-
   async update(firmId: string, id: string, dto: UpdateCrossFrameworkDto): Promise<CrossFrameworkDto> {
-    const cur = await this.findById(firmId, id);
-    const updated: CrossFrameworkDto = { ...cur, ...dto, updatedAt: new Date().toISOString() };
-    this.memory.set(id, updated);
-    return updated;
+    return (await this.ensureAdapter()).registry.update(firmId, id, dto);
   }
-
   async remove(firmId: string, id: string): Promise<void> {
-    await this.findById(firmId, id);
-    this.memory.delete(id);
+    return (await this.ensureAdapter()).registry.remove(firmId, id);
   }
 }
