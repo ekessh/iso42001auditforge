@@ -1,0 +1,989 @@
+{
+  "version": "0.1.0",
+  "license": "BUSL-1.1",
+  "note": "Synthetic, anonymized bootstrap corpus for the Conversational Audit Engine. 50 entries covering all 9 Annex A control families. Real labeled corpus lands in commercial/eval-corpus/ per v3 Section 15.9.",
+  "entries": [
+    {
+      "id": "C-001",
+      "answer": "Our AI policy was approved by the executive committee last March and is reviewed annually. The policy explicitly references the responsible AI principles we've adopted firm-wide.",
+      "ground_truth": {
+        "claims": [
+          { "subject": "AI policy", "predicate": "approved by", "object": "executive committee" },
+          { "subject": "AI policy", "predicate": "is reviewed", "object": "annually" }
+        ],
+        "primary_attributions": [
+          { "framework": "ISO42001_AnnexA", "nodeId": "A.2.2", "confidence": 0.95 },
+          { "framework": "ISO42001_AnnexA", "nodeId": "A.2.4", "confidence": 0.92 }
+        ],
+        "supporting_attributions": [
+          { "framework": "ISO42001", "nodeId": "5.2", "confidence": 0.6 }
+        ],
+        "dismissed_false_positives": [],
+        "contradicts": null
+      },
+      "audit_phase": "S2",
+      "ai_system_kind": "llm",
+      "tags": ["policy", "governance"]
+    },
+    {
+      "id": "C-002",
+      "answer": "We don't currently have a documented AI policy. We follow our general information security policy, which mentions AI in passing.",
+      "ground_truth": {
+        "claims": [
+          { "subject": "organization", "predicate": "lacks", "object": "documented AI policy" }
+        ],
+        "primary_attributions": [
+          { "framework": "ISO42001_AnnexA", "nodeId": "A.2.2", "confidence": 0.97 }
+        ],
+        "supporting_attributions": [
+          { "framework": "ISO42001", "nodeId": "5.2", "confidence": 0.7 }
+        ],
+        "dismissed_false_positives": [],
+        "contradicts": "C-001"
+      },
+      "audit_phase": "S2",
+      "ai_system_kind": "predictive-ml",
+      "tags": ["policy", "gap"]
+    },
+    {
+      "id": "C-003",
+      "answer": "The AI policy references our existing data governance policy and the model risk policy. The intent is that an AI initiative inherits whichever policy is most restrictive.",
+      "ground_truth": {
+        "claims": [
+          { "subject": "AI policy", "predicate": "references", "object": "data governance policy" },
+          { "subject": "AI policy", "predicate": "references", "object": "model risk policy" }
+        ],
+        "primary_attributions": [
+          { "framework": "ISO42001_AnnexA", "nodeId": "A.2.3", "confidence": 0.93 }
+        ],
+        "supporting_attributions": [],
+        "dismissed_false_positives": [],
+        "contradicts": null
+      },
+      "audit_phase": "S2",
+      "ai_system_kind": "llm",
+      "tags": ["policy", "alignment"]
+    },
+    {
+      "id": "C-004",
+      "answer": "Roles for AI are split across the CTO office, the CISO office, and the data office. The Chief Data Officer chairs the AI risk forum.",
+      "ground_truth": {
+        "claims": [
+          { "subject": "Chief Data Officer", "predicate": "chairs", "object": "AI risk forum" },
+          { "subject": "AI roles", "predicate": "split across", "object": "CTO/CISO/CDO" }
+        ],
+        "primary_attributions": [
+          { "framework": "ISO42001_AnnexA", "nodeId": "A.3.2", "confidence": 0.94 }
+        ],
+        "supporting_attributions": [
+          { "framework": "ISO42001", "nodeId": "5.3", "confidence": 0.7 }
+        ],
+        "dismissed_false_positives": [],
+        "contradicts": null
+      },
+      "audit_phase": "S1",
+      "ai_system_kind": "agent",
+      "tags": ["roles", "governance"]
+    },
+    {
+      "id": "C-005",
+      "answer": "Engineers can report concerns about an AI system through the standard whistle-blower channel; we added an explicit AI-incident category last quarter.",
+      "ground_truth": {
+        "claims": [
+          { "subject": "engineers", "predicate": "can report concerns through", "object": "whistle-blower channel" },
+          { "subject": "AI-incident category", "predicate": "added", "object": "last quarter" }
+        ],
+        "primary_attributions": [
+          { "framework": "ISO42001_AnnexA", "nodeId": "A.3.3", "confidence": 0.92 }
+        ],
+        "supporting_attributions": [],
+        "dismissed_false_positives": [],
+        "contradicts": null
+      },
+      "audit_phase": "S2",
+      "ai_system_kind": "agent",
+      "tags": ["roles", "concerns"]
+    },
+    {
+      "id": "C-006",
+      "answer": "We track all AI initiatives in a shared inventory, but resources allocated to each are not consistently documented.",
+      "ground_truth": {
+        "claims": [
+          { "subject": "organization", "predicate": "tracks initiatives in", "object": "shared inventory" },
+          { "subject": "resource allocation", "predicate": "is", "object": "inconsistently documented" }
+        ],
+        "primary_attributions": [
+          { "framework": "ISO42001_AnnexA", "nodeId": "A.4.2", "confidence": 0.9 }
+        ],
+        "supporting_attributions": [],
+        "dismissed_false_positives": [],
+        "contradicts": null
+      },
+      "audit_phase": "S2",
+      "ai_system_kind": "rag_agent",
+      "tags": ["resources", "documentation"]
+    },
+    {
+      "id": "C-007",
+      "answer": "Training datasets are catalogued in our data lake with classification tags and lineage. Sensitive datasets carry an additional access-control list.",
+      "ground_truth": {
+        "claims": [
+          { "subject": "training datasets", "predicate": "are catalogued in", "object": "data lake" },
+          { "subject": "sensitive datasets", "predicate": "have", "object": "additional ACL" }
+        ],
+        "primary_attributions": [
+          { "framework": "ISO42001_AnnexA", "nodeId": "A.4.3", "confidence": 0.95 },
+          { "framework": "ISO42001_AnnexA", "nodeId": "A.7.5", "confidence": 0.85 }
+        ],
+        "supporting_attributions": [],
+        "dismissed_false_positives": [],
+        "contradicts": null
+      },
+      "audit_phase": "S2",
+      "ai_system_kind": "training-pipeline",
+      "tags": ["data", "resources"]
+    },
+    {
+      "id": "C-008",
+      "answer": "Tooling for our ML pipelines is standardized on managed Vertex AI services. Custom tooling requires architecture review.",
+      "ground_truth": {
+        "claims": [
+          { "subject": "ML pipelines", "predicate": "use", "object": "Vertex AI" },
+          { "subject": "custom tooling", "predicate": "requires", "object": "architecture review" }
+        ],
+        "primary_attributions": [
+          { "framework": "ISO42001_AnnexA", "nodeId": "A.4.4", "confidence": 0.93 }
+        ],
+        "supporting_attributions": [],
+        "dismissed_false_positives": [],
+        "contradicts": null
+      },
+      "audit_phase": "S1",
+      "ai_system_kind": "training-pipeline",
+      "tags": ["tooling"]
+    },
+    {
+      "id": "C-009",
+      "answer": "Compute capacity is provisioned per-project. We don't have organization-wide GPU quotas, but each project owner gets a budget approved at planning time.",
+      "ground_truth": {
+        "claims": [
+          { "subject": "compute capacity", "predicate": "is provisioned", "object": "per-project" }
+        ],
+        "primary_attributions": [
+          { "framework": "ISO42001_AnnexA", "nodeId": "A.4.5", "confidence": 0.92 }
+        ],
+        "supporting_attributions": [],
+        "dismissed_false_positives": [],
+        "contradicts": null
+      },
+      "audit_phase": "S2",
+      "ai_system_kind": "training-pipeline",
+      "tags": ["resources"]
+    },
+    {
+      "id": "C-010",
+      "answer": "All ML engineers complete an annual responsible-AI training, recorded in our LMS.",
+      "ground_truth": {
+        "claims": [
+          { "subject": "ML engineers", "predicate": "complete", "object": "annual responsible-AI training" }
+        ],
+        "primary_attributions": [
+          { "framework": "ISO42001_AnnexA", "nodeId": "A.4.6", "confidence": 0.94 }
+        ],
+        "supporting_attributions": [
+          { "framework": "ISO42001", "nodeId": "7.2", "confidence": 0.75 },
+          { "framework": "ISO42001", "nodeId": "7.3", "confidence": 0.7 }
+        ],
+        "dismissed_false_positives": [],
+        "contradicts": null
+      },
+      "audit_phase": "Surv",
+      "ai_system_kind": "predictive-ml",
+      "tags": ["competence", "awareness"]
+    },
+    {
+      "id": "C-011",
+      "answer": "We assess impact on individuals using a fairness-aware impact-assessment template; the form has been used for 22 systems this year.",
+      "ground_truth": {
+        "claims": [
+          { "subject": "organization", "predicate": "uses", "object": "impact-assessment template" },
+          { "subject": "form", "predicate": "applied to", "object": "22 systems this year" }
+        ],
+        "primary_attributions": [
+          { "framework": "ISO42001_AnnexA", "nodeId": "A.5.2", "confidence": 0.95 },
+          { "framework": "ISO42001_AnnexA", "nodeId": "A.5.4", "confidence": 0.9 }
+        ],
+        "supporting_attributions": [
+          { "framework": "ISO42001", "nodeId": "6.1.4", "confidence": 0.7 }
+        ],
+        "dismissed_false_positives": [],
+        "contradicts": null
+      },
+      "audit_phase": "S2",
+      "ai_system_kind": "predictive-ml",
+      "tags": ["impact", "fairness"]
+    },
+    {
+      "id": "C-012",
+      "answer": "Impact assessments are stored alongside the system documentation in our internal wiki, with versioning.",
+      "ground_truth": {
+        "claims": [
+          { "subject": "impact assessments", "predicate": "stored in", "object": "internal wiki" },
+          { "subject": "wiki", "predicate": "supports", "object": "versioning" }
+        ],
+        "primary_attributions": [
+          { "framework": "ISO42001_AnnexA", "nodeId": "A.5.3", "confidence": 0.94 }
+        ],
+        "supporting_attributions": [],
+        "dismissed_false_positives": [],
+        "contradicts": null
+      },
+      "audit_phase": "S2",
+      "ai_system_kind": "rag_agent",
+      "tags": ["impact", "documentation"]
+    },
+    {
+      "id": "C-013",
+      "answer": "We do consider broader societal impacts when an AI system is consumer-facing, but we don't have a formal societal-impact assessment yet.",
+      "ground_truth": {
+        "claims": [
+          { "subject": "organization", "predicate": "considers", "object": "broader societal impacts" },
+          { "subject": "organization", "predicate": "lacks", "object": "formal societal-impact assessment" }
+        ],
+        "primary_attributions": [
+          { "framework": "ISO42001_AnnexA", "nodeId": "A.5.5", "confidence": 0.92 }
+        ],
+        "supporting_attributions": [],
+        "dismissed_false_positives": [],
+        "contradicts": null
+      },
+      "audit_phase": "S2",
+      "ai_system_kind": "llm",
+      "tags": ["impact", "gap"]
+    },
+    {
+      "id": "C-014",
+      "answer": "The MLOps team owns development; product owns requirements. Each new model has a published model card before deployment.",
+      "ground_truth": {
+        "claims": [
+          { "subject": "MLOps team", "predicate": "owns", "object": "development" },
+          { "subject": "each new model", "predicate": "has", "object": "model card" }
+        ],
+        "primary_attributions": [
+          { "framework": "ISO42001_AnnexA", "nodeId": "A.6.1.3", "confidence": 0.91 },
+          { "framework": "ISO42001_AnnexA", "nodeId": "A.6.2.7", "confidence": 0.88 }
+        ],
+        "supporting_attributions": [],
+        "dismissed_false_positives": [],
+        "contradicts": null
+      },
+      "audit_phase": "S2",
+      "ai_system_kind": "predictive-ml",
+      "tags": ["lifecycle", "documentation"]
+    },
+    {
+      "id": "C-015",
+      "answer": "Responsible-AI objectives are part of the engineering team OKRs each quarter.",
+      "ground_truth": {
+        "claims": [
+          { "subject": "responsible-AI objectives", "predicate": "are part of", "object": "engineering OKRs" }
+        ],
+        "primary_attributions": [
+          { "framework": "ISO42001_AnnexA", "nodeId": "A.6.1.2", "confidence": 0.93 }
+        ],
+        "supporting_attributions": [
+          { "framework": "ISO42001", "nodeId": "6.2", "confidence": 0.65 }
+        ],
+        "dismissed_false_positives": [],
+        "contradicts": null
+      },
+      "audit_phase": "S2",
+      "ai_system_kind": "agent",
+      "tags": ["lifecycle", "objectives"]
+    },
+    {
+      "id": "C-016",
+      "answer": "Requirements specifications for AI systems must include performance targets, fairness criteria, and intended use boundaries.",
+      "ground_truth": {
+        "claims": [
+          { "subject": "requirements specifications", "predicate": "must include", "object": "performance targets" },
+          { "subject": "requirements specifications", "predicate": "must include", "object": "fairness criteria" }
+        ],
+        "primary_attributions": [
+          { "framework": "ISO42001_AnnexA", "nodeId": "A.6.2.2", "confidence": 0.94 }
+        ],
+        "supporting_attributions": [
+          { "framework": "ISO42001_AnnexA", "nodeId": "A.9.4", "confidence": 0.6 }
+        ],
+        "dismissed_false_positives": [],
+        "contradicts": null
+      },
+      "audit_phase": "S2",
+      "ai_system_kind": "predictive-ml",
+      "tags": ["lifecycle", "requirements"]
+    },
+    {
+      "id": "C-017",
+      "answer": "Architecture decisions are captured as ADRs in the repo. Design records cover model choice, data flow, and observability.",
+      "ground_truth": {
+        "claims": [
+          { "subject": "architecture decisions", "predicate": "captured as", "object": "ADRs" },
+          { "subject": "design records", "predicate": "cover", "object": "model choice and data flow" }
+        ],
+        "primary_attributions": [
+          { "framework": "ISO42001_AnnexA", "nodeId": "A.6.2.3", "confidence": 0.92 }
+        ],
+        "supporting_attributions": [],
+        "dismissed_false_positives": [],
+        "contradicts": null
+      },
+      "audit_phase": "S2",
+      "ai_system_kind": "agent",
+      "tags": ["lifecycle", "design"]
+    },
+    {
+      "id": "C-018",
+      "answer": "Validation includes offline evaluation and a 5% canary in production. Acceptance criteria are signed off by product and ML platform.",
+      "ground_truth": {
+        "claims": [
+          { "subject": "validation", "predicate": "includes", "object": "offline evaluation" },
+          { "subject": "validation", "predicate": "includes", "object": "5% canary" }
+        ],
+        "primary_attributions": [
+          { "framework": "ISO42001_AnnexA", "nodeId": "A.6.2.4", "confidence": 0.95 }
+        ],
+        "supporting_attributions": [],
+        "dismissed_false_positives": [],
+        "contradicts": null
+      },
+      "audit_phase": "S2",
+      "ai_system_kind": "predictive-ml",
+      "tags": ["lifecycle", "validation"]
+    },
+    {
+      "id": "C-019",
+      "answer": "Deployment runbook covers traffic shift, rollback drill, and on-call escalation. We ran a chaos game-day in February.",
+      "ground_truth": {
+        "claims": [
+          { "subject": "deployment runbook", "predicate": "covers", "object": "rollback drill" },
+          { "subject": "team", "predicate": "ran", "object": "chaos game-day" }
+        ],
+        "primary_attributions": [
+          { "framework": "ISO42001_AnnexA", "nodeId": "A.6.2.5", "confidence": 0.94 }
+        ],
+        "supporting_attributions": [],
+        "dismissed_false_positives": [
+          { "framework": "ISO42001_AnnexA", "nodeId": "A.6.2.4", "rationale": "validation appears thematically related but the answer addresses deployment robustness" }
+        ],
+        "contradicts": null
+      },
+      "audit_phase": "S2",
+      "ai_system_kind": "agent",
+      "tags": ["lifecycle", "deployment"]
+    },
+    {
+      "id": "C-020",
+      "answer": "Operational monitoring tracks accuracy drift, data drift, latency, and cost. Drift alerts page the on-call.",
+      "ground_truth": {
+        "claims": [
+          { "subject": "monitoring", "predicate": "tracks", "object": "accuracy drift" },
+          { "subject": "drift alerts", "predicate": "page", "object": "on-call" }
+        ],
+        "primary_attributions": [
+          { "framework": "ISO42001_AnnexA", "nodeId": "A.6.2.6", "confidence": 0.96 }
+        ],
+        "supporting_attributions": [
+          { "framework": "ISO42001", "nodeId": "9.1", "confidence": 0.7 }
+        ],
+        "dismissed_false_positives": [],
+        "contradicts": null
+      },
+      "audit_phase": "Surv",
+      "ai_system_kind": "predictive-ml",
+      "tags": ["lifecycle", "monitoring"]
+    },
+    {
+      "id": "C-021",
+      "answer": "Technical documentation is generated from code annotations and exported to Confluence. Out-of-date docs are flagged automatically.",
+      "ground_truth": {
+        "claims": [
+          { "subject": "technical documentation", "predicate": "generated from", "object": "code annotations" },
+          { "subject": "out-of-date docs", "predicate": "are flagged", "object": "automatically" }
+        ],
+        "primary_attributions": [
+          { "framework": "ISO42001_AnnexA", "nodeId": "A.6.2.7", "confidence": 0.94 }
+        ],
+        "supporting_attributions": [],
+        "dismissed_false_positives": [],
+        "contradicts": null
+      },
+      "audit_phase": "S2",
+      "ai_system_kind": "rag_agent",
+      "tags": ["lifecycle", "documentation"]
+    },
+    {
+      "id": "C-022",
+      "answer": "Event logging captures every model inference at the gateway: request hash, model version, latency, decision class, and the user identity.",
+      "ground_truth": {
+        "claims": [
+          { "subject": "event logging", "predicate": "captures", "object": "every model inference" },
+          { "subject": "logs", "predicate": "include", "object": "model version and user identity" }
+        ],
+        "primary_attributions": [
+          { "framework": "ISO42001_AnnexA", "nodeId": "A.6.2.8", "confidence": 0.96 }
+        ],
+        "supporting_attributions": [],
+        "dismissed_false_positives": [],
+        "contradicts": null
+      },
+      "audit_phase": "Surv",
+      "ai_system_kind": "agent",
+      "tags": ["lifecycle", "logging"]
+    },
+    {
+      "id": "C-023",
+      "answer": "Training data is sourced from internal records and one licensed vendor. Public datasets are used only for evaluation, never for training.",
+      "ground_truth": {
+        "claims": [
+          { "subject": "training data", "predicate": "sourced from", "object": "internal records" },
+          { "subject": "public datasets", "predicate": "used for", "object": "evaluation only" }
+        ],
+        "primary_attributions": [
+          { "framework": "ISO42001_AnnexA", "nodeId": "A.7.2", "confidence": 0.93 },
+          { "framework": "ISO42001_AnnexA", "nodeId": "A.7.3", "confidence": 0.9 }
+        ],
+        "supporting_attributions": [],
+        "dismissed_false_positives": [],
+        "contradicts": null
+      },
+      "audit_phase": "S2",
+      "ai_system_kind": "training-pipeline",
+      "tags": ["data"]
+    },
+    {
+      "id": "C-024",
+      "answer": "Data acquisition contracts are reviewed by legal and the AI risk forum. We don't use scraped data.",
+      "ground_truth": {
+        "claims": [
+          { "subject": "data acquisition contracts", "predicate": "reviewed by", "object": "legal and AI risk forum" },
+          { "subject": "organization", "predicate": "does not use", "object": "scraped data" }
+        ],
+        "primary_attributions": [
+          { "framework": "ISO42001_AnnexA", "nodeId": "A.7.3", "confidence": 0.94 }
+        ],
+        "supporting_attributions": [],
+        "dismissed_false_positives": [],
+        "contradicts": null
+      },
+      "audit_phase": "S2",
+      "ai_system_kind": "training-pipeline",
+      "tags": ["data", "acquisition"]
+    },
+    {
+      "id": "C-025",
+      "answer": "Data quality checks include schema validation, range checks, and a fairness-distribution check across protected attributes.",
+      "ground_truth": {
+        "claims": [
+          { "subject": "data quality checks", "predicate": "include", "object": "schema validation" },
+          { "subject": "data quality checks", "predicate": "include", "object": "fairness-distribution check" }
+        ],
+        "primary_attributions": [
+          { "framework": "ISO42001_AnnexA", "nodeId": "A.7.4", "confidence": 0.96 }
+        ],
+        "supporting_attributions": [],
+        "dismissed_false_positives": [],
+        "contradicts": null
+      },
+      "audit_phase": "S2",
+      "ai_system_kind": "predictive-ml",
+      "tags": ["data", "quality"]
+    },
+    {
+      "id": "C-026",
+      "answer": "Provenance is captured automatically from the ETL pipeline; we use OpenLineage emitters in Airflow.",
+      "ground_truth": {
+        "claims": [
+          { "subject": "provenance", "predicate": "captured automatically by", "object": "ETL pipeline" }
+        ],
+        "primary_attributions": [
+          { "framework": "ISO42001_AnnexA", "nodeId": "A.7.5", "confidence": 0.95 }
+        ],
+        "supporting_attributions": [],
+        "dismissed_false_positives": [],
+        "contradicts": null
+      },
+      "audit_phase": "Surv",
+      "ai_system_kind": "training-pipeline",
+      "tags": ["data", "provenance", "lineage"]
+    },
+    {
+      "id": "C-027",
+      "answer": "Provenance is informally documented in spreadsheets maintained by individual data scientists.",
+      "ground_truth": {
+        "claims": [
+          { "subject": "provenance", "predicate": "is documented", "object": "informally in spreadsheets" }
+        ],
+        "primary_attributions": [
+          { "framework": "ISO42001_AnnexA", "nodeId": "A.7.5", "confidence": 0.92 }
+        ],
+        "supporting_attributions": [],
+        "dismissed_false_positives": [],
+        "contradicts": "C-026"
+      },
+      "audit_phase": "S2",
+      "ai_system_kind": "training-pipeline",
+      "tags": ["data", "lineage", "gap"]
+    },
+    {
+      "id": "C-028",
+      "answer": "Data preparation steps are codified as Spark jobs and version-controlled.",
+      "ground_truth": {
+        "claims": [
+          { "subject": "data preparation steps", "predicate": "codified as", "object": "Spark jobs" },
+          { "subject": "Spark jobs", "predicate": "are", "object": "version-controlled" }
+        ],
+        "primary_attributions": [
+          { "framework": "ISO42001_AnnexA", "nodeId": "A.7.6", "confidence": 0.94 }
+        ],
+        "supporting_attributions": [],
+        "dismissed_false_positives": [],
+        "contradicts": null
+      },
+      "audit_phase": "S1",
+      "ai_system_kind": "training-pipeline",
+      "tags": ["data", "preparation"]
+    },
+    {
+      "id": "C-029",
+      "answer": "Users get model documentation embedded in the UI: a 'How does this work?' panel with the intended use, limitations, and contact info.",
+      "ground_truth": {
+        "claims": [
+          { "subject": "users", "predicate": "get", "object": "model documentation in UI" }
+        ],
+        "primary_attributions": [
+          { "framework": "ISO42001_AnnexA", "nodeId": "A.8.2", "confidence": 0.94 },
+          { "framework": "ISO42001_AnnexA", "nodeId": "A.9.4", "confidence": 0.7 }
+        ],
+        "supporting_attributions": [],
+        "dismissed_false_positives": [],
+        "contradicts": null
+      },
+      "audit_phase": "S2",
+      "ai_system_kind": "agent",
+      "tags": ["transparency"]
+    },
+    {
+      "id": "C-030",
+      "answer": "We publish quarterly transparency reports to regulators and the board, summarizing AI incidents and material model changes.",
+      "ground_truth": {
+        "claims": [
+          { "subject": "organization", "predicate": "publishes", "object": "quarterly transparency reports" }
+        ],
+        "primary_attributions": [
+          { "framework": "ISO42001_AnnexA", "nodeId": "A.8.3", "confidence": 0.95 }
+        ],
+        "supporting_attributions": [],
+        "dismissed_false_positives": [],
+        "contradicts": null
+      },
+      "audit_phase": "S2",
+      "ai_system_kind": "predictive-ml",
+      "tags": ["transparency", "reporting"]
+    },
+    {
+      "id": "C-031",
+      "answer": "Two AI incidents reached customer impact in 2025; both were communicated within 48 hours per our incident comms playbook.",
+      "ground_truth": {
+        "claims": [
+          { "subject": "AI incidents", "predicate": "communicated within", "object": "48 hours" },
+          { "subject": "organization", "predicate": "had", "object": "two customer-impact incidents in 2025" }
+        ],
+        "primary_attributions": [
+          { "framework": "ISO42001_AnnexA", "nodeId": "A.8.4", "confidence": 0.96 }
+        ],
+        "supporting_attributions": [],
+        "dismissed_false_positives": [],
+        "contradicts": null
+      },
+      "audit_phase": "Recert",
+      "ai_system_kind": "predictive-ml",
+      "tags": ["transparency", "incidents"]
+    },
+    {
+      "id": "C-032",
+      "answer": "We maintain a dedicated stakeholder distribution list for AI updates; affected customers are flagged via product alerts.",
+      "ground_truth": {
+        "claims": [
+          { "subject": "organization", "predicate": "maintains", "object": "stakeholder distribution list" }
+        ],
+        "primary_attributions": [
+          { "framework": "ISO42001_AnnexA", "nodeId": "A.8.5", "confidence": 0.93 }
+        ],
+        "supporting_attributions": [],
+        "dismissed_false_positives": [],
+        "contradicts": null
+      },
+      "audit_phase": "Surv",
+      "ai_system_kind": "rag_agent",
+      "tags": ["transparency"]
+    },
+    {
+      "id": "C-033",
+      "answer": "Our LLM assistant is for internal use only. We have an acceptable-use policy that prohibits using outputs for legal, medical, or financial advice without human review.",
+      "ground_truth": {
+        "claims": [
+          { "subject": "LLM assistant", "predicate": "is for", "object": "internal use only" },
+          { "subject": "acceptable-use policy", "predicate": "prohibits", "object": "advice without human review" }
+        ],
+        "primary_attributions": [
+          { "framework": "ISO42001_AnnexA", "nodeId": "A.9.2", "confidence": 0.95 },
+          { "framework": "ISO42001_AnnexA", "nodeId": "A.9.4", "confidence": 0.94 }
+        ],
+        "supporting_attributions": [],
+        "dismissed_false_positives": [],
+        "contradicts": null
+      },
+      "audit_phase": "S2",
+      "ai_system_kind": "llm",
+      "tags": ["use", "policy"]
+    },
+    {
+      "id": "C-034",
+      "answer": "Objectives for responsible use of the assistant are tracked in product OKRs: error rate, escalation rate, and safety violations per 1k turns.",
+      "ground_truth": {
+        "claims": [
+          { "subject": "responsible-use objectives", "predicate": "tracked in", "object": "product OKRs" }
+        ],
+        "primary_attributions": [
+          { "framework": "ISO42001_AnnexA", "nodeId": "A.9.3", "confidence": 0.94 }
+        ],
+        "supporting_attributions": [],
+        "dismissed_false_positives": [],
+        "contradicts": null
+      },
+      "audit_phase": "Recert",
+      "ai_system_kind": "llm",
+      "tags": ["use", "objectives"]
+    },
+    {
+      "id": "C-035",
+      "answer": "Intended-use boundaries are documented for each release. Out-of-scope inputs are gated by a classifier that returns a refusal with an explanation.",
+      "ground_truth": {
+        "claims": [
+          { "subject": "intended-use boundaries", "predicate": "are documented for", "object": "each release" },
+          { "subject": "out-of-scope inputs", "predicate": "are gated by", "object": "refusal classifier" }
+        ],
+        "primary_attributions": [
+          { "framework": "ISO42001_AnnexA", "nodeId": "A.9.4", "confidence": 0.96 }
+        ],
+        "supporting_attributions": [
+          { "framework": "ISO42001_AnnexA", "nodeId": "A.6.2.5", "confidence": 0.55 }
+        ],
+        "dismissed_false_positives": [],
+        "contradicts": null
+      },
+      "audit_phase": "S2",
+      "ai_system_kind": "llm",
+      "tags": ["use", "intended-use"]
+    },
+    {
+      "id": "C-036",
+      "answer": "Responsibilities between us and our LLM provider are split per the BAA-style addendum: model behavior is theirs, deployment configuration and prompt design are ours.",
+      "ground_truth": {
+        "claims": [
+          { "subject": "responsibilities", "predicate": "split per", "object": "BAA-style addendum" },
+          { "subject": "model behavior", "predicate": "owned by", "object": "LLM provider" }
+        ],
+        "primary_attributions": [
+          { "framework": "ISO42001_AnnexA", "nodeId": "A.10.2", "confidence": 0.95 }
+        ],
+        "supporting_attributions": [],
+        "dismissed_false_positives": [],
+        "contradicts": null
+      },
+      "audit_phase": "S2",
+      "ai_system_kind": "llm",
+      "tags": ["third-party"]
+    },
+    {
+      "id": "C-037",
+      "answer": "All AI suppliers complete a security and AI-risk questionnaire. We have an annual review schedule for each tier-1 supplier.",
+      "ground_truth": {
+        "claims": [
+          { "subject": "AI suppliers", "predicate": "complete", "object": "AI-risk questionnaire" },
+          { "subject": "tier-1 suppliers", "predicate": "are reviewed", "object": "annually" }
+        ],
+        "primary_attributions": [
+          { "framework": "ISO42001_AnnexA", "nodeId": "A.10.3", "confidence": 0.96 }
+        ],
+        "supporting_attributions": [],
+        "dismissed_false_positives": [],
+        "contradicts": null
+      },
+      "audit_phase": "S2",
+      "ai_system_kind": "rag_agent",
+      "tags": ["third-party", "supplier"]
+    },
+    {
+      "id": "C-038",
+      "answer": "Customer obligations and rights are spelled out in the AI services schedule. Customers can request deletion of their data after contract termination.",
+      "ground_truth": {
+        "claims": [
+          { "subject": "customer obligations", "predicate": "spelled out in", "object": "AI services schedule" },
+          { "subject": "customers", "predicate": "can request", "object": "data deletion after termination" }
+        ],
+        "primary_attributions": [
+          { "framework": "ISO42001_AnnexA", "nodeId": "A.10.4", "confidence": 0.95 }
+        ],
+        "supporting_attributions": [],
+        "dismissed_false_positives": [],
+        "contradicts": null
+      },
+      "audit_phase": "S2",
+      "ai_system_kind": "rag_agent",
+      "tags": ["third-party", "customers"]
+    },
+    {
+      "id": "C-039",
+      "answer": "We measure assistant quality with a weekly eval over 1500 prompts; the eval set evolves with new failure modes added.",
+      "ground_truth": {
+        "claims": [
+          { "subject": "assistant quality", "predicate": "measured by", "object": "weekly eval" },
+          { "subject": "eval set", "predicate": "evolves with", "object": "new failure modes" }
+        ],
+        "primary_attributions": [
+          { "framework": "ISO42001", "nodeId": "9.1", "confidence": 0.93 }
+        ],
+        "supporting_attributions": [
+          { "framework": "ISO42001_AnnexA", "nodeId": "A.6.2.6", "confidence": 0.85 }
+        ],
+        "dismissed_false_positives": [],
+        "contradicts": null
+      },
+      "audit_phase": "Surv",
+      "ai_system_kind": "llm",
+      "tags": ["monitoring"]
+    },
+    {
+      "id": "C-040",
+      "answer": "We had an internal audit on the recommender system in November; one minor non-conformity raised on data lineage was closed in February.",
+      "ground_truth": {
+        "claims": [
+          { "subject": "internal audit", "predicate": "happened on", "object": "recommender system in November" },
+          { "subject": "minor NC", "predicate": "was closed", "object": "in February" }
+        ],
+        "primary_attributions": [
+          { "framework": "ISO42001", "nodeId": "9.2", "confidence": 0.95 }
+        ],
+        "supporting_attributions": [
+          { "framework": "ISO42001_AnnexA", "nodeId": "A.7.5", "confidence": 0.55 }
+        ],
+        "dismissed_false_positives": [],
+        "contradicts": null
+      },
+      "audit_phase": "Recert",
+      "ai_system_kind": "predictive-ml",
+      "tags": ["internal-audit"]
+    },
+    {
+      "id": "C-041",
+      "answer": "Top management reviews the AIMS twice yearly. Outputs include resourcing decisions and policy updates.",
+      "ground_truth": {
+        "claims": [
+          { "subject": "top management", "predicate": "reviews", "object": "AIMS twice yearly" },
+          { "subject": "review", "predicate": "outputs", "object": "resourcing decisions and policy updates" }
+        ],
+        "primary_attributions": [
+          { "framework": "ISO42001", "nodeId": "9.3", "confidence": 0.96 }
+        ],
+        "supporting_attributions": [],
+        "dismissed_false_positives": [],
+        "contradicts": null
+      },
+      "audit_phase": "Recert",
+      "ai_system_kind": "agent",
+      "tags": ["leadership"]
+    },
+    {
+      "id": "C-042",
+      "answer": "Our AI risk register has 47 items, classified by likelihood and impact. Risk treatment plans are tracked in Jira.",
+      "ground_truth": {
+        "claims": [
+          { "subject": "AI risk register", "predicate": "contains", "object": "47 items" },
+          { "subject": "risk treatment plans", "predicate": "tracked in", "object": "Jira" }
+        ],
+        "primary_attributions": [
+          { "framework": "ISO42001", "nodeId": "6.1.2", "confidence": 0.94 },
+          { "framework": "ISO42001", "nodeId": "6.1.3", "confidence": 0.91 }
+        ],
+        "supporting_attributions": [],
+        "dismissed_false_positives": [],
+        "contradicts": null
+      },
+      "audit_phase": "S2",
+      "ai_system_kind": "agent",
+      "tags": ["risk"]
+    },
+    {
+      "id": "C-043",
+      "answer": "Our context analysis covers regulatory exposure (EU AI Act, GDPR) and stakeholder expectations. It's refreshed when scope changes.",
+      "ground_truth": {
+        "claims": [
+          { "subject": "context analysis", "predicate": "covers", "object": "EU AI Act and GDPR exposure" }
+        ],
+        "primary_attributions": [
+          { "framework": "ISO42001", "nodeId": "4.1", "confidence": 0.94 },
+          { "framework": "ISO42001", "nodeId": "4.2", "confidence": 0.9 }
+        ],
+        "supporting_attributions": [],
+        "dismissed_false_positives": [],
+        "contradicts": null
+      },
+      "audit_phase": "S1",
+      "ai_system_kind": "rag_agent",
+      "tags": ["context"]
+    },
+    {
+      "id": "C-044",
+      "answer": "Continual improvement actions are tracked from internal audits, customer escalations, and the model performance dashboard.",
+      "ground_truth": {
+        "claims": [
+          { "subject": "continual improvement actions", "predicate": "tracked from", "object": "internal audits and dashboards" }
+        ],
+        "primary_attributions": [
+          { "framework": "ISO42001", "nodeId": "10.1", "confidence": 0.94 }
+        ],
+        "supporting_attributions": [
+          { "framework": "ISO42001", "nodeId": "10.2", "confidence": 0.7 }
+        ],
+        "dismissed_false_positives": [],
+        "contradicts": null
+      },
+      "audit_phase": "Recert",
+      "ai_system_kind": "predictive-ml",
+      "tags": ["improvement"]
+    },
+    {
+      "id": "C-045",
+      "answer": "We don't currently document data provenance. We rely on the data scientists' notebooks.",
+      "ground_truth": {
+        "claims": [
+          { "subject": "organization", "predicate": "does not document", "object": "data provenance" }
+        ],
+        "primary_attributions": [
+          { "framework": "ISO42001_AnnexA", "nodeId": "A.7.5", "confidence": 0.97 }
+        ],
+        "supporting_attributions": [],
+        "dismissed_false_positives": [],
+        "contradicts": "C-026"
+      },
+      "audit_phase": "S2",
+      "ai_system_kind": "training-pipeline",
+      "tags": ["data", "lineage", "gap"]
+    },
+    {
+      "id": "C-046",
+      "answer": "Our agentic workflow uses an MCP server to expose tools to the planner. The MCP server enforces a per-tool RBAC matrix and emits an audit row per call.",
+      "ground_truth": {
+        "claims": [
+          { "subject": "agentic workflow", "predicate": "uses", "object": "MCP server" },
+          { "subject": "MCP server", "predicate": "enforces", "object": "per-tool RBAC" },
+          { "subject": "MCP server", "predicate": "emits", "object": "audit row per call" }
+        ],
+        "primary_attributions": [
+          { "framework": "ISO42001_AnnexA", "nodeId": "A.6.2.7", "confidence": 0.91 },
+          { "framework": "ISO42001_AnnexA", "nodeId": "A.6.2.8", "confidence": 0.92 },
+          { "framework": "ISO42001_AnnexA", "nodeId": "A.10.3", "confidence": 0.85 }
+        ],
+        "supporting_attributions": [],
+        "dismissed_false_positives": [],
+        "contradicts": null
+      },
+      "audit_phase": "S2",
+      "ai_system_kind": "mcp-server",
+      "tags": ["mcp", "agentic"]
+    },
+    {
+      "id": "C-047",
+      "answer": "Our vector database holds embeddings for the RAG corpus. Access is restricted by service account and the corpus is re-indexed weekly with provenance metadata.",
+      "ground_truth": {
+        "claims": [
+          { "subject": "vector database", "predicate": "holds", "object": "RAG corpus embeddings" },
+          { "subject": "vector database", "predicate": "restricted by", "object": "service account" }
+        ],
+        "primary_attributions": [
+          { "framework": "ISO42001_AnnexA", "nodeId": "A.4.5", "confidence": 0.85 },
+          { "framework": "ISO42001_AnnexA", "nodeId": "A.7.5", "confidence": 0.83 }
+        ],
+        "supporting_attributions": [],
+        "dismissed_false_positives": [],
+        "contradicts": null
+      },
+      "audit_phase": "S2",
+      "ai_system_kind": "vector-db",
+      "tags": ["rag", "data"]
+    },
+    {
+      "id": "C-048",
+      "answer": "Multi-agent workflow includes a planner, an executor, and a verifier. The verifier rejects outputs that fail policy checks; rejections are logged with reasons.",
+      "ground_truth": {
+        "claims": [
+          { "subject": "multi-agent workflow", "predicate": "includes", "object": "planner/executor/verifier" },
+          { "subject": "verifier", "predicate": "rejects outputs failing", "object": "policy checks" }
+        ],
+        "primary_attributions": [
+          { "framework": "ISO42001_AnnexA", "nodeId": "A.6.2.6", "confidence": 0.9 },
+          { "framework": "ISO42001_AnnexA", "nodeId": "A.9.2", "confidence": 0.85 }
+        ],
+        "supporting_attributions": [],
+        "dismissed_false_positives": [],
+        "contradicts": null
+      },
+      "audit_phase": "S2",
+      "ai_system_kind": "multi-agent",
+      "tags": ["agentic", "monitoring"]
+    },
+    {
+      "id": "C-049",
+      "answer": "We've documented the AIMS scope: it covers the recommender system, the customer support assistant, and the underwriting model. Excluded: HR pilots and the marketing copywriting tool.",
+      "ground_truth": {
+        "claims": [
+          { "subject": "AIMS scope", "predicate": "covers", "object": "three AI systems" },
+          { "subject": "AIMS scope", "predicate": "excludes", "object": "HR pilots and marketing copywriting tool" }
+        ],
+        "primary_attributions": [
+          { "framework": "ISO42001", "nodeId": "4.3", "confidence": 0.96 }
+        ],
+        "supporting_attributions": [
+          { "framework": "ISO42001", "nodeId": "4.4", "confidence": 0.7 }
+        ],
+        "dismissed_false_positives": [],
+        "contradicts": null
+      },
+      "audit_phase": "S1",
+      "ai_system_kind": "predictive-ml",
+      "tags": ["scope"]
+    },
+    {
+      "id": "C-050",
+      "answer": "Operational risk treatment is reviewed monthly by the AI risk forum. Open treatments past their target date trigger an automatic escalation.",
+      "ground_truth": {
+        "claims": [
+          { "subject": "operational risk treatment", "predicate": "reviewed", "object": "monthly" },
+          { "subject": "open treatments past due", "predicate": "trigger", "object": "escalation" }
+        ],
+        "primary_attributions": [
+          { "framework": "ISO42001", "nodeId": "8.3", "confidence": 0.93 }
+        ],
+        "supporting_attributions": [
+          { "framework": "ISO42001", "nodeId": "8.2", "confidence": 0.7 }
+        ],
+        "dismissed_false_positives": [],
+        "contradicts": null
+      },
+      "audit_phase": "Surv",
+      "ai_system_kind": "predictive-ml",
+      "tags": ["risk", "operations"]
+    }
+  ]
+}
