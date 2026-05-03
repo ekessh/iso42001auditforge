@@ -2,8 +2,10 @@
 import {
   CallHandler,
   ExecutionContext,
+  Inject,
   Injectable,
   NestInterceptor,
+  Optional,
   SetMetadata,
   UnauthorizedException,
 } from '@nestjs/common';
@@ -12,6 +14,11 @@ import { Observable } from 'rxjs';
 import { WebAuthnService } from '@auditforge/auth-core';
 import type { AuthenticationResponseJSON } from '@simplewebauthn/server';
 import type { LedgerSink } from './auth.guard.js';
+import type { WebAuthnCredentialRepository } from './webauthn-credential.repository.js';
+import {
+  MonotonicityViolationError,
+  WEBAUTHN_CREDENTIAL_REPOSITORY,
+} from './webauthn-credential.repository.js';
 
 export const REQUIRES_SIGNED = 'requiresSigned';
 export const RequiresSignedAction = (): MethodDecorator => SetMetadata(REQUIRES_SIGNED, true);
@@ -60,11 +67,15 @@ declare module 'fastify' {
 export class SignedActionInterceptor implements NestInterceptor {
   private readonly webAuthnSvc: WebAuthnService;
 
-  constructor(private readonly ledgerSink?: LedgerSink) {
-    // Construct WebAuthnService from env — this avoids a hard DI dependency on
-    // a separately-provided token while still allowing injection in tests.
-    // TODO(phase-rls): promote to an injected token once the config module
-    // is accessible from CommonModule.
+  constructor(
+    @Optional() @Inject(SIGNED_ACTION_LEDGER_SINK)
+    private readonly ledgerSink?: LedgerSink,
+    @Optional() @Inject(WEBAUTHN_CREDENTIAL_REPOSITORY)
+    private readonly credentialRepo?: WebAuthnCredentialRepository,
+  ) {
+    // Construct WebAuthnService from env — the config module is not available
+    // in CommonModule without creating a circular dependency, so we read from
+    // process.env directly. Tests override via withService().
     this.webAuthnSvc = new WebAuthnService({
       rpName: process.env.WEBAUTHN_RP_NAME ?? 'AuditForge',
       rpId: process.env.WEBAUTHN_RP_ID ?? 'localhost',
@@ -72,9 +83,16 @@ export class SignedActionInterceptor implements NestInterceptor {
     });
   }
 
-  /** Constructor override for tests — allows injecting a mock WebAuthnService. */
-  static withService(svc: WebAuthnService, ledger?: LedgerSink): SignedActionInterceptor {
-    const instance = new SignedActionInterceptor(ledger);
+  /**
+   * Constructor override for tests — allows injecting a mock WebAuthnService
+   * and optional credential repository.
+   */
+  static withService(
+    svc: WebAuthnService,
+    ledger?: LedgerSink,
+    credentialRepo?: WebAuthnCredentialRepository,
+  ): SignedActionInterceptor {
+    const instance = new SignedActionInterceptor(ledger, credentialRepo);
     (instance as { webAuthnSvc: WebAuthnService }).webAuthnSvc = svc;
     return instance;
   }
@@ -128,8 +146,8 @@ export class SignedActionInterceptor implements NestInterceptor {
       clientExtensionResults: parsed.clientExtensionResults ?? {},
     };
 
-    // We cannot make this async easily with a sync intercept, so we return an
-    // Observable that awaits the verification before passing to the handler.
+    // Return an Observable that awaits the async verification before passing
+    // to the handler.
     return new Observable((subscriber) => {
       this.verifyAndProceed(authResponse, expectedChallenge, req, next)
         .then((obs) => obs.subscribe(subscriber))
@@ -143,16 +161,41 @@ export class SignedActionInterceptor implements NestInterceptor {
     req: FastifyRequest,
     next: CallHandler,
   ): Promise<Observable<unknown>> {
-    // Retrieve the stored credential for this auditor.
-    // TODO(phase-rls): load credential from the Drizzle-backed credentials repository.
-    const storedCredential = req.auth
-      ? await this.loadStoredCredential(req.auth.auditorId, authResponse.id)
-      : undefined;
+    if (!req.auth) {
+      this.emitFailure('missing_auth_context', req);
+      throw new UnauthorizedException('No authentication context for signed action');
+    }
 
-    if (!storedCredential) {
+    // Look up the stored credential from the Drizzle-backed repository.
+    if (!this.credentialRepo) {
+      // Repository not injected — this means the module is misconfigured.
+      // Fail secure: reject the request rather than silently skipping verification.
+      this.emitFailure('credential_repo_not_configured', req);
+      throw new UnauthorizedException('Signed action credential store not available');
+    }
+
+    const credRecord = await this.credentialRepo.getByCredentialId(authResponse.id);
+
+    if (!credRecord) {
       this.emitFailure('credential_not_found', req);
       throw new UnauthorizedException('WebAuthn credential not found for this auditor');
     }
+
+    // Verify that the credential belongs to the authenticated auditor.
+    if (credRecord.auditorId !== req.auth.auditorId) {
+      this.emitFailure('credential_auditor_mismatch', req, {
+        credentialAuditorId: credRecord.auditorId,
+      });
+      throw new UnauthorizedException('WebAuthn credential does not belong to this auditor');
+    }
+
+    // Build a StoredCredential compatible with @auditforge/auth-core.
+    const storedCredential = {
+      credentialId: credRecord.credentialId,
+      publicKey: credRecord.publicKey,
+      counter: credRecord.counter,
+      transports: credRecord.transports as import('@auditforge/auth-core').StoredCredential['transports'],
+    };
 
     let verified: Awaited<ReturnType<WebAuthnService['finishAuthentication']>>;
     try {
@@ -171,24 +214,39 @@ export class SignedActionInterceptor implements NestInterceptor {
       throw new UnauthorizedException('WebAuthn attestation could not be verified');
     }
 
-    // Counter must strictly increase to prevent replay.
-    if (
-      verified.authenticationInfo.newCounter !== undefined &&
-      verified.authenticationInfo.newCounter <= storedCredential.counter
-    ) {
+    const newCounter = verified.authenticationInfo.newCounter;
+
+    // Counter must strictly increase to prevent replay. The repository
+    // enforces this at the SQL level too (monotonicity constraint).
+    if (newCounter !== undefined && newCounter <= credRecord.counter) {
       this.emitFailure('webauthn_counter_replay', req, {
-        stored: storedCredential.counter,
-        received: verified.authenticationInfo.newCounter,
+        stored: credRecord.counter,
+        received: newCounter,
       });
       throw new UnauthorizedException('WebAuthn counter did not increase — possible replay');
     }
 
-    // TODO(phase-rls): persist updated counter to the credentials repository.
+    // Persist the updated counter. MonotonicityViolationError is a second
+    // defense line at the repository/SQL layer.
+    if (newCounter !== undefined) {
+      try {
+        await this.credentialRepo.incrementCounter(credRecord.credentialId, newCounter);
+      } catch (e) {
+        if (e instanceof MonotonicityViolationError) {
+          this.emitFailure('webauthn_counter_replay_sql', req, {
+            stored: e.storedCounter,
+            received: e.receivedCounter,
+          });
+          throw new UnauthorizedException('WebAuthn counter did not increase — possible replay');
+        }
+        throw e;
+      }
+    }
 
     void this.ledgerSink?.emitAuthFailure('signed_action_verified', {
-      auditorId: req.auth?.auditorId,
-      firmId: req.auth?.firmId,
-      roles: req.auth?.roles,
+      auditorId: req.auth.auditorId,
+      firmId: req.auth.firmId,
+      roles: req.auth.roles,
     });
 
     return next.handle();
@@ -202,22 +260,6 @@ export class SignedActionInterceptor implements NestInterceptor {
       ip: typeof req.ip === 'string' ? req.ip : undefined,
       ...extras,
     });
-  }
-
-  /**
-   * Load a stored WebAuthn credential for the given auditor and credentialId.
-   *
-   * TODO(phase-rls): replace with a real repository call to the Drizzle-backed
-   * credentials table. Current implementation is an in-memory stub.
-   */
-  private async loadStoredCredential(
-    _auditorId: string,
-    _credentialId: string,
-  ): Promise<import('@auditforge/auth-core').StoredCredential | undefined> {
-    // Placeholder — always returns undefined (credential not found) until
-    // the real repository is wired in. This means ALL signed-action attempts
-    // fail with 401 until phase-rls is complete, which is a safe default.
-    return undefined;
   }
 }
 
