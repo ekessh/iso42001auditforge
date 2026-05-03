@@ -4,13 +4,22 @@ import {
   date,
   index,
   integer,
+  pgEnum,
   pgTable,
   text,
+  timestamp,
   uniqueIndex,
   uuid,
 } from 'drizzle-orm/pg-core';
 import { auditFirms } from './firms.js';
 import { archivedAt, createdAt, firmIdColumn, idColumn, updatedAt } from './_shared.js';
+
+// Lifecycle status for an auditor account. Used by the identity service to
+// gate authentication at the repository layer before issuing any session.
+//   active    — fully operational account
+//   suspended — temporarily blocked (e.g. pending investigation); can be re-activated
+//   disabled  — permanently deactivated; cannot be re-activated without service-role action
+export const auditorStatusEnum = pgEnum('auditor_status', ['active', 'suspended', 'disabled']);
 
 export const auditors = pgTable(
   'auditors',
@@ -25,6 +34,12 @@ export const auditors = pgTable(
     bio: text('bio'),
     isActive: boolean('is_active').notNull().default(true),
     webauthnEnabled: boolean('webauthn_enabled').notNull().default(false),
+    // Fine-grained lifecycle state. Replaces the implicit isActive boolean
+    // for new code paths while keeping isActive for backward compatibility.
+    status: auditorStatusEnum('status').notNull().default('active'),
+    // Set by the rate-limiter when an auditor has exceeded failed-login
+    // thresholds. The identity service rejects logins until this timestamp.
+    lockedUntil: timestamp('locked_until', { withTimezone: true }),
     createdAt: createdAt(),
     updatedAt: updatedAt(),
     archivedAt: archivedAt(),
@@ -119,3 +134,35 @@ export const auditorAssignments = pgTable(
     ixEngagement: index('auditor_assignments_engagement_ix').on(t.engagementId),
   }),
 );
+
+// Maps an external OIDC issuer+subject pair to an internal auditor. A single
+// auditor may have identities from multiple providers (e.g. Google + Okta).
+// The pair (issuer, subject) is globally unique — two firms cannot share an
+// IdP identity mapping.
+export const auditorOidcIdentities = pgTable(
+  'auditor_oidc_identities',
+  {
+    id: idColumn(),
+    firmId: firmIdColumn().references(() => auditFirms.id, { onDelete: 'cascade' }),
+    auditorId: uuid('auditor_id')
+      .notNull()
+      .references(() => auditors.id, { onDelete: 'cascade' }),
+    // OIDC issuer URL (e.g. "https://accounts.google.com").
+    issuer: text('issuer').notNull(),
+    // OIDC subject claim ("sub") from the ID token — opaque identifier
+    // assigned by the IdP. Never a user-controlled value.
+    subject: text('subject').notNull(),
+    createdAt: createdAt(),
+    updatedAt: updatedAt(),
+  },
+  (t) => ({
+    uqIssuerSubject: uniqueIndex('auditor_oidc_identities_issuer_subject_uq').on(
+      t.issuer,
+      t.subject,
+    ),
+    ixAuditor: index('auditor_oidc_identities_auditor_ix').on(t.auditorId),
+  }),
+);
+
+export type AuditorRow = typeof auditors.$inferSelect;
+export type NewAuditor = typeof auditors.$inferInsert;

@@ -13,10 +13,17 @@ import {
 import type { RegistrationResponseJSON, AuthenticationResponseJSON } from '@simplewebauthn/server';
 import type { SessionDto } from './dto.js';
 import type { LedgerSink } from '../../common/auth.guard.js';
+import type {
+  WebAuthnCredentialRepository,
+} from '../../common/webauthn-credential.repository.js';
+import {
+  MonotonicityViolationError,
+  WEBAUTHN_CREDENTIAL_REPOSITORY,
+} from '../../common/webauthn-credential.repository.js';
 
-// ── Repository port (interface) ───────────────────────────────────────────────
-// Implementation is injected — the placeholder below is marked
-// TODO(phase-rls): wire to Drizzle.
+// ── Repository port (interface) ──────────────────────────────────────────────
+// Production implementation: DrizzleAuditorRepository (auditor.repository.ts)
+// Injected via AUDITOR_REPOSITORY token by IdentityModule.
 
 export interface AuditorRecord {
   id: string;
@@ -43,6 +50,10 @@ export interface AuditorRepository {
     newCounter: number,
   ): Promise<void>;
   addCredential(auditorId: string, credential: StoredCredential): Promise<void>;
+  /** Suspend an auditor account (e.g. after suspicious activity). */
+  markSuspended?(auditorId: string): Promise<void>;
+  /** Record a successful login event (update last-seen timestamps). */
+  recordLogin?(auditorId: string): Promise<void>;
 }
 
 // ── OIDC session store port ───────────────────────────────────────────────────
@@ -60,66 +71,14 @@ export interface OidcPendingSession {
 export const AUDITOR_REPOSITORY = Symbol('AUDITOR_REPOSITORY');
 /** Injected token for the LedgerSink */
 export const IDENTITY_LEDGER_SINK = Symbol('IDENTITY_LEDGER_SINK');
+/** Injected token for the WebAuthnCredentialRepository (used in WebAuthn login + signed actions) */
+export { WEBAUTHN_CREDENTIAL_REPOSITORY };
 
 /** How long a WebAuthn/OIDC challenge is valid (5 minutes). */
 const CHALLENGE_TTL_MS = 5 * 60 * 1_000;
 
 /** Session TTL — 8 hours. */
 const SESSION_TTL_MS = 8 * 3_600 * 1_000;
-
-/**
- * In-process placeholder for AuditorRepository.
- *
- * TODO(phase-rls): replace with a Drizzle-backed repository that queries the
- * `auditors` table with RLS-enforced `app_request_role` connection.
- */
-class InMemoryAuditorRepository implements AuditorRepository {
-  private readonly store = new Map<string, AuditorRecord>();
-
-  async findByUsername(username: string): Promise<AuditorRecord | undefined> {
-    return [...this.store.values()].find((r) => r.username === username);
-  }
-
-  async findById(id: string): Promise<AuditorRecord | undefined> {
-    return this.store.get(id);
-  }
-
-  async findByOidcSub(sub: string): Promise<AuditorRecord | undefined> {
-    return [...this.store.values()].find((r) => (r as AuditorRecord & { oidcSub?: string }).oidcSub === sub);
-  }
-
-  async createFromOidc(sub: string, email: string, firmId: string): Promise<AuditorRecord> {
-    const id = `usr_${randomBytes(8).toString('hex')}`;
-    const record: AuditorRecord & { oidcSub: string } = {
-      id,
-      username: email,
-      firmId,
-      roles: ['lead_auditor'],
-      status: 'active',
-      webauthnCredentials: [],
-      oidcSub: sub,
-    };
-    this.store.set(id, record);
-    return record;
-  }
-
-  async updateCredentialCounter(
-    auditorId: string,
-    credentialId: string,
-    newCounter: number,
-  ): Promise<void> {
-    const record = this.store.get(auditorId);
-    if (!record) return;
-    const cred = record.webauthnCredentials.find((c) => c.credentialId === credentialId);
-    if (cred) cred.counter = newCounter;
-  }
-
-  async addCredential(auditorId: string, credential: StoredCredential): Promise<void> {
-    const record = this.store.get(auditorId);
-    if (!record) return;
-    record.webauthnCredentials.push(credential);
-  }
-}
 
 // ── Service ───────────────────────────────────────────────────────────────────
 
@@ -141,8 +100,12 @@ export class IdentityService {
 
   constructor(
     @Inject(APP_CONFIG) private readonly cfg: AppConfig,
+    // AuditorRepository is required for production; @Optional only for
+    // unit-test instantiation where the full DI context is not present.
     @Optional() @Inject(AUDITOR_REPOSITORY) auditorRepo?: AuditorRepository,
     @Optional() @Inject(IDENTITY_LEDGER_SINK) private readonly ledger?: LedgerSink,
+    @Optional() @Inject(WEBAUTHN_CREDENTIAL_REPOSITORY)
+    private readonly webauthnCredentialRepo?: WebAuthnCredentialRepository,
   ) {
     this.webAuthnService = new WebAuthnService({
       rpName: cfg.WEBAUTHN_RP_NAME,
@@ -150,9 +113,16 @@ export class IdentityService {
       origin: cfg.WEBAUTHN_ORIGIN,
     });
 
-    // Use the injected repo or fall back to the in-memory placeholder.
-    // TODO(phase-rls): remove fallback once Drizzle-backed repo is wired.
-    this.auditorRepo = auditorRepo ?? new InMemoryAuditorRepository();
+    if (!auditorRepo) {
+      // In production the module must provide the Drizzle repository.
+      // This path should only be hit in isolated unit tests.
+      this.logger.warn(
+        'No AuditorRepository injected — IdentityService will reject all authentication attempts. ' +
+          'Ensure IdentityModule provides AUDITOR_REPOSITORY.',
+      );
+    }
+    // Assign; undefined guarded at runtime in each method.
+    this.auditorRepo = auditorRepo as AuditorRepository;
   }
 
   // ── OIDC ──────────────────────────────────────────────────────────────────
@@ -234,14 +204,19 @@ export class IdentityService {
       throw new UnauthorizedError('OIDC provider did not return an email claim');
     }
 
-    // Look up or provision the auditor.
-    let auditor = await this.auditorRepo.findByOidcSub(userInfo.sub);
+    // Lookup the auditor by OIDC subject. JIT provisioning is a separate
+    // controlled flow — if no identity mapping exists, reject with a clear
+    // error rather than silently creating an unprovisioned account.
+    const auditor = await this.auditorRepo.findByOidcSub(userInfo.sub);
     if (!auditor) {
-      // Auto-provision from OIDC — firmId is derived from tenant mapping.
-      // TODO(phase-rls): look up firmId from a tenant-map table seeded by
-      // the IdP issuer URL. Using a placeholder until that table exists.
-      const firmId = this.cfg.OIDC_ISSUER ?? 'unknown-firm';
-      auditor = await this.auditorRepo.createFromOidc(userInfo.sub, userInfo.email, firmId);
+      this.emitAuthFailure('oidc_auditor_not_provisioned', {
+        detail: userInfo.sub,
+        email: userInfo.email,
+      });
+      throw new UnauthorizedError(
+        'No auditor account is associated with this identity. ' +
+          'An administrator must provision your account before you can log in.',
+      );
     }
 
     this.assertAuditorActive(auditor);
@@ -383,7 +358,28 @@ export class IdentityService {
       throw new UnauthorizedError('Authentication failed');
     }
 
-    await this.auditorRepo.updateCredentialCounter(auditor.id, credentialId, newCounter);
+    // Persist the counter. Prefer the dedicated credential repository when
+    // available (it enforces monotonicity at the SQL layer too); fall back
+    // to the auditor repository's legacy updateCredentialCounter otherwise.
+    if (this.webauthnCredentialRepo) {
+      try {
+        await this.webauthnCredentialRepo.incrementCounter(credentialId, newCounter);
+      } catch (e) {
+        if (e instanceof MonotonicityViolationError) {
+          this.emitAuthFailure('webauthn_login_counter_replay_sql', {
+            username,
+            stored: e.storedCounter,
+            received: e.receivedCounter,
+          });
+          throw new UnauthorizedError('Authentication failed');
+        }
+        throw e;
+      }
+    } else {
+      await this.auditorRepo.updateCredentialCounter(auditor.id, credentialId, newCounter);
+    }
+
+    void this.auditorRepo.recordLogin?.(auditor.id);
     return this.issueSession(auditor);
   }
 

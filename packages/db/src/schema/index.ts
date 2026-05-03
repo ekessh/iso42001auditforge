@@ -22,3 +22,4 @@ export * from './billing.js';
 export * from './surveillance.js';
 export * from './claims.js';
 export * from './soa.js';
+export * from './webauthn-credentials.js';
