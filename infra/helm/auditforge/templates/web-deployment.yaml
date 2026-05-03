@@ -1,0 +1,74 @@
+{{/* SPDX-License-Identifier: BUSL-1.1 */}}
+{{- if .Values.web.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "auditforge.fullname" . }}-web
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "auditforge.componentLabels" (dict "component" "web" "Chart" .Chart "Release" .Release "Values" .Values) | nindent 4 }}
+spec:
+  {{- if not .Values.web.autoscaling.enabled }}
+  replicas: {{ .Values.web.replicaCount }}
+  {{- end }}
+  revisionHistoryLimit: 5
+  selector:
+    matchLabels:
+      {{- include "auditforge.componentSelector" (dict "component" "web" "root" .) | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "auditforge.componentSelector" (dict "component" "web" "root" .) | nindent 8 }}
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
+    spec:
+      serviceAccountName: {{ include "auditforge.serviceAccountName" . }}
+      {{- include "auditforge.imagePullSecrets" . | nindent 6 }}
+      automountServiceAccountToken: false
+      securityContext:
+        {{- include "auditforge.podSecurityContext" . | nindent 8 }}
+      containers:
+        - name: web
+          image: {{ include "auditforge.image" (dict "root" . "image" .Values.web.image) | quote }}
+          imagePullPolicy: {{ include "auditforge.imagePullPolicy" (dict "root" . "image" .Values.web.image) }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.web.containerPort }}
+              protocol: TCP
+          envFrom:
+            - configMapRef:
+                name: {{ include "auditforge.fullname" . }}-config
+          env:
+            - name: AUDITFORGE_COMPONENT
+              value: web
+          resources:
+            {{- toYaml .Values.web.resources | nindent 12 }}
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 10
+            periodSeconds: 30
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 3
+            periodSeconds: 10
+          securityContext:
+            {{- include "auditforge.containerSecurityContext" . | nindent 12 }}
+          volumeMounts:
+            - name: nginx-cache
+              mountPath: /var/cache/nginx
+            - name: nginx-run
+              mountPath: /var/run
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        - name: nginx-cache
+          emptyDir: {}
+        - name: nginx-run
+          emptyDir: {}
+        - name: tmp
+          emptyDir: {}
+{{- end }}

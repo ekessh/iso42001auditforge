@@ -1,0 +1,53 @@
+{{/* SPDX-License-Identifier: BUSL-1.1 */}}
+{{- if .Values.archiveRenewal.enabled }}
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ include "auditforge.fullname" . }}-archive-renewal
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "auditforge.componentLabels" (dict "component" "archive-renewal" "Chart" .Chart "Release" .Release "Values" .Values) | nindent 4 }}
+spec:
+  schedule: {{ .Values.archiveRenewal.schedule | quote }}
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 5
+  concurrencyPolicy: Forbid
+  jobTemplate:
+    spec:
+      backoffLimit: 2
+      template:
+        metadata:
+          labels:
+            {{- include "auditforge.componentSelector" (dict "component" "archive-renewal" "root" .) | nindent 12 }}
+        spec:
+          serviceAccountName: {{ include "auditforge.serviceAccountName" . }}
+          restartPolicy: OnFailure
+          {{- include "auditforge.imagePullSecrets" . | nindent 10 }}
+          securityContext:
+            {{- include "auditforge.podSecurityContext" . | nindent 12 }}
+          containers:
+            - name: renewal
+              image: {{ include "auditforge.image" (dict "root" . "image" .Values.worker.image) | quote }}
+              imagePullPolicy: {{ include "auditforge.imagePullPolicy" (dict "root" . "image" .Values.worker.image) }}
+              command: ["node"]
+              args: ["dist/cli.js", "archive:renew-signatures", "--ledger=long-term"]
+              envFrom:
+                - configMapRef:
+                    name: {{ include "auditforge.fullname" . }}-config
+                - secretRef:
+                    name: {{ include "auditforge.fullname" . }}-app-secrets
+                    optional: true
+              env:
+                - name: AUDITFORGE_COMPONENT
+                  value: archive-renewal
+              resources:
+                {{- toYaml .Values.archiveRenewal.resources | nindent 16 }}
+              securityContext:
+                {{- include "auditforge.containerSecurityContext" . | nindent 16 }}
+              volumeMounts:
+                - name: tmp
+                  mountPath: /tmp
+          volumes:
+            - name: tmp
+              emptyDir: {}
+{{- end }}

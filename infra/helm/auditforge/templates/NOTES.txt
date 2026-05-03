@@ -1,0 +1,32 @@
+{{/* SPDX-License-Identifier: BUSL-1.1 */}}
+AuditForge {{ .Chart.AppVersion }} has been deployed.
+
+Release:   {{ .Release.Name }}
+Namespace: {{ .Release.Namespace }}
+
+To check status:
+  kubectl --namespace {{ .Release.Namespace }} get all -l "app.kubernetes.io/instance={{ .Release.Name }}"
+
+To run the bundled smoke tests:
+  helm test {{ .Release.Name }} -n {{ .Release.Namespace }}
+
+API:
+{{- if .Values.api.ingress.enabled }}
+{{- range .Values.api.ingress.hosts }}
+  https://{{ .host }}
+{{- end }}
+{{- else }}
+  kubectl --namespace {{ .Release.Namespace }} port-forward svc/{{ include "auditforge.fullname" . }}-api 3000:{{ .Values.api.service.port }}
+{{- end }}
+
+Web UI:
+{{- if .Values.web.ingress.enabled }}
+{{- range .Values.web.ingress.hosts }}
+  https://{{ .host }}
+{{- end }}
+{{- else }}
+  kubectl --namespace {{ .Release.Namespace }} port-forward svc/{{ include "auditforge.fullname" . }}-web 8080:{{ .Values.web.service.port }}
+{{- end }}
+
+For air-gapped installs see infra/helm/auditforge/values-airgapped.yaml.
+For production HA values see infra/helm/auditforge/values-prod.yaml.

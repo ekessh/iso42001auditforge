@@ -1,0 +1,486 @@
+# SPDX-License-Identifier: BUSL-1.1
+# AuditForge Helm chart — default values
+# All defaults are production-leaning but small (single-replica, 1Gi PVCs).
+# See values-prod.yaml for HA settings and values-airgapped.yaml for air-gapped.
+
+global:
+  # -- Container image registry override (use private registry for air-gapped).
+  imageRegistry: ""
+  # -- Default image pull policy.
+  imagePullPolicy: IfNotPresent
+  # -- Image pull secrets (list of names) for private registries.
+  imagePullSecrets: []
+  # -- Cluster domain.
+  clusterDomain: cluster.local
+  # -- Default storage class (empty = cluster default).
+  storageClass: ""
+  # -- Common labels applied to every resource.
+  labels: {}
+  # -- Common annotations.
+  annotations: {}
+
+nameOverride: ""
+fullnameOverride: ""
+
+# -- Service account creation + RBAC.
+serviceAccount:
+  create: true
+  name: ""
+  annotations: {}
+  automountServiceAccountToken: false
+
+# -- Pod-level security context applied to all workload pods.
+podSecurityContext:
+  runAsNonRoot: true
+  runAsUser: 10001
+  runAsGroup: 10001
+  fsGroup: 10001
+  seccompProfile:
+    type: RuntimeDefault
+
+# -- Container-level security context applied to all containers.
+containerSecurityContext:
+  allowPrivilegeEscalation: false
+  privileged: false
+  readOnlyRootFilesystem: true
+  capabilities:
+    drop: [ALL]
+  runAsNonRoot: true
+  runAsUser: 10001
+
+# -- Default network policy (default-deny + allowlist between AuditForge components).
+networkPolicy:
+  enabled: true
+  # -- Allow pods labelled with this map to access the API/web (e.g. ingress controller).
+  allowedIngressNamespaces:
+    - kubernetes.io/metadata.name: ingress-nginx
+  # -- Egress allowlist (CIDRs / namespaces) outside the chart, e.g. cloud KMS.
+  egressAllowList:
+    - to:
+        - namespaceSelector: {}
+      ports:
+        - port: 53
+          protocol: UDP
+
+# -- Pod Disruption Budget for HA workloads.
+podDisruptionBudget:
+  enabled: true
+  minAvailable: 1
+
+# ----------------------------------------------------------------------------
+# API service (apps/api).
+# ----------------------------------------------------------------------------
+api:
+  enabled: true
+  replicaCount: 2
+  image:
+    repository: ghcr.io/auditforge/api
+    tag: ""  # defaults to .Chart.AppVersion
+    pullPolicy: ""
+  command: []
+  args: []
+  containerPort: 3000
+  service:
+    type: ClusterIP
+    port: 80
+    annotations: {}
+  ingress:
+    enabled: true
+    className: nginx
+    annotations:
+      cert-manager.io/cluster-issuer: letsencrypt-prod
+      nginx.ingress.kubernetes.io/ssl-redirect: "true"
+      nginx.ingress.kubernetes.io/proxy-body-size: "256m"
+    hosts:
+      - host: api.auditforge.local
+        paths:
+          - path: /
+            pathType: Prefix
+    tls:
+      - secretName: auditforge-api-tls
+        hosts:
+          - api.auditforge.local
+  env: []
+  envFrom: []
+  resources:
+    requests:
+      cpu: 200m
+      memory: 512Mi
+    limits:
+      cpu: 1000m
+      memory: 1Gi
+  autoscaling:
+    enabled: true
+    minReplicas: 2
+    maxReplicas: 10
+    targetCPUUtilizationPercentage: 70
+    targetMemoryUtilizationPercentage: 80
+  livenessProbe:
+    httpGet:
+      path: /healthz/live
+      port: http
+    initialDelaySeconds: 30
+    periodSeconds: 30
+  readinessProbe:
+    httpGet:
+      path: /healthz/ready
+      port: http
+    initialDelaySeconds: 5
+    periodSeconds: 10
+  startupProbe:
+    httpGet:
+      path: /healthz/live
+      port: http
+    failureThreshold: 30
+    periodSeconds: 10
+  podAnnotations:
+    prometheus.io/scrape: "true"
+    prometheus.io/port: "3000"
+    prometheus.io/path: /metrics
+  topologySpreadConstraints: []
+  affinity: {}
+  nodeSelector: {}
+  tolerations: []
+  volumes:
+    - name: tmp
+      emptyDir: {}
+    - name: cache
+      emptyDir: {}
+  volumeMounts:
+    - name: tmp
+      mountPath: /tmp
+    - name: cache
+      mountPath: /app/.cache
+
+# ----------------------------------------------------------------------------
+# Worker (probe runner, signing pipeline, archive jobs).
+# ----------------------------------------------------------------------------
+worker:
+  enabled: true
+  replicaCount: 2
+  image:
+    repository: ghcr.io/auditforge/worker
+    tag: ""
+    pullPolicy: ""
+  command: []
+  args: []
+  resources:
+    requests:
+      cpu: 250m
+      memory: 768Mi
+    limits:
+      cpu: 2000m
+      memory: 2Gi
+  autoscaling:
+    enabled: true
+    minReplicas: 2
+    maxReplicas: 20
+    targetCPUUtilizationPercentage: 75
+    customMetrics:
+      - type: External
+        external:
+          metric:
+            name: probe_queue_depth
+          target:
+            type: AverageValue
+            averageValue: "10"
+  env: []
+  envFrom: []
+  podAnnotations:
+    prometheus.io/scrape: "true"
+    prometheus.io/port: "9464"
+  livenessProbe:
+    exec:
+      command: [/bin/sh, -c, "test -f /tmp/healthy"]
+    initialDelaySeconds: 60
+    periodSeconds: 30
+  readinessProbe:
+    exec:
+      command: [/bin/sh, -c, "test -f /tmp/ready"]
+    initialDelaySeconds: 10
+    periodSeconds: 10
+  volumes:
+    - name: tmp
+      emptyDir: {}
+    - name: probe-sandbox
+      emptyDir:
+        sizeLimit: 5Gi
+  volumeMounts:
+    - name: tmp
+      mountPath: /tmp
+    - name: probe-sandbox
+      mountPath: /var/probe-sandbox
+
+# ----------------------------------------------------------------------------
+# Web UI (apps/web).
+# ----------------------------------------------------------------------------
+web:
+  enabled: true
+  replicaCount: 2
+  image:
+    repository: ghcr.io/auditforge/web
+    tag: ""
+    pullPolicy: ""
+  containerPort: 8080
+  service:
+    type: ClusterIP
+    port: 80
+  ingress:
+    enabled: true
+    className: nginx
+    annotations:
+      cert-manager.io/cluster-issuer: letsencrypt-prod
+      nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    hosts:
+      - host: app.auditforge.local
+        paths:
+          - path: /
+            pathType: Prefix
+    tls:
+      - secretName: auditforge-web-tls
+        hosts:
+          - app.auditforge.local
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+  autoscaling:
+    enabled: true
+    minReplicas: 2
+    maxReplicas: 10
+    targetCPUUtilizationPercentage: 70
+
+# ----------------------------------------------------------------------------
+# PostgreSQL (in-cluster StatefulSet OR external/RDS).
+# ----------------------------------------------------------------------------
+postgres:
+  # -- Mode: "in-cluster" deploys a StatefulSet; "external" uses values from postgres.external.
+  mode: in-cluster
+  image:
+    repository: postgres
+    tag: "16.4-alpine"
+  replicas: 1
+  persistence:
+    size: 20Gi
+    storageClass: ""
+  resources:
+    requests:
+      cpu: 250m
+      memory: 1Gi
+    limits:
+      cpu: 2000m
+      memory: 4Gi
+  database: auditforge
+  user: auditforge
+  passwordSecretRef:
+    name: auditforge-postgres
+    key: password
+  parameters:
+    max_connections: "200"
+    shared_buffers: "512MB"
+    work_mem: "16MB"
+    log_statement: ddl
+    log_connections: "on"
+    log_disconnections: "on"
+    ssl: "on"
+  external:
+    host: ""
+    port: 5432
+    database: ""
+    user: ""
+    sslmode: require
+    secretName: ""
+
+# ----------------------------------------------------------------------------
+# Redis (in-cluster StatefulSet OR external/ElastiCache).
+# ----------------------------------------------------------------------------
+redis:
+  mode: in-cluster
+  image:
+    repository: redis
+    tag: "7.4-alpine"
+  replicas: 1
+  persistence:
+    size: 5Gi
+    storageClass: ""
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      cpu: 500m
+      memory: 1Gi
+  passwordSecretRef:
+    name: auditforge-redis
+    key: password
+  external:
+    host: ""
+    port: 6379
+    secretName: ""
+
+# ----------------------------------------------------------------------------
+# Object storage (MinIO in-cluster OR external S3).
+# ----------------------------------------------------------------------------
+objectStorage:
+  mode: in-cluster   # or "s3"
+  minio:
+    image:
+      repository: minio/minio
+      tag: RELEASE.2024-10-13T13-34-11Z
+    replicas: 1
+    persistence:
+      size: 50Gi
+      storageClass: ""
+    resources:
+      requests:
+        cpu: 200m
+        memory: 512Mi
+      limits:
+        cpu: 1000m
+        memory: 2Gi
+    rootUserSecretRef:
+      name: auditforge-minio
+      userKey: username
+      passwordKey: password
+    buckets:
+      - auditforge-evidence
+      - auditforge-archive
+      - auditforge-reports
+  s3:
+    region: ""
+    evidenceBucket: ""
+    archiveBucket: ""
+    reportsBucket: ""
+    endpointOverride: ""
+    credentialsSecretRef: ""
+
+# ----------------------------------------------------------------------------
+# Meilisearch (full-text search across working papers).
+# ----------------------------------------------------------------------------
+meilisearch:
+  enabled: true
+  image:
+    repository: getmeili/meilisearch
+    tag: v1.10.2
+  replicas: 1
+  persistence:
+    size: 10Gi
+    storageClass: ""
+  resources:
+    requests:
+      cpu: 200m
+      memory: 512Mi
+    limits:
+      cpu: 1000m
+      memory: 2Gi
+  masterKeySecretRef:
+    name: auditforge-meilisearch
+    key: master-key
+
+# ----------------------------------------------------------------------------
+# Ollama (optional local LLM backend).
+# ----------------------------------------------------------------------------
+ollama:
+  enabled: false
+  image:
+    repository: ollama/ollama
+    tag: "0.3.13"
+  replicas: 1
+  persistence:
+    size: 50Gi
+  resources:
+    requests:
+      cpu: 1000m
+      memory: 4Gi
+      nvidia.com/gpu: 0
+    limits:
+      cpu: 4000m
+      memory: 16Gi
+  models:
+    - llama3.2:3b
+    - nomic-embed-text
+
+# ----------------------------------------------------------------------------
+# External Secrets Operator integration.
+# ----------------------------------------------------------------------------
+externalSecrets:
+  enabled: false
+  refreshInterval: 1h
+  # -- Secret store kind: "ClusterSecretStore" or "SecretStore".
+  storeKind: ClusterSecretStore
+  storeName: auditforge-secret-store
+  remoteRefs:
+    postgres:
+      key: auditforge/postgres
+      property: password
+    redis:
+      key: auditforge/redis
+      property: password
+    minio:
+      key: auditforge/minio
+    meilisearch:
+      key: auditforge/meilisearch
+      property: master-key
+
+# ----------------------------------------------------------------------------
+# Sealed Secrets fallback (used when externalSecrets.enabled = false).
+# Operators bring their own; chart only references by name.
+# ----------------------------------------------------------------------------
+sealedSecrets:
+  enabled: false
+
+# ----------------------------------------------------------------------------
+# Backups + archive renewal cron jobs.
+# ----------------------------------------------------------------------------
+backup:
+  enabled: true
+  schedule: "0 2 * * *"
+  retention: 30
+  s3:
+    bucket: auditforge-backups
+    region: ""
+    secretName: auditforge-backup-s3
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      cpu: 500m
+      memory: 1Gi
+
+archiveRenewal:
+  enabled: true
+  schedule: "0 4 * * *"
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      cpu: 500m
+      memory: 1Gi
+
+# ----------------------------------------------------------------------------
+# Observability — Prometheus ServiceMonitor + OpenTelemetry collector endpoint.
+# ----------------------------------------------------------------------------
+observability:
+  serviceMonitor:
+    enabled: true
+    interval: 30s
+    scrapeTimeout: 10s
+    namespaceSelector: {}
+    additionalLabels:
+      release: kube-prometheus-stack
+  otel:
+    endpoint: http://otel-collector.observability.svc.cluster.local:4318
+    insecure: true
+
+# ----------------------------------------------------------------------------
+# Prometheus alerting rule defaults.
+# ----------------------------------------------------------------------------
+prometheusRule:
+  enabled: false
+  additionalLabels:
+    role: auditforge-alerts

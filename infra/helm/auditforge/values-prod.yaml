@@ -1,0 +1,97 @@
+# SPDX-License-Identifier: BUSL-1.1
+# Production overlay: HA, external managed services, External Secrets, large PVCs.
+global:
+  imagePullPolicy: IfNotPresent
+  storageClass: gp3-encrypted
+
+api:
+  replicaCount: 3
+  resources:
+    requests: { cpu: 500m, memory: 1Gi }
+    limits:   { cpu: 2000m, memory: 2Gi }
+  autoscaling:
+    minReplicas: 3
+    maxReplicas: 30
+  ingress:
+    hosts:
+      - host: api.auditforge.example.com
+        paths: [{ path: /, pathType: Prefix }]
+    tls:
+      - secretName: auditforge-api-tls
+        hosts: [api.auditforge.example.com]
+  topologySpreadConstraints:
+    - maxSkew: 1
+      topologyKey: topology.kubernetes.io/zone
+      whenUnsatisfiable: ScheduleAnyway
+      labelSelector:
+        matchLabels:
+          app.kubernetes.io/component: api
+
+worker:
+  replicaCount: 4
+  autoscaling:
+    minReplicas: 4
+    maxReplicas: 50
+  resources:
+    requests: { cpu: 500m, memory: 1Gi }
+    limits:   { cpu: 4000m, memory: 4Gi }
+
+web:
+  replicaCount: 3
+  ingress:
+    hosts:
+      - host: app.auditforge.example.com
+        paths: [{ path: /, pathType: Prefix }]
+    tls:
+      - secretName: auditforge-web-tls
+        hosts: [app.auditforge.example.com]
+
+postgres:
+  mode: external
+  external:
+    host: auditforge-prod.cluster-abcd.us-east-1.rds.amazonaws.com
+    port: 5432
+    database: auditforge
+    user: auditforge
+    sslmode: verify-full
+    secretName: auditforge-postgres
+
+redis:
+  mode: external
+  external:
+    host: auditforge-prod.abcd.0001.use1.cache.amazonaws.com
+    port: 6379
+    secretName: auditforge-redis
+
+objectStorage:
+  mode: s3
+  s3:
+    region: us-east-1
+    evidenceBucket: auditforge-prod-evidence
+    archiveBucket: auditforge-prod-archive
+    reportsBucket: auditforge-prod-reports
+    credentialsSecretRef: auditforge-s3
+
+externalSecrets:
+  enabled: true
+  storeKind: ClusterSecretStore
+  storeName: aws-secrets-manager
+
+backup:
+  enabled: true
+  schedule: "0 1 * * *"
+  retention: 90
+  s3:
+    bucket: auditforge-prod-backups
+    region: us-east-1
+    secretName: auditforge-backup-s3
+
+prometheusRule:
+  enabled: true
+
+observability:
+  serviceMonitor:
+    enabled: true
+  otel:
+    endpoint: https://otel.auditforge.example.com:4318
+    insecure: false

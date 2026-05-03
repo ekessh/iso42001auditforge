@@ -1,0 +1,129 @@
+{{/* SPDX-License-Identifier: BUSL-1.1 */}}
+{{- if .Values.prometheusRule.enabled }}
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: {{ include "auditforge.fullname" . }}-rules
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "auditforge.labels" . | nindent 4 }}
+    {{- with .Values.prometheusRule.additionalLabels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+spec:
+  groups:
+    - name: auditforge.api.slo
+      interval: 30s
+      rules:
+        - alert: AuditForgeApiHighErrorRateFastBurn
+          expr: |
+            (
+              sum(rate(http_requests_total{job=~".*auditforge.*",status=~"5.."}[5m]))
+              /
+              sum(rate(http_requests_total{job=~".*auditforge.*"}[5m]))
+            ) > (14.4 * 0.001)
+          for: 5m
+          labels:
+            severity: critical
+            slo: api-availability
+          annotations:
+            summary: "AuditForge API burning fast (5m window)"
+            description: "Error rate is more than 14.4x the SLO budget over 5 minutes."
+        - alert: AuditForgeApiHighErrorRateSlowBurn
+          expr: |
+            (
+              sum(rate(http_requests_total{job=~".*auditforge.*",status=~"5.."}[1h]))
+              /
+              sum(rate(http_requests_total{job=~".*auditforge.*"}[1h]))
+            ) > (6 * 0.001)
+          for: 1h
+          labels:
+            severity: warning
+            slo: api-availability
+          annotations:
+            summary: "AuditForge API slow burn (1h window)"
+            description: "Error rate is more than 6x the SLO budget over 1 hour."
+        - alert: AuditForgeApiP95LatencyHigh
+          expr: |
+            histogram_quantile(0.95, sum(rate(http_server_duration_seconds_bucket{job=~".*auditforge.*"}[5m])) by (le)) > 0.2
+          for: 10m
+          labels:
+            severity: warning
+            slo: api-latency
+          annotations:
+            summary: "API p95 latency above 200ms"
+    - name: auditforge.ledger
+      interval: 30s
+      rules:
+        - alert: AuditForgeLedgerChainVerifyFailure
+          expr: increase(auditforge_ledger_chain_verify_failures_total[10m]) > 0
+          for: 1m
+          labels:
+            severity: critical
+            slo: ledger-integrity
+          annotations:
+            summary: "Audit ledger chain verification failed"
+            description: "Investigate immediately — possible tampering or hardware corruption."
+        - alert: AuditForgeSignatureRenewalJobFailed
+          expr: kube_job_failed{job_name=~".*archive-renewal.*"} > 0
+          for: 10m
+          labels:
+            severity: critical
+            slo: archive-durability
+          annotations:
+            summary: "Signature renewal CronJob failed"
+        - alert: AuditForgeLedgerBacklogGrowing
+          expr: |
+            rate(auditforge_ledger_pending_events[15m]) > 0 and auditforge_ledger_pending_events > 1000
+          for: 30m
+          labels:
+            severity: warning
+          annotations:
+            summary: "Ledger pending event count growing"
+    - name: auditforge.security
+      interval: 30s
+      rules:
+        - alert: AuditForgeAVScanDisabled
+          expr: auditforge_av_scan_enabled == 0
+          for: 5m
+          labels:
+            severity: critical
+            slo: evidence-integrity
+          annotations:
+            summary: "Antivirus scanning is disabled on evidence vault"
+        - alert: AuditForgeRLSBypassDetected
+          expr: increase(auditforge_rls_bypass_total[5m]) > 0
+          for: 1m
+          labels:
+            severity: critical
+            slo: tenant-isolation
+          annotations:
+            summary: "Postgres RLS bypass detected — tenant isolation breach"
+    - name: auditforge.probes
+      interval: 30s
+      rules:
+        - alert: AuditForgeProbeBudget80Percent
+          expr: |
+            (auditforge_probe_budget_used / auditforge_probe_budget_total) > 0.8
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: "Probe budget at 80% for engagement {{ "{{" }} $labels.engagement_id {{ "}}" }}"
+        - alert: AuditForgeProbeBudgetBreached
+          expr: |
+            (auditforge_probe_budget_used / auditforge_probe_budget_total) >= 1.0
+          for: 1m
+          labels:
+            severity: critical
+          annotations:
+            summary: "Probe budget breached for engagement {{ "{{" }} $labels.engagement_id {{ "}}" }}"
+        - alert: AuditForgeHighLLMCost
+          expr: |
+            sum(rate(auditforge_llm_cost_usd_total[1h])) by (tenant_id) > 5
+          for: 30m
+          labels:
+            severity: warning
+          annotations:
+            summary: "Tenant {{ "{{" }} $labels.tenant_id {{ "}}" }} LLM spend > $5/h"
+{{- end }}

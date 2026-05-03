@@ -1,0 +1,15 @@
+{{/* SPDX-License-Identifier: BUSL-1.1 */}}
+{{- if and .Values.api.enabled .Values.podDisruptionBudget.enabled }}
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: {{ include "auditforge.fullname" . }}-api
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "auditforge.componentLabels" (dict "component" "api" "Chart" .Chart "Release" .Release "Values" .Values) | nindent 4 }}
+spec:
+  minAvailable: {{ .Values.podDisruptionBudget.minAvailable }}
+  selector:
+    matchLabels:
+      {{- include "auditforge.componentSelector" (dict "component" "api" "root" .) | nindent 6 }}
+{{- end }}
