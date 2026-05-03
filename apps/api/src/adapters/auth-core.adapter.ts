@@ -1,75 +1,68 @@
 // SPDX-License-Identifier: BUSL-1.1
-// TODO(phase-1): replace with packages/auth-core when available.
-// Local RBAC matrix and role helpers.
+/**
+ * Thin wrapper around @auditforge/auth-core's canonical RBAC matrix.
+ *
+ * All wildcard (*) entries from the previous local matrix have been removed.
+ * Role, Action, and Resource enums are re-exported directly from the package
+ * so every consumer (RbacGuard, controllers, tests) uses a single source of
+ * truth.
+ *
+ * Migration from the old local matrix:
+ *   - `auditor` → `team_auditor`
+ *   - `observer` → `client_user` (read-only) or `peer_reviewer`
+ *   - `accreditation_inspector` → `accreditation_auditor`
+ *   - `service` role removed — service-to-service authentication must use
+ *     short-lived JWTs with explicit resource grants, not a wildcard role.
+ */
 
-export type Role =
-  | 'super_admin'
-  | 'firm_admin'
-  | 'lead_auditor'
-  | 'auditor'
-  | 'technical_expert'
-  | 'peer_reviewer'
-  | 'observer'
-  | 'accreditation_inspector'
-  | 'service';
+import {
+  can as coreCan,
+  canScope as coreCanScope,
+  buildFullPermissionMatrix as coreBuildMatrix,
+  permissionScope as corePermissionScope,
+  ROLES,
+  RESOURCES,
+  ACTIONS,
+  type Role,
+  type Action,
+  type Resource,
+  type Permission,
+} from '@auditforge/auth-core';
 
-export type Action = 'read' | 'create' | 'update' | 'delete' | 'sign' | 'archive' | 'admin';
-
-const MATRIX: Record<Role, ReadonlyArray<{ resource: string; actions: ReadonlyArray<Action> }>> = {
-  super_admin: [{ resource: '*', actions: ['read', 'create', 'update', 'delete', 'sign', 'archive', 'admin'] }],
-  firm_admin: [
-    { resource: 'tenancy', actions: ['read', 'create', 'update', 'admin'] },
-    { resource: 'clients', actions: ['read', 'create', 'update', 'delete'] },
-    { resource: 'engagements', actions: ['read', 'create', 'update', 'delete'] },
-    { resource: '*', actions: ['read'] },
-  ],
-  lead_auditor: [
-    { resource: 'engagements', actions: ['read', 'create', 'update'] },
-    { resource: 'audit-plans', actions: ['read', 'create', 'update'] },
-    { resource: 'working-papers', actions: ['read', 'create', 'update'] },
-    { resource: 'findings', actions: ['read', 'create', 'update'] },
-    { resource: 'reports', actions: ['read', 'create', 'update', 'sign'] },
-    { resource: 'capa', actions: ['read', 'create', 'update'] },
-    { resource: '*', actions: ['read'] },
-  ],
-  auditor: [
-    { resource: 'working-papers', actions: ['read', 'create', 'update'] },
-    { resource: 'findings', actions: ['read', 'create', 'update'] },
-    { resource: 'evidence-vault', actions: ['read', 'create'] },
-    { resource: 'samples', actions: ['read', 'create'] },
-    { resource: 'interviews', actions: ['read', 'create', 'update'] },
-    { resource: 'probes', actions: ['read', 'create'] },
-    { resource: '*', actions: ['read'] },
-  ],
-  technical_expert: [
-    { resource: 'probes', actions: ['read', 'create', 'update'] },
-    { resource: 'traces', actions: ['read'] },
-    { resource: 'working-papers', actions: ['read', 'update'] },
-    { resource: '*', actions: ['read'] },
-  ],
-  peer_reviewer: [
-    { resource: 'peer-review', actions: ['read', 'create', 'update'] },
-    { resource: 'reports', actions: ['read'] },
-    { resource: '*', actions: ['read'] },
-  ],
-  observer: [{ resource: '*', actions: ['read'] }],
-  accreditation_inspector: [
-    { resource: 'archive', actions: ['read'] },
-    { resource: 'reports', actions: ['read'] },
-    { resource: 'audit-ledger', actions: ['read'] },
-  ],
-  service: [{ resource: '*', actions: ['read', 'create', 'update'] }],
+// Re-export plain type-only and constant re-exports.
+export {
+  ROLES,
+  RESOURCES,
+  ACTIONS,
+  type Role,
+  type Action,
+  type Resource,
+  type Permission,
 };
 
-export function can(roles: readonly Role[], resource: string, action: Action): boolean {
+// Re-export the matrix constant so existing consumers that referenced
+// RBAC_MATRIX have a named symbol to import (even though they should
+// prefer the can() / canScope() functions for runtime checks).
+export const RBAC_MATRIX = coreBuildMatrix();
+
+// Re-export the scope-level helpers unchanged.
+export const canScope = coreCanScope;
+export const permissionScope = corePermissionScope;
+export const buildFullPermissionMatrix = coreBuildMatrix;
+
+/**
+ * Compatibility shim: the old adapter's `can(roles[], resource, action)`
+ * accepted an array of roles. This wrapper preserves that call-site signature
+ * so RbacGuard does not need to change its public API.
+ *
+ * Internally it delegates to `can(role, action, resource)` from auth-core
+ * which has a different parameter order — note the intentional swap.
+ *
+ * Unknown resource strings always return false — no wildcard fallthrough.
+ */
+export function can(roles: readonly Role[], resource: Resource | string, action: Action): boolean {
   for (const role of roles) {
-    const entries = MATRIX[role];
-    if (!entries) continue;
-    for (const e of entries) {
-      if ((e.resource === resource || e.resource === '*') && e.actions.includes(action)) return true;
-    }
+    if (coreCan(role, action, resource as Resource)) return true;
   }
   return false;
 }
-
-export const RBAC_MATRIX = MATRIX;
