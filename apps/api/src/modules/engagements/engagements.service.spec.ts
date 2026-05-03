@@ -9,6 +9,8 @@ const firm = '11111111-1111-1111-1111-111111111111';
 const otherFirm = '22222222-2222-2222-2222-222222222222';
 const baseDto: CreateEngagementDto = {
   clientId: '33333333-3333-3333-3333-333333333333',
+  // ADR-0013: mode is required at creation time and immutable thereafter.
+  mode: 'audit',
   stage: 'stage1',
   scopeStatement: 'AIMS coverage scope',
   startsOn: '2026-06-01',
@@ -58,5 +60,19 @@ describe('EngagementsService', () => {
     const page = await svc.list(firm, { limit: 2 });
     expect(page.items).toHaveLength(2);
     expect(page.nextCursor).not.toBeNull();
+  });
+
+  it('rejects creation with an invalid mode (defence-in-depth)', async () => {
+    await expect(
+      svc.create(firm, { ...baseDto, mode: 'hybrid' as never }),
+    ).rejects.toMatchObject({ status: 409 });
+  });
+
+  it('rejects update that attempts to change mode (ADR-0013, 409 Conflict)', async () => {
+    const e = await svc.create(firm, baseDto);
+    // Untyped cast to mimic an over-the-wire payload that bypassed typing.
+    await expect(
+      svc.update(firm, e.id, { mode: 'readiness' } as never),
+    ).rejects.toMatchObject({ status: 409, extras: expect.objectContaining({ code: 'MODE_IMMUTABLE' }) });
   });
 });
