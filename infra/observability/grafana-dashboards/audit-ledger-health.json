@@ -1,0 +1,120 @@
+{
+  "$schema": "https://grafana.com/schemas/dashboard/v10.0.0",
+  "uid": "auditforge-audit-ledger-health",
+  "title": "AuditForge — Audit Ledger Health",
+  "tags": ["auditforge", "ledger", "slo"],
+  "timezone": "",
+  "schemaVersion": 39,
+  "version": 1,
+  "editable": true,
+  "graphTooltip": 1,
+  "time": { "from": "now-24h", "to": "now" },
+  "refresh": "30s",
+  "templating": {
+    "list": [
+      { "name": "datasource", "type": "datasource", "query": "prometheus", "current": { "text": "Prometheus", "value": "Prometheus" } }
+    ]
+  },
+  "panels": [
+    {
+      "id": 1,
+      "type": "stat",
+      "title": "Events / sec (5m)",
+      "datasource": "$datasource",
+      "gridPos": { "h": 4, "w": 6, "x": 0, "y": 0 },
+      "targets": [
+        { "expr": "sum(rate(auditforge_ledger_emit_total[5m]))", "refId": "A" }
+      ],
+      "fieldConfig": { "defaults": { "unit": "ops" } }
+    },
+    {
+      "id": 2,
+      "type": "stat",
+      "title": "Failure ratio (1h)",
+      "datasource": "$datasource",
+      "gridPos": { "h": 4, "w": 6, "x": 6, "y": 0 },
+      "targets": [
+        { "expr": "sum(rate(auditforge_ledger_emit_failures_total[1h])) / clamp_min(sum(rate(auditforge_ledger_emit_total[1h])),1)", "refId": "A" }
+      ],
+      "fieldConfig": { "defaults": { "unit": "percentunit" } }
+    },
+    {
+      "id": 3,
+      "type": "stat",
+      "title": "verifyChain p95",
+      "datasource": "$datasource",
+      "gridPos": { "h": 4, "w": 6, "x": 12, "y": 0 },
+      "targets": [
+        { "expr": "histogram_quantile(0.95, sum(rate(auditforge_ledger_chain_verify_ms_bucket[10m])) by (le))", "refId": "A" }
+      ],
+      "fieldConfig": { "defaults": { "unit": "ms" } }
+    },
+    {
+      "id": 4,
+      "type": "stat",
+      "title": "Signature renewal backlog (1h)",
+      "datasource": "$datasource",
+      "gridPos": { "h": 4, "w": 6, "x": 18, "y": 0 },
+      "targets": [
+        { "expr": "sum(increase(auditforge_signature_renewal_failure_total[1h]))", "refId": "A" }
+      ]
+    },
+    {
+      "id": 5,
+      "type": "timeseries",
+      "title": "Ledger emit success vs failure",
+      "datasource": "$datasource",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 4 },
+      "targets": [
+        { "expr": "sum(rate(auditforge_ledger_emit_total[5m]))", "refId": "A", "legendFormat": "success" },
+        { "expr": "sum(rate(auditforge_ledger_emit_failures_total[5m]))", "refId": "B", "legendFormat": "failure" }
+      ],
+      "fieldConfig": { "defaults": { "unit": "ops" } }
+    },
+    {
+      "id": 6,
+      "type": "timeseries",
+      "title": "verifyChain latency distribution",
+      "datasource": "$datasource",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 4 },
+      "targets": [
+        { "expr": "histogram_quantile(0.50, sum(rate(auditforge_ledger_chain_verify_ms_bucket[10m])) by (le))", "refId": "A", "legendFormat": "p50" },
+        { "expr": "histogram_quantile(0.95, sum(rate(auditforge_ledger_chain_verify_ms_bucket[10m])) by (le))", "refId": "B", "legendFormat": "p95" },
+        { "expr": "histogram_quantile(0.99, sum(rate(auditforge_ledger_chain_verify_ms_bucket[10m])) by (le))", "refId": "C", "legendFormat": "p99" }
+      ],
+      "fieldConfig": { "defaults": { "unit": "ms" } }
+    },
+    {
+      "id": 7,
+      "type": "timeseries",
+      "title": "Failure breakdown by reason",
+      "datasource": "$datasource",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 12 },
+      "targets": [
+        { "expr": "sum by (reason) (rate(auditforge_ledger_emit_failures_total[5m]))", "refId": "A", "legendFormat": "{{reason}}" }
+      ]
+    },
+    {
+      "id": 8,
+      "type": "timeseries",
+      "title": "Signature renewal — success vs failure",
+      "datasource": "$datasource",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 12 },
+      "targets": [
+        { "expr": "rate(auditforge_signature_renewal_success_total[10m])", "refId": "A", "legendFormat": "success" },
+        { "expr": "sum by (reason) (rate(auditforge_signature_renewal_failure_total[10m]))", "refId": "B", "legendFormat": "failure: {{reason}}" }
+      ]
+    },
+    {
+      "id": 9,
+      "type": "stat",
+      "title": "Backup age",
+      "datasource": "$datasource",
+      "gridPos": { "h": 4, "w": 24, "x": 0, "y": 20 },
+      "targets": [
+        { "expr": "max(auditforge_backup_age_seconds)", "refId": "A" }
+      ],
+      "fieldConfig": { "defaults": { "unit": "s", "thresholds": { "mode": "absolute", "steps": [ { "color": "green", "value": null }, { "color": "yellow", "value": 86400 }, { "color": "red", "value": 90000 } ] } } }
+    }
+  ]
+}

@@ -1,0 +1,95 @@
+{
+  "$schema": "https://grafana.com/schemas/dashboard/v10.0.0",
+  "uid": "auditforge-tenant-cost",
+  "title": "AuditForge — Tenant Cost",
+  "tags": ["auditforge", "cost", "tenant"],
+  "timezone": "",
+  "schemaVersion": 39,
+  "version": 1,
+  "editable": true,
+  "graphTooltip": 1,
+  "time": { "from": "now-7d", "to": "now" },
+  "refresh": "5m",
+  "templating": {
+    "list": [
+      { "name": "datasource", "type": "datasource", "query": "prometheus", "current": { "text": "Prometheus", "value": "Prometheus" } },
+      { "name": "engagement_hashed", "type": "query", "datasource": "$datasource", "query": "label_values(auditforge_llm_call_cost_usd_total, engagement_hashed)", "includeAll": true, "multi": true, "current": { "text": "All", "value": "$__all" } }
+    ]
+  },
+  "panels": [
+    {
+      "id": 1,
+      "type": "stat",
+      "title": "LLM cost (last 24h, USD)",
+      "datasource": "$datasource",
+      "gridPos": { "h": 4, "w": 6, "x": 0, "y": 0 },
+      "targets": [
+        { "expr": "sum(increase(auditforge_llm_call_cost_usd_total{engagement_hashed=~\"$engagement_hashed\"}[24h]))", "refId": "A" }
+      ],
+      "fieldConfig": { "defaults": { "unit": "currencyUSD" } }
+    },
+    {
+      "id": 2,
+      "type": "stat",
+      "title": "Probe live cost (last 24h, USD)",
+      "datasource": "$datasource",
+      "gridPos": { "h": 4, "w": 6, "x": 6, "y": 0 },
+      "targets": [
+        { "expr": "sum(max by (engagement_hashed) (auditforge_probe_budget_used_usd))", "refId": "A" }
+      ],
+      "fieldConfig": { "defaults": { "unit": "currencyUSD" } }
+    },
+    {
+      "id": 3,
+      "type": "stat",
+      "title": "Storage (estimated GB)",
+      "datasource": "$datasource",
+      "gridPos": { "h": 4, "w": 6, "x": 12, "y": 0 },
+      "targets": [
+        { "expr": "sum(kubelet_volume_stats_used_bytes{persistentvolumeclaim=~\"auditforge.*\"}) / (1024*1024*1024)", "refId": "A" }
+      ],
+      "fieldConfig": { "defaults": { "unit": "decgbytes" } }
+    },
+    {
+      "id": 4,
+      "type": "stat",
+      "title": "Engagements with > $5/h burn",
+      "datasource": "$datasource",
+      "gridPos": { "h": 4, "w": 6, "x": 18, "y": 0 },
+      "targets": [
+        { "expr": "count(sum by (engagement_hashed) (rate(auditforge_llm_call_cost_usd_total[1h])) > 5)", "refId": "A" }
+      ]
+    },
+    {
+      "id": 5,
+      "type": "timeseries",
+      "title": "LLM cost burn ($/h) per engagement bucket",
+      "datasource": "$datasource",
+      "gridPos": { "h": 9, "w": 24, "x": 0, "y": 4 },
+      "targets": [
+        { "expr": "sum by (engagement_hashed) (rate(auditforge_llm_call_cost_usd_total[1h]))", "refId": "A", "legendFormat": "{{engagement_hashed}}" }
+      ],
+      "fieldConfig": { "defaults": { "unit": "currencyUSD/h" } }
+    },
+    {
+      "id": 6,
+      "type": "timeseries",
+      "title": "LLM cost split by provider/model",
+      "datasource": "$datasource",
+      "gridPos": { "h": 9, "w": 12, "x": 0, "y": 13 },
+      "targets": [
+        { "expr": "sum by (provider, model) (rate(auditforge_llm_call_cost_usd_total[1h]))", "refId": "A", "legendFormat": "{{provider}} / {{model}}" }
+      ]
+    },
+    {
+      "id": 7,
+      "type": "table",
+      "title": "Top 10 engagements by 24h spend",
+      "datasource": "$datasource",
+      "gridPos": { "h": 9, "w": 12, "x": 12, "y": 13 },
+      "targets": [
+        { "expr": "topk(10, sum by (engagement_hashed) (increase(auditforge_llm_call_cost_usd_total[24h])))", "refId": "A", "format": "table", "instant": true }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,76 @@
+{
+  "$schema": "https://grafana.com/schemas/dashboard/v10.0.0",
+  "uid": "auditforge-capa-aging",
+  "title": "AuditForge — CAPA / NC Aging",
+  "tags": ["auditforge", "capa", "nc"],
+  "timezone": "",
+  "schemaVersion": 39,
+  "version": 1,
+  "editable": true,
+  "graphTooltip": 1,
+  "time": { "from": "now-30d", "to": "now" },
+  "refresh": "5m",
+  "templating": {
+    "list": [
+      { "name": "datasource", "type": "datasource", "query": "prometheus", "current": { "text": "Prometheus", "value": "Prometheus" } }
+    ]
+  },
+  "panels": [
+    {
+      "id": 1,
+      "type": "stat",
+      "title": "Open NCs",
+      "datasource": "$datasource",
+      "gridPos": { "h": 4, "w": 6, "x": 0, "y": 0 },
+      "targets": [{ "expr": "sum(auditforge_ledger_emit_total{event_type=\"nc.opened\"}) - sum(auditforge_ledger_emit_total{event_type=\"nc.closed\"})", "refId": "A" }]
+    },
+    {
+      "id": 2,
+      "type": "stat",
+      "title": "Overdue (>30d open)",
+      "datasource": "$datasource",
+      "gridPos": { "h": 4, "w": 6, "x": 6, "y": 0 },
+      "targets": [{ "expr": "sum(increase(auditforge_ledger_emit_total{event_type=\"nc.opened\"}[30d])) - sum(increase(auditforge_ledger_emit_total{event_type=\"nc.closed\"}[30d]))", "refId": "A" }]
+    },
+    {
+      "id": 3,
+      "type": "stat",
+      "title": "Median time-to-close",
+      "datasource": "$datasource",
+      "gridPos": { "h": 4, "w": 6, "x": 12, "y": 0 },
+      "targets": [{ "expr": "histogram_quantile(0.50, sum(rate(auditforge_ledger_chain_verify_ms_bucket[30d])) by (le))", "refId": "A" }],
+      "fieldConfig": { "defaults": { "unit": "ms" } }
+    },
+    {
+      "id": 4,
+      "type": "stat",
+      "title": "Closures last 7d",
+      "datasource": "$datasource",
+      "gridPos": { "h": 4, "w": 6, "x": 18, "y": 0 },
+      "targets": [{ "expr": "sum(increase(auditforge_ledger_emit_total{event_type=\"nc.closed\"}[7d]))", "refId": "A" }]
+    },
+    {
+      "id": 5,
+      "type": "timeseries",
+      "title": "NC opened vs closed",
+      "datasource": "$datasource",
+      "gridPos": { "h": 9, "w": 24, "x": 0, "y": 4 },
+      "targets": [
+        { "expr": "rate(auditforge_ledger_emit_total{event_type=\"nc.opened\"}[1d])", "refId": "A", "legendFormat": "opened" },
+        { "expr": "rate(auditforge_ledger_emit_total{event_type=\"nc.closed\"}[1d])", "refId": "B", "legendFormat": "closed" }
+      ]
+    },
+    {
+      "id": 6,
+      "type": "bargauge",
+      "title": "Age distribution (days)",
+      "datasource": "$datasource",
+      "gridPos": { "h": 9, "w": 24, "x": 0, "y": 13 },
+      "targets": [
+        { "expr": "histogram_quantile(0.25, sum(rate(auditforge_ledger_chain_verify_ms_bucket[30d])) by (le))", "refId": "A", "legendFormat": "p25" },
+        { "expr": "histogram_quantile(0.50, sum(rate(auditforge_ledger_chain_verify_ms_bucket[30d])) by (le))", "refId": "B", "legendFormat": "p50" },
+        { "expr": "histogram_quantile(0.95, sum(rate(auditforge_ledger_chain_verify_ms_bucket[30d])) by (le))", "refId": "C", "legendFormat": "p95" }
+      ]
+    }
+  ]
+}

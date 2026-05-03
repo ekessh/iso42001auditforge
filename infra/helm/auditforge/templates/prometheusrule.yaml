@@ -12,118 +12,346 @@ metadata:
     {{- end }}
 spec:
   groups:
+    # ------------------------------------------------------------------ #
+    # Recording rules — error-rate / availability ratios at multiple
+    # rolling windows so multi-window multi-burn-rate alerts can reuse
+    # the same numerator/denominator.
+    # ------------------------------------------------------------------ #
+    - name: auditforge.api.recording
+      interval: 30s
+      rules:
+        - record: auditforge:api_request:rate5m
+          expr: sum(rate(auditforge_http_request_duration_ms_count{job=~".*auditforge.*"}[5m]))
+        - record: auditforge:api_error:rate5m
+          expr: sum(rate(auditforge_http_request_duration_ms_count{job=~".*auditforge.*",status=~"5.."}[5m]))
+        - record: auditforge:api_request:rate30m
+          expr: sum(rate(auditforge_http_request_duration_ms_count{job=~".*auditforge.*"}[30m]))
+        - record: auditforge:api_error:rate30m
+          expr: sum(rate(auditforge_http_request_duration_ms_count{job=~".*auditforge.*",status=~"5.."}[30m]))
+        - record: auditforge:api_request:rate1h
+          expr: sum(rate(auditforge_http_request_duration_ms_count{job=~".*auditforge.*"}[1h]))
+        - record: auditforge:api_error:rate1h
+          expr: sum(rate(auditforge_http_request_duration_ms_count{job=~".*auditforge.*",status=~"5.."}[1h]))
+        - record: auditforge:api_request:rate6h
+          expr: sum(rate(auditforge_http_request_duration_ms_count{job=~".*auditforge.*"}[6h]))
+        - record: auditforge:api_error:rate6h
+          expr: sum(rate(auditforge_http_request_duration_ms_count{job=~".*auditforge.*",status=~"5.."}[6h]))
+        - record: auditforge:api_burn_rate:5m
+          expr: |
+            (auditforge:api_error:rate5m / clamp_min(auditforge:api_request:rate5m, 1)) / 0.001
+        - record: auditforge:api_burn_rate:30m
+          expr: |
+            (auditforge:api_error:rate30m / clamp_min(auditforge:api_request:rate30m, 1)) / 0.001
+        - record: auditforge:api_burn_rate:1h
+          expr: |
+            (auditforge:api_error:rate1h / clamp_min(auditforge:api_request:rate1h, 1)) / 0.001
+        - record: auditforge:api_burn_rate:6h
+          expr: |
+            (auditforge:api_error:rate6h / clamp_min(auditforge:api_request:rate6h, 1)) / 0.001
+
+    # ------------------------------------------------------------------ #
+    # API availability SLO — 99.9 %, error budget = 0.1 %.
+    # Multi-window multi-burn-rate per Google SRE workbook.
+    # ------------------------------------------------------------------ #
     - name: auditforge.api.slo
       interval: 30s
       rules:
-        - alert: AuditForgeApiHighErrorRateFastBurn
+        - alert: AuditForgeApiErrorBudgetBurnFast
           expr: |
-            (
-              sum(rate(http_requests_total{job=~".*auditforge.*",status=~"5.."}[5m]))
-              /
-              sum(rate(http_requests_total{job=~".*auditforge.*"}[5m]))
-            ) > (14.4 * 0.001)
-          for: 5m
+            auditforge:api_burn_rate:5m > 14.4 and auditforge:api_burn_rate:1h > 14.4
+          for: 2m
           labels:
             severity: critical
             slo: api-availability
+            page: "true"
           annotations:
-            summary: "AuditForge API burning fast (5m window)"
-            description: "Error rate is more than 14.4x the SLO budget over 5 minutes."
-        - alert: AuditForgeApiHighErrorRateSlowBurn
+            summary: "AuditForge API burning error budget fast (14.4x over 1h)"
+            description: "Both 5m and 1h burn rates exceed 14.4x — at this pace 2% of the monthly budget is consumed per hour."
+            runbook_url: "https://runbook.auditforge.local/api-error-budget-fast-burn"
+        - alert: AuditForgeApiErrorBudgetBurnSlow
           expr: |
-            (
-              sum(rate(http_requests_total{job=~".*auditforge.*",status=~"5.."}[1h]))
-              /
-              sum(rate(http_requests_total{job=~".*auditforge.*"}[1h]))
-            ) > (6 * 0.001)
-          for: 1h
+            auditforge:api_burn_rate:30m > 6 and auditforge:api_burn_rate:6h > 6
+          for: 15m
           labels:
             severity: warning
             slo: api-availability
           annotations:
-            summary: "AuditForge API slow burn (1h window)"
-            description: "Error rate is more than 6x the SLO budget over 1 hour."
+            summary: "AuditForge API burning error budget at 6x sustained (6h window)"
+            description: "Both 30m and 6h burn rates exceed 6x — slow burn against the 99.9% SLO."
+            runbook_url: "https://runbook.auditforge.local/api-error-budget-slow-burn"
         - alert: AuditForgeApiP95LatencyHigh
           expr: |
-            histogram_quantile(0.95, sum(rate(http_server_duration_seconds_bucket{job=~".*auditforge.*"}[5m])) by (le)) > 0.2
+            histogram_quantile(
+              0.95,
+              sum(rate(auditforge_http_request_duration_ms_bucket{job=~".*auditforge.*"}[5m])) by (le)
+            ) > 200
           for: 10m
           labels:
             severity: warning
             slo: api-latency
           annotations:
             summary: "API p95 latency above 200ms"
-    - name: auditforge.ledger
+            description: "p95 over 5m is above the SLO target of 200ms."
+            runbook_url: "https://runbook.auditforge.local/api-latency-high"
+
+    # ------------------------------------------------------------------ #
+    # Audit-ledger durability SLO — 99.999 %.
+    # Multi-window multi-burn-rate against ledger emit success.
+    # ------------------------------------------------------------------ #
+    - name: auditforge.ledger.slo
       interval: 30s
       rules:
-        - alert: AuditForgeLedgerChainVerifyFailure
-          expr: increase(auditforge_ledger_chain_verify_failures_total[10m]) > 0
+        - record: auditforge:ledger_emit:rate5m
+          expr: sum(rate(auditforge_ledger_emit_total[5m]))
+        - record: auditforge:ledger_failures:rate5m
+          expr: sum(rate(auditforge_ledger_emit_failures_total[5m]))
+        - record: auditforge:ledger_emit:rate1h
+          expr: sum(rate(auditforge_ledger_emit_total[1h]))
+        - record: auditforge:ledger_failures:rate1h
+          expr: sum(rate(auditforge_ledger_emit_failures_total[1h]))
+        - record: auditforge:ledger_emit:rate6h
+          expr: sum(rate(auditforge_ledger_emit_total[6h]))
+        - record: auditforge:ledger_failures:rate6h
+          expr: sum(rate(auditforge_ledger_emit_failures_total[6h]))
+        - alert: AuditForgeLedgerErrorBudgetBurnFast
+          expr: |
+            (
+              auditforge:ledger_failures:rate5m / clamp_min(auditforge:ledger_emit:rate5m, 1)
+            ) / 0.00001 > 14.4
+            and
+            (
+              auditforge:ledger_failures:rate1h / clamp_min(auditforge:ledger_emit:rate1h, 1)
+            ) / 0.00001 > 14.4
+          for: 2m
+          labels:
+            severity: critical
+            slo: ledger-durability
+            page: "true"
+          annotations:
+            summary: "Audit ledger emit error budget burning fast (99.999% SLO)"
+            description: "Failure ratio above 14.4x SLO budget across 5m and 1h windows."
+            runbook_url: "https://runbook.auditforge.local/ledger-error-budget-fast-burn"
+        - alert: AuditForgeLedgerErrorBudgetBurnSlow
+          expr: |
+            (
+              auditforge:ledger_failures:rate1h / clamp_min(auditforge:ledger_emit:rate1h, 1)
+            ) / 0.00001 > 6
+            and
+            (
+              auditforge:ledger_failures:rate6h / clamp_min(auditforge:ledger_emit:rate6h, 1)
+            ) / 0.00001 > 6
+          for: 15m
+          labels:
+            severity: warning
+            slo: ledger-durability
+          annotations:
+            summary: "Audit ledger emit slow-burn against 99.999% SLO"
+            runbook_url: "https://runbook.auditforge.local/ledger-error-budget-slow-burn"
+        - alert: ChainVerifyFailureSpike
+          expr: increase(auditforge_ledger_emit_failures_total{reason=~"chain_verify.*"}[10m]) > 0
           for: 1m
           labels:
             severity: critical
             slo: ledger-integrity
+            page: "true"
           annotations:
             summary: "Audit ledger chain verification failed"
-            description: "Investigate immediately — possible tampering or hardware corruption."
-        - alert: AuditForgeSignatureRenewalJobFailed
-          expr: kube_job_failed{job_name=~".*archive-renewal.*"} > 0
-          for: 10m
-          labels:
-            severity: critical
-            slo: archive-durability
-          annotations:
-            summary: "Signature renewal CronJob failed"
-        - alert: AuditForgeLedgerBacklogGrowing
+            description: "Possible tampering or hardware corruption — freeze writes immediately and run forensic verify."
+            runbook_url: "https://runbook.auditforge.local/chain-verify-failure"
+        - alert: LedgerBacklogGrowing
           expr: |
-            rate(auditforge_ledger_pending_events[15m]) > 0 and auditforge_ledger_pending_events > 1000
+            (
+              auditforge:ledger_emit:rate5m == 0
+              and
+              auditforge:ledger_failures:rate5m > 0
+            )
           for: 30m
           labels:
             severity: warning
           annotations:
-            summary: "Ledger pending event count growing"
+            summary: "Ledger emit failures with zero successes — backlog growing"
+            runbook_url: "https://runbook.auditforge.local/ledger-backlog"
+
+    # ------------------------------------------------------------------ #
+    # Signing pipeline SLO — 99.9 %.
+    # ------------------------------------------------------------------ #
+    - name: auditforge.signing.slo
+      interval: 30s
+      rules:
+        - alert: AuditForgeSigningErrorBudgetBurnFast
+          expr: |
+            (
+              sum(rate(auditforge_signature_renewal_failure_total[5m]))
+              /
+              clamp_min(
+                sum(rate(auditforge_signature_renewal_success_total[5m]))
+                + sum(rate(auditforge_signature_renewal_failure_total[5m])),
+                1
+              )
+            ) / 0.001 > 14.4
+            and
+            (
+              sum(rate(auditforge_signature_renewal_failure_total[1h]))
+              /
+              clamp_min(
+                sum(rate(auditforge_signature_renewal_success_total[1h]))
+                + sum(rate(auditforge_signature_renewal_failure_total[1h])),
+                1
+              )
+            ) / 0.001 > 14.4
+          for: 2m
+          labels:
+            severity: critical
+            slo: signing-pipeline
+            page: "true"
+          annotations:
+            summary: "Signing pipeline burning fast (99.9% SLO)"
+            runbook_url: "https://runbook.auditforge.local/signing-pipeline-fast-burn"
+        - alert: SignatureRenewalFailed
+          expr: increase(auditforge_signature_renewal_failure_total[1h]) > 0
+          for: 5m
+          labels:
+            severity: critical
+            slo: archive-durability
+            page: "true"
+          annotations:
+            summary: "Signature renewal failed for the long-term archive"
+            runbook_url: "https://runbook.auditforge.local/signature-renewal-failed"
+        - alert: MissedArchiveRenewal
+          expr: |
+            time() - max(kube_job_status_completion_time{job_name=~".*archive-renewal.*"}) > 26 * 3600
+          for: 30m
+          labels:
+            severity: critical
+            slo: archive-durability
+            page: "true"
+          annotations:
+            summary: "Archive-renewal CronJob has not completed in over 26h"
+            description: "Daily schedule means a missed run — controller may be down or job suspended."
+            runbook_url: "https://runbook.auditforge.local/signature-renewal-failed"
+
+    # ------------------------------------------------------------------ #
+    # Probe-runner availability SLO — 99 %.
+    # ------------------------------------------------------------------ #
+    - name: auditforge.probe.slo
+      interval: 30s
+      rules:
+        - alert: AuditForgeProbeErrorBudgetBurnFast
+          expr: |
+            (
+              sum(rate(auditforge_probe_duration_ms_count{status="error"}[5m]))
+              /
+              clamp_min(sum(rate(auditforge_probe_duration_ms_count[5m])), 1)
+            ) / 0.01 > 14.4
+            and
+            (
+              sum(rate(auditforge_probe_duration_ms_count{status="error"}[1h]))
+              /
+              clamp_min(sum(rate(auditforge_probe_duration_ms_count[1h])), 1)
+            ) / 0.01 > 14.4
+          for: 2m
+          labels:
+            severity: critical
+            slo: probe-runner
+            page: "true"
+          annotations:
+            summary: "Probe runner error budget burning fast (99% SLO)"
+            runbook_url: "https://runbook.auditforge.local/probe-runner-backlog"
+        - alert: ProbeRunnerBacklog
+          expr: max(auditforge_probe_queue_depth) > 250
+          for: 15m
+          labels:
+            severity: critical
+            slo: probe-runner
+            page: "true"
+          annotations:
+            summary: "Probe queue depth above 250 for 15 minutes"
+            runbook_url: "https://runbook.auditforge.local/probe-runner-backlog"
+        - alert: ProbeBudget80Pct
+          expr: max(auditforge_probe_budget_used_usd) by (engagement_hashed) > 40
+          for: 10m
+          labels:
+            severity: warning
+          annotations:
+            summary: "Probe budget at 80% for engagement bucket {{ "{{" }} $labels.engagement_hashed {{ "}}" }}"
+            runbook_url: "https://runbook.auditforge.local/probe-runner-backlog"
+        - alert: ProbeBudgetBreached
+          expr: max(auditforge_probe_budget_used_usd) by (engagement_hashed) > 50
+          for: 1m
+          labels:
+            severity: critical
+          annotations:
+            summary: "Probe budget breached for engagement bucket {{ "{{" }} $labels.engagement_hashed {{ "}}" }}"
+            runbook_url: "https://runbook.auditforge.local/probe-runner-backlog"
+
+    # ------------------------------------------------------------------ #
+    # Security / tenancy isolation alerts.
+    # ------------------------------------------------------------------ #
     - name: auditforge.security
       interval: 30s
       rules:
-        - alert: AuditForgeAVScanDisabled
-          expr: auditforge_av_scan_enabled == 0
+        - alert: AVScanDisabled
+          expr: max(auditforge_av_scan_enabled) < 1
           for: 5m
           labels:
             severity: critical
             slo: evidence-integrity
+            page: "true"
           annotations:
-            summary: "Antivirus scanning is disabled on evidence vault"
-        - alert: AuditForgeRLSBypassDetected
+            summary: "Antivirus scanning is disabled on the evidence vault"
+            runbook_url: "https://runbook.auditforge.local/av-scan-disabled"
+        - alert: RLSBypassDetected
           expr: increase(auditforge_rls_bypass_total[5m]) > 0
           for: 1m
           labels:
             severity: critical
             slo: tenant-isolation
+            page: "true"
           annotations:
             summary: "Postgres RLS bypass detected — tenant isolation breach"
-    - name: auditforge.probes
+            runbook_url: "https://runbook.auditforge.local/rls-bypass-detected"
+
+    # ------------------------------------------------------------------ #
+    # LLM cost & routing alerts.
+    # ------------------------------------------------------------------ #
+    - name: auditforge.llm
       interval: 30s
       rules:
-        - alert: AuditForgeProbeBudget80Percent
+        - alert: LLMCostHighPerEngagement
           expr: |
-            (auditforge_probe_budget_used / auditforge_probe_budget_total) > 0.8
-          for: 5m
-          labels:
-            severity: warning
-          annotations:
-            summary: "Probe budget at 80% for engagement {{ "{{" }} $labels.engagement_id {{ "}}" }}"
-        - alert: AuditForgeProbeBudgetBreached
-          expr: |
-            (auditforge_probe_budget_used / auditforge_probe_budget_total) >= 1.0
-          for: 1m
-          labels:
-            severity: critical
-          annotations:
-            summary: "Probe budget breached for engagement {{ "{{" }} $labels.engagement_id {{ "}}" }}"
-        - alert: AuditForgeHighLLMCost
-          expr: |
-            sum(rate(auditforge_llm_cost_usd_total[1h])) by (tenant_id) > 5
+            sum by (engagement_hashed) (rate(auditforge_llm_call_cost_usd_total[1h])) > 5
           for: 30m
           labels:
             severity: warning
           annotations:
-            summary: "Tenant {{ "{{" }} $labels.tenant_id {{ "}}" }} LLM spend > $5/h"
+            summary: "Engagement bucket {{ "{{" }} $labels.engagement_hashed {{ "}}" }} LLM spend > $5/h"
+            runbook_url: "https://runbook.auditforge.local/probe-runner-backlog"
+        - alert: LLMRoutingFallback
+          expr: |
+            sum(increase(auditforge_llm_call_duration_ms_count{task="fallback"}[10m])) > 0
+          for: 5m
+          labels:
+            severity: critical
+            page: "true"
+          annotations:
+            summary: "LLM provider routing has fallen back to a secondary in the last 10m"
+            runbook_url: "https://runbook.auditforge.local/probe-runner-backlog"
+
+    # ------------------------------------------------------------------ #
+    # Backup freshness alerts (RPO guard).
+    # ------------------------------------------------------------------ #
+    - name: auditforge.backup
+      interval: 30s
+      rules:
+        - alert: BackupTooOld
+          expr: max(auditforge_backup_age_seconds) > 90000
+          for: 30m
+          labels:
+            severity: critical
+            slo: ledger-durability
+            page: "true"
+          annotations:
+            summary: "Latest Postgres basebackup is older than 25h"
+            description: "RPO guard — backup pipeline may be broken or upload to S3 failing."
+            runbook_url: "https://runbook.auditforge.local/backup-too-old"
 {{- end }}

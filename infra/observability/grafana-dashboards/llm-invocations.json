@@ -1,0 +1,107 @@
+{
+  "$schema": "https://grafana.com/schemas/dashboard/v10.0.0",
+  "uid": "auditforge-llm-invocations",
+  "title": "AuditForge — LLM Invocations",
+  "tags": ["auditforge", "llm"],
+  "timezone": "",
+  "schemaVersion": 39,
+  "version": 1,
+  "editable": true,
+  "graphTooltip": 1,
+  "time": { "from": "now-6h", "to": "now" },
+  "refresh": "30s",
+  "templating": {
+    "list": [
+      { "name": "datasource", "type": "datasource", "query": "prometheus", "current": { "text": "Prometheus", "value": "Prometheus" } },
+      { "name": "provider", "type": "query", "datasource": "$datasource", "query": "label_values(auditforge_llm_call_duration_ms_count, provider)", "includeAll": true, "multi": true, "current": { "text": "All", "value": "$__all" } },
+      { "name": "model", "type": "query", "datasource": "$datasource", "query": "label_values(auditforge_llm_call_duration_ms_count{provider=~\"$provider\"}, model)", "includeAll": true, "multi": true, "current": { "text": "All", "value": "$__all" } }
+    ]
+  },
+  "panels": [
+    {
+      "id": 1,
+      "type": "stat",
+      "title": "Calls / sec",
+      "datasource": "$datasource",
+      "gridPos": { "h": 4, "w": 6, "x": 0, "y": 0 },
+      "targets": [
+        { "expr": "sum(rate(auditforge_llm_call_duration_ms_count{provider=~\"$provider\",model=~\"$model\"}[5m]))", "refId": "A" }
+      ]
+    },
+    {
+      "id": 2,
+      "type": "stat",
+      "title": "p95 latency",
+      "datasource": "$datasource",
+      "gridPos": { "h": 4, "w": 6, "x": 6, "y": 0 },
+      "targets": [
+        { "expr": "histogram_quantile(0.95, sum(rate(auditforge_llm_call_duration_ms_bucket{provider=~\"$provider\",model=~\"$model\"}[5m])) by (le))", "refId": "A" }
+      ],
+      "fieldConfig": { "defaults": { "unit": "ms" } }
+    },
+    {
+      "id": 3,
+      "type": "stat",
+      "title": "Cost burn ($/h)",
+      "datasource": "$datasource",
+      "gridPos": { "h": 4, "w": 6, "x": 12, "y": 0 },
+      "targets": [
+        { "expr": "sum(rate(auditforge_llm_call_cost_usd_total{provider=~\"$provider\",model=~\"$model\"}[1h]))", "refId": "A" }
+      ],
+      "fieldConfig": { "defaults": { "unit": "currencyUSD" } }
+    },
+    {
+      "id": 4,
+      "type": "stat",
+      "title": "Fallback events (10m)",
+      "datasource": "$datasource",
+      "gridPos": { "h": 4, "w": 6, "x": 18, "y": 0 },
+      "targets": [
+        { "expr": "sum(increase(auditforge_llm_call_duration_ms_count{task=\"fallback\"}[10m]))", "refId": "A" }
+      ]
+    },
+    {
+      "id": 5,
+      "type": "timeseries",
+      "title": "Latency by provider/model",
+      "datasource": "$datasource",
+      "gridPos": { "h": 9, "w": 12, "x": 0, "y": 4 },
+      "targets": [
+        { "expr": "histogram_quantile(0.95, sum by (provider, model, le) (rate(auditforge_llm_call_duration_ms_bucket[5m])))", "refId": "A", "legendFormat": "{{provider}}/{{model}} p95" }
+      ],
+      "fieldConfig": { "defaults": { "unit": "ms" } }
+    },
+    {
+      "id": 6,
+      "type": "timeseries",
+      "title": "Cost burn by provider/model",
+      "datasource": "$datasource",
+      "gridPos": { "h": 9, "w": 12, "x": 12, "y": 4 },
+      "targets": [
+        { "expr": "sum by (provider, model) (rate(auditforge_llm_call_cost_usd_total[1h]))", "refId": "A", "legendFormat": "{{provider}}/{{model}}" }
+      ],
+      "fieldConfig": { "defaults": { "unit": "currencyUSD" } }
+    },
+    {
+      "id": 7,
+      "type": "timeseries",
+      "title": "Success rate by task",
+      "datasource": "$datasource",
+      "gridPos": { "h": 9, "w": 12, "x": 0, "y": 13 },
+      "targets": [
+        { "expr": "1 - (sum by (task) (rate(auditforge_llm_call_duration_ms_count{task!=\"\",task!=\"fallback\"}[5m])) / clamp_min(sum by (task) (rate(auditforge_llm_call_duration_ms_count{task!=\"\"}[5m])),1))", "refId": "A", "legendFormat": "{{task}}" }
+      ],
+      "fieldConfig": { "defaults": { "unit": "percentunit" } }
+    },
+    {
+      "id": 8,
+      "type": "timeseries",
+      "title": "Fallback events over time",
+      "datasource": "$datasource",
+      "gridPos": { "h": 9, "w": 12, "x": 12, "y": 13 },
+      "targets": [
+        { "expr": "sum by (provider) (rate(auditforge_llm_call_duration_ms_count{task=\"fallback\"}[10m]))", "refId": "A", "legendFormat": "{{provider}}" }
+      ]
+    }
+  ]
+}

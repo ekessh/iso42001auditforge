@@ -12,6 +12,13 @@ data:
   AUDITFORGE_LOG_FORMAT: "json"
   AUDITFORGE_OTEL_EXPORTER_OTLP_ENDPOINT: {{ .Values.observability.otel.endpoint | quote }}
   AUDITFORGE_OTEL_EXPORTER_OTLP_INSECURE: {{ .Values.observability.otel.insecure | quote }}
+  # Canonical OTEL_* env aliases — the API config schema reads either name (CRITICAL-OBS-001).
+  OTEL_EXPORTER_OTLP_ENDPOINT: {{ .Values.observability.otel.endpoint | quote }}
+  OTEL_EXPORTER_OTLP_INSECURE: {{ .Values.observability.otel.insecure | quote }}
+  OTEL_EXPORTER_OTLP_PROTOCOL: {{ default "http" .Values.observability.otel.protocol | quote }}
+  OTEL_SERVICE_NAME: {{ default "auditforge-api" .Values.observability.otel.serviceName | quote }}
+  OTEL_TRACES_SAMPLER_ARG: {{ default "0.1" .Values.observability.otel.samplerRatio | quote }}
+  OTEL_RESOURCE_ATTRIBUTES: {{ printf "deployment.environment=%s,auditforge.component=api" .Release.Namespace | quote }}
   AUDITFORGE_POSTGRES_HOST: {{ include "auditforge.postgresHost" . | quote }}
   AUDITFORGE_POSTGRES_PORT: {{ ternary (.Values.postgres.external.port | toString) "5432" (eq .Values.postgres.mode "external") | quote }}
   AUDITFORGE_POSTGRES_DB: {{ ternary .Values.postgres.external.database .Values.postgres.database (eq .Values.postgres.mode "external") | quote }}
