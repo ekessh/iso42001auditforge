@@ -1,0 +1,39 @@
+{{/* SPDX-License-Identifier: BUSL-1.1 */}}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "auditforge.fullname" . }}-config
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "auditforge.labels" . | nindent 4 }}
+data:
+  AUDITFORGE_ENV: {{ .Release.Namespace | quote }}
+  AUDITFORGE_LOG_LEVEL: "info"
+  AUDITFORGE_LOG_FORMAT: "json"
+  AUDITFORGE_OTEL_EXPORTER_OTLP_ENDPOINT: {{ .Values.observability.otel.endpoint | quote }}
+  AUDITFORGE_OTEL_EXPORTER_OTLP_INSECURE: {{ .Values.observability.otel.insecure | quote }}
+  AUDITFORGE_POSTGRES_HOST: {{ include "auditforge.postgresHost" . | quote }}
+  AUDITFORGE_POSTGRES_PORT: {{ ternary (.Values.postgres.external.port | toString) "5432" (eq .Values.postgres.mode "external") | quote }}
+  AUDITFORGE_POSTGRES_DB: {{ ternary .Values.postgres.external.database .Values.postgres.database (eq .Values.postgres.mode "external") | quote }}
+  AUDITFORGE_POSTGRES_USER: {{ ternary .Values.postgres.external.user .Values.postgres.user (eq .Values.postgres.mode "external") | quote }}
+  AUDITFORGE_POSTGRES_SSLMODE: {{ ternary .Values.postgres.external.sslmode "disable" (eq .Values.postgres.mode "external") | quote }}
+  AUDITFORGE_REDIS_HOST: {{ include "auditforge.redisHost" . | quote }}
+  AUDITFORGE_REDIS_PORT: {{ ternary (.Values.redis.external.port | toString) "6379" (eq .Values.redis.mode "external") | quote }}
+  AUDITFORGE_OBJECT_STORE_ENDPOINT: {{ include "auditforge.objectStorageEndpoint" . | quote }}
+  AUDITFORGE_OBJECT_STORE_MODE: {{ .Values.objectStorage.mode | quote }}
+{{- if eq .Values.objectStorage.mode "s3" }}
+  AUDITFORGE_OBJECT_STORE_REGION: {{ .Values.objectStorage.s3.region | quote }}
+  AUDITFORGE_EVIDENCE_BUCKET: {{ .Values.objectStorage.s3.evidenceBucket | quote }}
+  AUDITFORGE_ARCHIVE_BUCKET: {{ .Values.objectStorage.s3.archiveBucket | quote }}
+  AUDITFORGE_REPORTS_BUCKET: {{ .Values.objectStorage.s3.reportsBucket | quote }}
+{{- else }}
+  AUDITFORGE_EVIDENCE_BUCKET: "auditforge-evidence"
+  AUDITFORGE_ARCHIVE_BUCKET: "auditforge-archive"
+  AUDITFORGE_REPORTS_BUCKET: "auditforge-reports"
+{{- end }}
+{{- if .Values.meilisearch.enabled }}
+  AUDITFORGE_MEILISEARCH_HOST: {{ printf "http://%s-meilisearch:7700" (include "auditforge.fullname" .) | quote }}
+{{- end }}
+{{- if .Values.ollama.enabled }}
+  AUDITFORGE_OLLAMA_HOST: {{ printf "http://%s-ollama:11434" (include "auditforge.fullname" .) | quote }}
+{{- end }}

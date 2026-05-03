@@ -1,0 +1,24 @@
+{{/* SPDX-License-Identifier: BUSL-1.1 */}}
+{{- if and .Values.web.enabled .Values.web.autoscaling.enabled }}
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: {{ include "auditforge.fullname" . }}-web
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "auditforge.componentLabels" (dict "component" "web" "Chart" .Chart "Release" .Release "Values" .Values) | nindent 4 }}
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: {{ include "auditforge.fullname" . }}-web
+  minReplicas: {{ .Values.web.autoscaling.minReplicas }}
+  maxReplicas: {{ .Values.web.autoscaling.maxReplicas }}
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: {{ .Values.web.autoscaling.targetCPUUtilizationPercentage }}
+{{- end }}

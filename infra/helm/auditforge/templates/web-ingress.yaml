@@ -1,0 +1,35 @@
+{{/* SPDX-License-Identifier: BUSL-1.1 */}}
+{{- if and .Values.web.enabled .Values.web.ingress.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ include "auditforge.fullname" . }}-web
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "auditforge.componentLabels" (dict "component" "web" "Chart" .Chart "Release" .Release "Values" .Values) | nindent 4 }}
+  {{- with .Values.web.ingress.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  ingressClassName: {{ .Values.web.ingress.className }}
+  {{- with .Values.web.ingress.tls }}
+  tls:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  rules:
+    {{- range .Values.web.ingress.hosts }}
+    - host: {{ .host | quote }}
+      http:
+        paths:
+          {{- range .paths }}
+          - path: {{ .path }}
+            pathType: {{ .pathType }}
+            backend:
+              service:
+                name: {{ include "auditforge.fullname" $ }}-web
+                port:
+                  name: http
+          {{- end }}
+    {{- end }}
+{{- end }}

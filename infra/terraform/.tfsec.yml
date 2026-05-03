@@ -1,0 +1,8 @@
+# SPDX-License-Identifier: BUSL-1.1
+exclude:
+  # Public ALB by design.
+  - aws-elb-alb-not-public
+severity_overrides:
+  aws-s3-block-public-acls: HIGH
+  aws-s3-encryption-customer-key: HIGH
+minimum_severity: MEDIUM

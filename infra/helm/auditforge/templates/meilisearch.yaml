@@ -1,0 +1,96 @@
+{{/* SPDX-License-Identifier: BUSL-1.1 */}}
+{{- if .Values.meilisearch.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "auditforge.fullname" . }}-meilisearch
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "auditforge.componentLabels" (dict "component" "meilisearch" "Chart" .Chart "Release" .Release "Values" .Values) | nindent 4 }}
+spec:
+  ports:
+    - port: 7700
+      name: http
+  selector:
+    {{- include "auditforge.componentSelector" (dict "component" "meilisearch" "root" .) | nindent 4 }}
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ include "auditforge.fullname" . }}-meilisearch
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "auditforge.componentLabels" (dict "component" "meilisearch" "Chart" .Chart "Release" .Release "Values" .Values) | nindent 4 }}
+spec:
+  serviceName: {{ include "auditforge.fullname" . }}-meilisearch
+  replicas: {{ .Values.meilisearch.replicas }}
+  selector:
+    matchLabels:
+      {{- include "auditforge.componentSelector" (dict "component" "meilisearch" "root" .) | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "auditforge.componentSelector" (dict "component" "meilisearch" "root" .) | nindent 8 }}
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 10001
+        runAsGroup: 10001
+        fsGroup: 10001
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: meilisearch
+          image: {{ include "auditforge.image" (dict "root" . "image" .Values.meilisearch.image) | quote }}
+          imagePullPolicy: {{ include "auditforge.imagePullPolicy" (dict "root" . "image" .Values.meilisearch.image) }}
+          env:
+            - name: MEILI_MASTER_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.meilisearch.masterKeySecretRef.name }}
+                  key: {{ .Values.meilisearch.masterKeySecretRef.key }}
+            - name: MEILI_ENV
+              value: production
+            - name: MEILI_NO_ANALYTICS
+              value: "true"
+          ports:
+            - containerPort: 7700
+              name: http
+          resources:
+            {{- toYaml .Values.meilisearch.resources | nindent 12 }}
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: http
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: http
+            initialDelaySeconds: 30
+            periodSeconds: 30
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: false
+            capabilities:
+              drop: [ALL]
+          volumeMounts:
+            - name: data
+              mountPath: /meili_data
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes: [ReadWriteOnce]
+        {{- with .Values.meilisearch.persistence.storageClass }}
+        storageClassName: {{ . | quote }}
+        {{- else }}
+        {{- with $.Values.global.storageClass }}
+        storageClassName: {{ . | quote }}
+        {{- end }}
+        {{- end }}
+        resources:
+          requests:
+            storage: {{ .Values.meilisearch.persistence.size }}
+{{- end }}

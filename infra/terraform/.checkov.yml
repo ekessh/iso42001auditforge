@@ -1,0 +1,13 @@
+# SPDX-License-Identifier: BUSL-1.1
+framework:
+  - terraform
+output: cli
+quiet: true
+soft-fail: false
+download-external-modules: false
+skip-check:
+  # ALB is intentionally internet-facing.
+  - CKV_AWS_150
+  # We use AWS managed policies on a few documented IAM service roles.
+  - CKV_AWS_111
+external-checks-dir: []

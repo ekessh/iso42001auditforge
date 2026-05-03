@@ -1,0 +1,102 @@
+{{/* SPDX-License-Identifier: BUSL-1.1 */}}
+{{- if eq .Values.objectStorage.mode "in-cluster" }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "auditforge.fullname" . }}-minio
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "auditforge.componentLabels" (dict "component" "minio" "Chart" .Chart "Release" .Release "Values" .Values) | nindent 4 }}
+spec:
+  ports:
+    - port: 9000
+      name: api
+    - port: 9001
+      name: console
+  selector:
+    {{- include "auditforge.componentSelector" (dict "component" "minio" "root" .) | nindent 4 }}
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ include "auditforge.fullname" . }}-minio
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "auditforge.componentLabels" (dict "component" "minio" "Chart" .Chart "Release" .Release "Values" .Values) | nindent 4 }}
+spec:
+  serviceName: {{ include "auditforge.fullname" . }}-minio
+  replicas: {{ .Values.objectStorage.minio.replicas }}
+  selector:
+    matchLabels:
+      {{- include "auditforge.componentSelector" (dict "component" "minio" "root" .) | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "auditforge.componentSelector" (dict "component" "minio" "root" .) | nindent 8 }}
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: minio
+          image: {{ include "auditforge.image" (dict "root" . "image" .Values.objectStorage.minio.image) | quote }}
+          imagePullPolicy: {{ include "auditforge.imagePullPolicy" (dict "root" . "image" .Values.objectStorage.minio.image) }}
+          args: ["server", "/data", "--console-address", ":9001"]
+          env:
+            - name: MINIO_ROOT_USER
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.objectStorage.minio.rootUserSecretRef.name }}
+                  key: {{ .Values.objectStorage.minio.rootUserSecretRef.userKey }}
+            - name: MINIO_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.objectStorage.minio.rootUserSecretRef.name }}
+                  key: {{ .Values.objectStorage.minio.rootUserSecretRef.passwordKey }}
+          ports:
+            - containerPort: 9000
+              name: api
+            - containerPort: 9001
+              name: console
+          resources:
+            {{- toYaml .Values.objectStorage.minio.resources | nindent 12 }}
+          livenessProbe:
+            httpGet:
+              path: /minio/health/live
+              port: api
+            initialDelaySeconds: 30
+            periodSeconds: 30
+          readinessProbe:
+            httpGet:
+              path: /minio/health/ready
+              port: api
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: false
+            capabilities:
+              drop: [ALL]
+          volumeMounts:
+            - name: data
+              mountPath: /data
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes: [ReadWriteOnce]
+        {{- with .Values.objectStorage.minio.persistence.storageClass }}
+        storageClassName: {{ . | quote }}
+        {{- else }}
+        {{- with $.Values.global.storageClass }}
+        storageClassName: {{ . | quote }}
+        {{- end }}
+        {{- end }}
+        resources:
+          requests:
+            storage: {{ .Values.objectStorage.minio.persistence.size }}
+{{- end }}

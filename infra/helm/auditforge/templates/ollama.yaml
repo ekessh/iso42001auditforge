@@ -1,0 +1,75 @@
+{{/* SPDX-License-Identifier: BUSL-1.1 */}}
+{{- if .Values.ollama.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "auditforge.fullname" . }}-ollama
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "auditforge.componentLabels" (dict "component" "ollama" "Chart" .Chart "Release" .Release "Values" .Values) | nindent 4 }}
+spec:
+  ports:
+    - port: 11434
+      name: http
+  selector:
+    {{- include "auditforge.componentSelector" (dict "component" "ollama" "root" .) | nindent 4 }}
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ include "auditforge.fullname" . }}-ollama
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "auditforge.componentLabels" (dict "component" "ollama" "Chart" .Chart "Release" .Release "Values" .Values) | nindent 4 }}
+spec:
+  serviceName: {{ include "auditforge.fullname" . }}-ollama
+  replicas: {{ .Values.ollama.replicas }}
+  selector:
+    matchLabels:
+      {{- include "auditforge.componentSelector" (dict "component" "ollama" "root" .) | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "auditforge.componentSelector" (dict "component" "ollama" "root" .) | nindent 8 }}
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 10001
+        fsGroup: 10001
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: ollama
+          image: {{ include "auditforge.image" (dict "root" . "image" .Values.ollama.image) | quote }}
+          imagePullPolicy: {{ include "auditforge.imagePullPolicy" (dict "root" . "image" .Values.ollama.image) }}
+          ports:
+            - containerPort: 11434
+              name: http
+          env:
+            - name: OLLAMA_HOST
+              value: 0.0.0.0:11434
+          resources:
+            {{- toYaml .Values.ollama.resources | nindent 12 }}
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 30
+            periodSeconds: 15
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: false
+            capabilities:
+              drop: [ALL]
+          volumeMounts:
+            - name: models
+              mountPath: /root/.ollama
+  volumeClaimTemplates:
+    - metadata:
+        name: models
+      spec:
+        accessModes: [ReadWriteOnce]
+        resources:
+          requests:
+            storage: {{ .Values.ollama.persistence.size }}
+{{- end }}

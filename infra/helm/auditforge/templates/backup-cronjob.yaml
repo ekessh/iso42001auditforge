@@ -1,0 +1,77 @@
+{{/* SPDX-License-Identifier: BUSL-1.1 */}}
+{{- if .Values.backup.enabled }}
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ include "auditforge.fullname" . }}-pg-backup
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "auditforge.componentLabels" (dict "component" "backup" "Chart" .Chart "Release" .Release "Values" .Values) | nindent 4 }}
+spec:
+  schedule: {{ .Values.backup.schedule | quote }}
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 5
+  concurrencyPolicy: Forbid
+  jobTemplate:
+    spec:
+      backoffLimit: 2
+      template:
+        metadata:
+          labels:
+            {{- include "auditforge.componentSelector" (dict "component" "backup" "root" .) | nindent 12 }}
+        spec:
+          serviceAccountName: {{ include "auditforge.serviceAccountName" . }}
+          restartPolicy: OnFailure
+          {{- include "auditforge.imagePullSecrets" . | nindent 10 }}
+          securityContext:
+            {{- include "auditforge.podSecurityContext" . | nindent 12 }}
+          containers:
+            - name: pg-basebackup
+              image: {{ include "auditforge.image" (dict "root" . "image" .Values.postgres.image) | quote }}
+              imagePullPolicy: {{ include "auditforge.imagePullPolicy" (dict "root" . "image" .Values.postgres.image) }}
+              command:
+                - /bin/sh
+                - -c
+                - |
+                  set -euo pipefail
+                  TS=$(date +%Y%m%dT%H%M%SZ)
+                  DEST=/tmp/basebackup
+                  mkdir -p "$DEST"
+                  PGPASSWORD="$PGPASSWORD" pg_basebackup \
+                    -h "$PGHOST" -U "$PGUSER" -D "$DEST" \
+                    -F tar -z -X fetch -P
+                  if command -v aws >/dev/null 2>&1; then
+                    aws s3 cp "$DEST" "s3://${BACKUP_BUCKET}/pg/${TS}/" --recursive
+                  else
+                    echo "aws cli unavailable in image; mount sidecar or use mc"
+                    exit 1
+                  fi
+              env:
+                - name: PGHOST
+                  value: {{ include "auditforge.postgresHost" . | quote }}
+                - name: PGUSER
+                  value: {{ ternary .Values.postgres.external.user .Values.postgres.user (eq .Values.postgres.mode "external") | quote }}
+                - name: PGPASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: {{ ternary .Values.postgres.external.secretName .Values.postgres.passwordSecretRef.name (eq .Values.postgres.mode "external") }}
+                      key: password
+                - name: BACKUP_BUCKET
+                  value: {{ .Values.backup.s3.bucket | quote }}
+                - name: AWS_REGION
+                  value: {{ .Values.backup.s3.region | quote }}
+              envFrom:
+                - secretRef:
+                    name: {{ .Values.backup.s3.secretName }}
+                    optional: true
+              resources:
+                {{- toYaml .Values.backup.resources | nindent 16 }}
+              securityContext:
+                {{- include "auditforge.containerSecurityContext" . | nindent 16 }}
+              volumeMounts:
+                - name: tmp
+                  mountPath: /tmp
+          volumes:
+            - name: tmp
+              emptyDir: {}
+{{- end }}

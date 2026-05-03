@@ -1,0 +1,19 @@
+{{/* SPDX-License-Identifier: BUSL-1.1 */}}
+{{- if .Values.web.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "auditforge.fullname" . }}-web
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "auditforge.componentLabels" (dict "component" "web" "Chart" .Chart "Release" .Release "Values" .Values) | nindent 4 }}
+spec:
+  type: {{ .Values.web.service.type }}
+  ports:
+    - name: http
+      port: {{ .Values.web.service.port }}
+      targetPort: http
+      protocol: TCP
+  selector:
+    {{- include "auditforge.componentSelector" (dict "component" "web" "root" .) | nindent 4 }}
+{{- end }}

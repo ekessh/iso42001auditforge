@@ -1,0 +1,137 @@
+{{/* SPDX-License-Identifier: BUSL-1.1 */}}
+{{- if .Values.networkPolicy.enabled }}
+# Default-deny policy for the namespace.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ include "auditforge.fullname" . }}-default-deny
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "auditforge.labels" . | nindent 4 }}
+spec:
+  podSelector: {}
+  policyTypes: [Ingress, Egress]
+---
+# Allow internal AuditForge mesh + allowlisted ingress namespaces to reach API/web.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ include "auditforge.fullname" . }}-api-ingress
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "auditforge.labels" . | nindent 4 }}
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/component: api
+      app.kubernetes.io/instance: {{ .Release.Name }}
+  policyTypes: [Ingress]
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/instance: {{ .Release.Name }}
+      ports:
+        - port: {{ .Values.api.containerPort }}
+          protocol: TCP
+    {{- range .Values.networkPolicy.allowedIngressNamespaces }}
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              {{- range $k, $v := . }}
+              {{ $k }}: {{ $v | quote }}
+              {{- end }}
+      ports:
+        - port: {{ $.Values.api.containerPort }}
+          protocol: TCP
+    {{- end }}
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ include "auditforge.fullname" . }}-web-ingress
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "auditforge.labels" . | nindent 4 }}
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/component: web
+      app.kubernetes.io/instance: {{ .Release.Name }}
+  policyTypes: [Ingress]
+  ingress:
+    {{- range .Values.networkPolicy.allowedIngressNamespaces }}
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              {{- range $k, $v := . }}
+              {{ $k }}: {{ $v | quote }}
+              {{- end }}
+      ports:
+        - port: {{ $.Values.web.containerPort }}
+          protocol: TCP
+    {{- end }}
+---
+# API egress: DNS + postgres + redis + object storage + OTel + meilisearch + ollama.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ include "auditforge.fullname" . }}-api-egress
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "auditforge.labels" . | nindent 4 }}
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/component: api
+      app.kubernetes.io/instance: {{ .Release.Name }}
+  policyTypes: [Egress]
+  egress:
+    - to:
+        - namespaceSelector: {}
+          podSelector:
+            matchLabels:
+              k8s-app: kube-dns
+      ports:
+        - port: 53
+          protocol: UDP
+        - port: 53
+          protocol: TCP
+    - to:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/instance: {{ .Release.Name }}
+    {{- with .Values.networkPolicy.egressAllowList }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ include "auditforge.fullname" . }}-worker-egress
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "auditforge.labels" . | nindent 4 }}
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/component: worker
+      app.kubernetes.io/instance: {{ .Release.Name }}
+  policyTypes: [Egress]
+  egress:
+    - to:
+        - namespaceSelector: {}
+          podSelector:
+            matchLabels:
+              k8s-app: kube-dns
+      ports:
+        - port: 53
+          protocol: UDP
+    - to:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/instance: {{ .Release.Name }}
+    {{- with .Values.networkPolicy.egressAllowList }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+{{- end }}

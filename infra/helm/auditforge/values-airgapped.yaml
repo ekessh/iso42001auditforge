@@ -1,0 +1,78 @@
+# SPDX-License-Identifier: BUSL-1.1
+# Air-gapped overlay: private registry, no External Secrets, in-cluster everything,
+# disabled cloud LLM connectors at the application layer (set via env).
+
+global:
+  imageRegistry: registry.internal.example.com/auditforge
+  imagePullPolicy: IfNotPresent
+  imagePullSecrets:
+    - name: airgap-registry
+
+api:
+  image:
+    repository: registry.internal.example.com/auditforge/api
+  ingress:
+    annotations:
+      cert-manager.io/cluster-issuer: internal-ca-issuer
+  env:
+    - name: AUDITFORGE_LLM_BACKEND
+      value: ollama
+    - name: AUDITFORGE_DISABLE_CLOUD_CONNECTORS
+      value: "true"
+
+worker:
+  image:
+    repository: registry.internal.example.com/auditforge/worker
+  env:
+    - name: AUDITFORGE_DISABLE_CLOUD_CONNECTORS
+      value: "true"
+
+web:
+  image:
+    repository: registry.internal.example.com/auditforge/web
+  ingress:
+    annotations:
+      cert-manager.io/cluster-issuer: internal-ca-issuer
+
+postgres:
+  mode: in-cluster
+  persistence:
+    size: 200Gi
+
+redis:
+  mode: in-cluster
+
+objectStorage:
+  mode: in-cluster
+  minio:
+    persistence:
+      size: 500Gi
+
+meilisearch:
+  enabled: true
+  persistence:
+    size: 50Gi
+
+ollama:
+  enabled: true
+  persistence:
+    size: 200Gi
+
+externalSecrets:
+  enabled: false
+
+backup:
+  enabled: true
+  s3:
+    bucket: auditforge-airgap-backups
+    secretName: auditforge-backup-s3
+
+prometheusRule:
+  enabled: true
+
+observability:
+  serviceMonitor:
+    enabled: true
+  otel:
+    endpoint: http://otel-collector.observability.svc.cluster.local:4318
+    insecure: true

@@ -1,0 +1,10 @@
+# SPDX-License-Identifier: BUSL-1.1
+.DS_Store
+.git/
+.gitignore
+.idea/
+.vscode/
+*.tgz
+charts/*.tgz
+.helmignore
+README.md.bak

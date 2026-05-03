@@ -1,0 +1,37 @@
+# SPDX-License-Identifier: BUSL-1.1
+apiVersion: v2
+name: auditforge
+description: |
+  AuditForge — ISO/IEC 42001 Lead Auditor Workbench.
+  Highly available Kubernetes deployment of the API, worker, web UI, and supporting
+  data services (PostgreSQL, Redis, MinIO/S3, Meilisearch, optional Ollama).
+type: application
+version: 0.14.0
+appVersion: "0.14.0"
+kubeVersion: ">=1.27.0-0"
+home: https://github.com/auditforge/iso42001auditforge
+sources:
+  - https://github.com/auditforge/iso42001auditforge
+maintainers:
+  - name: AuditForge Maintainers
+    email: maintainers@auditforge.example
+icon: https://auditforge.example/logo.png
+keywords:
+  - iso42001
+  - audit
+  - aims
+  - compliance
+  - ai-governance
+annotations:
+  category: Compliance
+  licenses: BUSL-1.1
+  artifacthub.io/changes: |
+    - kind: added
+      description: Phase 14 hardening — HPA, NetworkPolicy, PDB, External Secrets, ServiceMonitor
+    - kind: added
+      description: BackupCronJob for pg_basebackup; archive renewal CronJob
+    - kind: added
+      description: Air-gapped values example with image registry override
+  artifacthub.io/recommendations: |
+    - url: https://artifacthub.io/packages/helm/external-secrets-operator/external-secrets
+    - url: https://artifacthub.io/packages/helm/cert-manager/cert-manager
