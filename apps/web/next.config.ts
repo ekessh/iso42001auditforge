@@ -1,6 +1,5 @@
 // SPDX-License-Identifier: BUSL-1.1
 import type { NextConfig } from 'next';
-import { randomBytes } from 'node:crypto';
 
 /**
  * Content Security Policy configuration.
@@ -20,19 +19,20 @@ import { randomBytes } from 'node:crypto';
  * - CSP report-only mode is enabled via NEXT_PUBLIC_CSP_REPORT_ONLY=1.
  *
  * Nonce plumbing:
- *   Next.js 15 supports nonce-based CSP via middleware. A middleware at
- *   apps/web/middleware.ts (not created here) should call
- *   `generateNonce()` per request, set `x-nonce` on the response headers,
- *   and pass it to the CSP header via the `nonce` slot below.
- *   Server Components read the nonce from `headers()` and pass it to
- *   <Script nonce={nonce}> / <style nonce={nonce}>.
+ *   The CSP value emitted by `headers()` below uses the literal token
+ *   `{NONCE}` as a slot. The Edge middleware at `apps/web/middleware.ts`
+ *   generates a fresh 16-byte random nonce per request, sets it on the
+ *   `x-nonce` request header, and rewrites every `{NONCE}` occurrence in
+ *   the CSP response header with that per-request value. Server Components
+ *   read the same nonce via `apps/web/lib/nonce.ts` and pass it to
+ *   `<Script nonce={...}>` / `<style nonce={...}>`.
  *
- * Until the middleware is wired, a build-time nonce is used as a fallback.
- * This is weaker than per-request nonces but still removes 'unsafe-inline'.
+ *   `{NONCE}` is the ONLY allowed token in the CSP nonce slot. Substitution
+ *   happens exclusively in the middleware — do not interpolate at build
+ *   time, do not read a process env var, do not use a static fallback.
  */
 
-const BUILD_NONCE = randomBytes(16).toString('base64');
-const NONCE_PLACEHOLDER = process.env.NEXT_PUBLIC_CSP_NONCE ?? BUILD_NONCE;
+const NONCE_PLACEHOLDER = '{NONCE}';
 
 // Allow configuring the API origin via env (replaces localhost:4000 in prod).
 const API_ORIGIN = process.env.NEXT_PUBLIC_API_ORIGIN ?? 'http://localhost:4000';
