@@ -1,0 +1,87 @@
+{
+  "$schema": "https://grafana.com/schemas/dashboard/v10.0.0",
+  "uid": "auditforge-corpus-metrics",
+  "title": "AuditForge — Conversational Engine Corpus Metrics",
+  "tags": ["auditforge", "conversational-engine", "corpus"],
+  "timezone": "",
+  "schemaVersion": 39,
+  "version": 1,
+  "editable": true,
+  "graphTooltip": 1,
+  "time": { "from": "now-90d", "to": "now" },
+  "refresh": "5m",
+  "templating": {
+    "list": [
+      { "name": "datasource", "type": "datasource", "query": "prometheus", "current": { "text": "Prometheus", "value": "Prometheus" } },
+      { "name": "release", "type": "query", "datasource": "$datasource", "query": "label_values(auditforge_attribution_precision, release)", "includeAll": true, "multi": true, "current": { "text": "All", "value": "$__all" } }
+    ]
+  },
+  "panels": [
+    {
+      "id": 1,
+      "type": "stat",
+      "title": "Latest attribution precision@3",
+      "datasource": "$datasource",
+      "gridPos": { "h": 4, "w": 8, "x": 0, "y": 0 },
+      "targets": [
+        { "expr": "max(auditforge_attribution_precision)", "refId": "A" }
+      ],
+      "fieldConfig": { "defaults": { "unit": "percentunit", "thresholds": { "mode": "absolute", "steps": [ { "color": "red", "value": null }, { "color": "yellow", "value": 0.85 }, { "color": "green", "value": 0.9 } ] } } }
+    },
+    {
+      "id": 2,
+      "type": "stat",
+      "title": "Latest claim-extraction F1",
+      "datasource": "$datasource",
+      "gridPos": { "h": 4, "w": 8, "x": 8, "y": 0 },
+      "targets": [
+        { "expr": "max(auditforge_claim_extraction_f1)", "refId": "A" }
+      ],
+      "fieldConfig": { "defaults": { "unit": "percentunit", "thresholds": { "mode": "absolute", "steps": [ { "color": "red", "value": null }, { "color": "yellow", "value": 0.75 }, { "color": "green", "value": 0.85 } ] } } }
+    },
+    {
+      "id": 3,
+      "type": "stat",
+      "title": "Latest contradiction precision",
+      "datasource": "$datasource",
+      "gridPos": { "h": 4, "w": 8, "x": 16, "y": 0 },
+      "targets": [
+        { "expr": "max(auditforge_contradiction_precision)", "refId": "A" }
+      ],
+      "fieldConfig": { "defaults": { "unit": "percentunit", "thresholds": { "mode": "absolute", "steps": [ { "color": "red", "value": null }, { "color": "yellow", "value": 0.7 }, { "color": "green", "value": 0.8 } ] } } }
+    },
+    {
+      "id": 4,
+      "type": "timeseries",
+      "title": "Attribution precision per release",
+      "datasource": "$datasource",
+      "gridPos": { "h": 9, "w": 24, "x": 0, "y": 4 },
+      "targets": [
+        { "expr": "auditforge_attribution_precision{release=~\"$release\"}", "refId": "A", "legendFormat": "{{release}}" }
+      ],
+      "fieldConfig": { "defaults": { "unit": "percentunit" } }
+    },
+    {
+      "id": 5,
+      "type": "timeseries",
+      "title": "Claim-extraction F1 per release",
+      "datasource": "$datasource",
+      "gridPos": { "h": 9, "w": 12, "x": 0, "y": 13 },
+      "targets": [
+        { "expr": "auditforge_claim_extraction_f1{release=~\"$release\"}", "refId": "A", "legendFormat": "{{release}}" }
+      ],
+      "fieldConfig": { "defaults": { "unit": "percentunit" } }
+    },
+    {
+      "id": 6,
+      "type": "timeseries",
+      "title": "Contradiction precision per release",
+      "datasource": "$datasource",
+      "gridPos": { "h": 9, "w": 12, "x": 12, "y": 13 },
+      "targets": [
+        { "expr": "auditforge_contradiction_precision{release=~\"$release\"}", "refId": "A", "legendFormat": "{{release}}" }
+      ],
+      "fieldConfig": { "defaults": { "unit": "percentunit" } }
+    }
+  ]
+}

@@ -13,9 +13,13 @@ import { AppModule } from './app.module.js';
 import { loadConfig } from './config/config.schema.js';
 import { startOtel } from './otel.js';
 
+const SERVICE_VERSION = process.env['npm_package_version'] ?? '0.0.0';
+
 async function bootstrap(): Promise<void> {
   const cfg = loadConfig();
-  startOtel(cfg.OTEL_SERVICE_NAME, cfg.OTEL_EXPORTER_OTLP_ENDPOINT);
+  // Shared @auditforge/observability init — reads OTEL_* env (alias-resolved by config.schema)
+  // and brings up the Node SDK with auto-instrumentations + parent-based ratio sampler.
+  startOtel(cfg, SERVICE_VERSION);
 
   const app = await NestFactory.create<NestFastifyApplication>(
     AppModule,
@@ -62,6 +66,12 @@ async function bootstrap(): Promise<void> {
   }
 
   app.enableShutdownHooks();
+  // Ensure OTel SDK shutdown is awaited during the graceful window so in-flight batch exports
+  // are not dropped on rolling deploy (addresses MEDIUM-OBS-006).
+  const { shutdownOtel } = await import('./otel.js');
+  app.beforeApplicationShutdown(async () => {
+    await shutdownOtel();
+  });
   await app.listen(cfg.PORT, cfg.HOST);
 }
 

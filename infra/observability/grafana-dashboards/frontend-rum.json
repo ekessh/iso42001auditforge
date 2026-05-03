@@ -1,0 +1,89 @@
+{
+  "$schema": "https://grafana.com/schemas/dashboard/v10.0.0",
+  "uid": "auditforge-frontend-rum",
+  "title": "AuditForge — Frontend RUM (Core Web Vitals)",
+  "tags": ["auditforge", "rum", "frontend"],
+  "timezone": "",
+  "schemaVersion": 39,
+  "version": 1,
+  "editable": true,
+  "graphTooltip": 1,
+  "time": { "from": "now-6h", "to": "now" },
+  "refresh": "1m",
+  "templating": {
+    "list": [
+      { "name": "datasource", "type": "datasource", "query": "prometheus", "current": { "text": "Prometheus", "value": "Prometheus" } }
+    ]
+  },
+  "panels": [
+    {
+      "id": 1,
+      "type": "stat",
+      "title": "p75 LCP",
+      "datasource": "$datasource",
+      "gridPos": { "h": 4, "w": 8, "x": 0, "y": 0 },
+      "targets": [
+        { "expr": "histogram_quantile(0.75, sum(rate(auditforge_retrieval_latency_ms_bucket{source=\"web_vital_lcp\"}[10m])) by (le))", "refId": "A" }
+      ],
+      "fieldConfig": { "defaults": { "unit": "ms", "thresholds": { "mode": "absolute", "steps": [ { "color": "green", "value": null }, { "color": "yellow", "value": 2500 }, { "color": "red", "value": 4000 } ] } } }
+    },
+    {
+      "id": 2,
+      "type": "stat",
+      "title": "p75 INP",
+      "datasource": "$datasource",
+      "gridPos": { "h": 4, "w": 8, "x": 8, "y": 0 },
+      "targets": [
+        { "expr": "histogram_quantile(0.75, sum(rate(auditforge_retrieval_latency_ms_bucket{source=\"web_vital_inp\"}[10m])) by (le))", "refId": "A" }
+      ],
+      "fieldConfig": { "defaults": { "unit": "ms", "thresholds": { "mode": "absolute", "steps": [ { "color": "green", "value": null }, { "color": "yellow", "value": 200 }, { "color": "red", "value": 500 } ] } } }
+    },
+    {
+      "id": 3,
+      "type": "stat",
+      "title": "p75 CLS (x1000)",
+      "datasource": "$datasource",
+      "gridPos": { "h": 4, "w": 8, "x": 16, "y": 0 },
+      "targets": [
+        { "expr": "histogram_quantile(0.75, sum(rate(auditforge_retrieval_latency_ms_bucket{source=\"web_vital_cls\"}[10m])) by (le))", "refId": "A" }
+      ]
+    },
+    {
+      "id": 4,
+      "type": "timeseries",
+      "title": "LCP distribution",
+      "datasource": "$datasource",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 4 },
+      "targets": [
+        { "expr": "histogram_quantile(0.50, sum(rate(auditforge_retrieval_latency_ms_bucket{source=\"web_vital_lcp\"}[10m])) by (le))", "refId": "A", "legendFormat": "p50" },
+        { "expr": "histogram_quantile(0.75, sum(rate(auditforge_retrieval_latency_ms_bucket{source=\"web_vital_lcp\"}[10m])) by (le))", "refId": "B", "legendFormat": "p75" },
+        { "expr": "histogram_quantile(0.95, sum(rate(auditforge_retrieval_latency_ms_bucket{source=\"web_vital_lcp\"}[10m])) by (le))", "refId": "C", "legendFormat": "p95" }
+      ],
+      "fieldConfig": { "defaults": { "unit": "ms" } }
+    },
+    {
+      "id": 5,
+      "type": "timeseries",
+      "title": "INP distribution",
+      "datasource": "$datasource",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 4 },
+      "targets": [
+        { "expr": "histogram_quantile(0.50, sum(rate(auditforge_retrieval_latency_ms_bucket{source=\"web_vital_inp\"}[10m])) by (le))", "refId": "A", "legendFormat": "p50" },
+        { "expr": "histogram_quantile(0.75, sum(rate(auditforge_retrieval_latency_ms_bucket{source=\"web_vital_inp\"}[10m])) by (le))", "refId": "B", "legendFormat": "p75" },
+        { "expr": "histogram_quantile(0.95, sum(rate(auditforge_retrieval_latency_ms_bucket{source=\"web_vital_inp\"}[10m])) by (le))", "refId": "C", "legendFormat": "p95" }
+      ],
+      "fieldConfig": { "defaults": { "unit": "ms" } }
+    },
+    {
+      "id": 6,
+      "type": "timeseries",
+      "title": "CLS distribution",
+      "datasource": "$datasource",
+      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 12 },
+      "targets": [
+        { "expr": "histogram_quantile(0.50, sum(rate(auditforge_retrieval_latency_ms_bucket{source=\"web_vital_cls\"}[10m])) by (le))", "refId": "A", "legendFormat": "p50" },
+        { "expr": "histogram_quantile(0.75, sum(rate(auditforge_retrieval_latency_ms_bucket{source=\"web_vital_cls\"}[10m])) by (le))", "refId": "B", "legendFormat": "p75" }
+      ]
+    }
+  ]
+}

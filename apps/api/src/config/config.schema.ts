@@ -1,6 +1,31 @@
 // SPDX-License-Identifier: BUSL-1.1
 import { z } from 'zod';
 
+/**
+ * Pre-process the raw env so that the canonical OTel env var names take precedence, but the
+ * `AUDITFORGE_OTEL_*` aliases used by the Helm ConfigMap are honoured when the canonical name is
+ * unset. Solves CRITICAL-OBS-001 (ConfigMap exporting alias keys the API never read).
+ */
+function aliasOtelEnvVars(env: NodeJS.ProcessEnv): NodeJS.ProcessEnv {
+  const out: Record<string, string | undefined> = { ...env };
+  const aliases: ReadonlyArray<readonly [canonical: string, alias: string]> = [
+    ['OTEL_EXPORTER_OTLP_ENDPOINT', 'AUDITFORGE_OTEL_EXPORTER_OTLP_ENDPOINT'],
+    ['OTEL_EXPORTER_OTLP_PROTOCOL', 'AUDITFORGE_OTEL_EXPORTER_OTLP_PROTOCOL'],
+    ['OTEL_EXPORTER_OTLP_INSECURE', 'AUDITFORGE_OTEL_EXPORTER_OTLP_INSECURE'],
+    ['OTEL_RESOURCE_ATTRIBUTES', 'AUDITFORGE_OTEL_RESOURCE_ATTRIBUTES'],
+    ['OTEL_SERVICE_NAME', 'AUDITFORGE_OTEL_SERVICE_NAME'],
+    ['OTEL_TRACES_SAMPLER_ARG', 'AUDITFORGE_OTEL_TRACES_SAMPLER_ARG'],
+  ];
+  for (const [canonical, alias] of aliases) {
+    const canonicalValue = out[canonical];
+    const aliasValue = out[alias];
+    if ((canonicalValue === undefined || canonicalValue === '') && aliasValue !== undefined && aliasValue !== '') {
+      out[canonical] = aliasValue;
+    }
+  }
+  return out as NodeJS.ProcessEnv;
+}
+
 export const ConfigSchema = z.object({
   NODE_ENV: z.enum(['development', 'test', 'staging', 'production']).default('development'),
   PORT: z.coerce.number().int().positive().default(4000),
@@ -33,8 +58,13 @@ export const ConfigSchema = z.object({
   JWT_PRIVATE_KEY: z.string().min(1).optional(),
   JWT_PUBLIC_KEY: z.string().min(1).optional(),
 
+  // OTel — accepts either the canonical key or the AUDITFORGE_-prefixed alias used by Helm.
   OTEL_EXPORTER_OTLP_ENDPOINT: z.string().url().optional(),
+  OTEL_EXPORTER_OTLP_PROTOCOL: z.enum(['http', 'grpc']).default('http'),
+  OTEL_EXPORTER_OTLP_INSECURE: z.coerce.boolean().default(true),
+  OTEL_RESOURCE_ATTRIBUTES: z.string().optional(),
   OTEL_SERVICE_NAME: z.string().default('auditforge-api'),
+  OTEL_TRACES_SAMPLER_ARG: z.coerce.number().min(0).max(1).default(0.1),
 
   RATE_LIMIT_TTL_MS: z.coerce.number().int().positive().default(60_000),
   RATE_LIMIT_MAX: z.coerce.number().int().positive().default(300),
@@ -48,7 +78,8 @@ export const ConfigSchema = z.object({
 export type AppConfig = z.infer<typeof ConfigSchema>;
 
 export function loadConfig(env: NodeJS.ProcessEnv = process.env): AppConfig {
-  const parsed = ConfigSchema.safeParse(env);
+  const aliased = aliasOtelEnvVars(env);
+  const parsed = ConfigSchema.safeParse(aliased);
   if (!parsed.success) {
     throw new Error(
       `Invalid configuration:\n${parsed.error.issues.map((i) => `  - ${i.path.join('.')}: ${i.message}`).join('\n')}`,

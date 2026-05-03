@@ -1,0 +1,133 @@
+# SPDX-License-Identifier: Apache-2.0
+#
+# AuditForge OpenTelemetry Collector configuration.
+#
+# Pipeline summary
+#   receivers : OTLP over HTTP (4318) and gRPC (4317), plus Prometheus scrape on 8888 for self-obs.
+#   processors: memory_limiter -> batch -> tail_sampling -> attributes (PII strip).
+#   exporters : otlphttp/tempo for traces, prometheusremotewrite for metrics, loki for logs,
+#               and a local debug exporter (disabled in prod, retained as a fallback).
+#
+# Tail sampling decision tree:
+#   - Always keep spans flagged auditforge.critical=true (ledger emit, RLS, probe execution, LLM call).
+#   - Always keep spans whose status is ERROR.
+#   - Otherwise probabilistic 10% retention for the long tail of probe traces (which produce huge
+#     bursts of low-signal data during scheduled runs).
+#
+# Drop-in: deploy alongside the upstream `opentelemetry-collector` Helm chart with values
+# referencing this file as `config:`.
+
+receivers:
+  otlp:
+    protocols:
+      http:
+        endpoint: 0.0.0.0:4318
+      grpc:
+        endpoint: 0.0.0.0:4317
+  prometheus/self:
+    config:
+      scrape_configs:
+        - job_name: otelcol-self
+          scrape_interval: 30s
+          static_configs:
+            - targets: [127.0.0.1:8888]
+
+processors:
+  memory_limiter:
+    check_interval: 5s
+    limit_percentage: 75
+    spike_limit_percentage: 15
+  batch:
+    send_batch_size: 1024
+    send_batch_max_size: 2048
+    timeout: 5s
+  attributes/pii_strip:
+    actions:
+      # Defense in depth — also stripped at the SDK level. Drop query strings on http URL spans.
+      - key: http.url
+        action: update
+        from_attribute: http.target
+      - key: http.target
+        action: update
+        from_attribute: http.route
+      # Never let prompt / completion content leak into traces.
+      - key: llm.prompt
+        action: delete
+      - key: llm.completion
+        action: delete
+      - key: db.statement
+        action: hash
+  tail_sampling:
+    decision_wait: 10s
+    num_traces: 50000
+    expected_new_traces_per_sec: 200
+    policies:
+      - name: keep-critical-spans
+        type: string_attribute
+        string_attribute:
+          key: auditforge.critical
+          values: ["true"]
+      - name: keep-errors
+        type: status_code
+        status_code:
+          status_codes: [ERROR]
+      - name: probabilistic-default
+        type: probabilistic
+        probabilistic:
+          sampling_percentage: 10
+
+exporters:
+  otlphttp/tempo:
+    endpoint: ${env:TEMPO_OTLP_ENDPOINT}
+    tls:
+      insecure: ${env:TEMPO_TLS_INSECURE}
+    retry_on_failure:
+      enabled: true
+      initial_interval: 5s
+      max_interval: 30s
+      max_elapsed_time: 300s
+  prometheusremotewrite/mimir:
+    endpoint: ${env:MIMIR_REMOTE_WRITE_ENDPOINT}
+    tls:
+      insecure: ${env:MIMIR_TLS_INSECURE}
+    resource_to_telemetry_conversion:
+      enabled: true
+    external_labels:
+      cluster: ${env:CLUSTER_NAME}
+      tenant: ${env:OTEL_TENANT}
+  loki:
+    endpoint: ${env:LOKI_PUSH_ENDPOINT}
+    default_labels_enabled:
+      exporter: false
+      job: true
+  debug:
+    verbosity: basic
+
+extensions:
+  health_check:
+    endpoint: 0.0.0.0:13133
+  pprof:
+    endpoint: 0.0.0.0:1777
+  zpages:
+    endpoint: 0.0.0.0:55679
+
+service:
+  extensions: [health_check, pprof, zpages]
+  telemetry:
+    metrics:
+      address: 0.0.0.0:8888
+    logs:
+      level: info
+  pipelines:
+    traces:
+      receivers: [otlp]
+      processors: [memory_limiter, attributes/pii_strip, tail_sampling, batch]
+      exporters: [otlphttp/tempo]
+    metrics:
+      receivers: [otlp, prometheus/self]
+      processors: [memory_limiter, batch]
+      exporters: [prometheusremotewrite/mimir]
+    logs:
+      receivers: [otlp]
+      processors: [memory_limiter, attributes/pii_strip, batch]
+      exporters: [loki]

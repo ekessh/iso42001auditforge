@@ -1,0 +1,85 @@
+{
+  "$schema": "https://grafana.com/schemas/dashboard/v10.0.0",
+  "uid": "auditforge-trace-analyzer",
+  "title": "AuditForge — Trace Analyzer",
+  "tags": ["auditforge", "traces"],
+  "timezone": "",
+  "schemaVersion": 39,
+  "version": 1,
+  "editable": true,
+  "graphTooltip": 1,
+  "time": { "from": "now-12h", "to": "now" },
+  "refresh": "1m",
+  "templating": {
+    "list": [
+      { "name": "datasource", "type": "datasource", "query": "prometheus", "current": { "text": "Prometheus", "value": "Prometheus" } }
+    ]
+  },
+  "panels": [
+    {
+      "id": 1,
+      "type": "stat",
+      "title": "Ingest rate (traces/s)",
+      "datasource": "$datasource",
+      "gridPos": { "h": 4, "w": 8, "x": 0, "y": 0 },
+      "targets": [
+        { "expr": "sum(rate(auditforge_retrieval_latency_ms_count{source=\"trace_ingest\"}[5m]))", "refId": "A" }
+      ]
+    },
+    {
+      "id": 2,
+      "type": "stat",
+      "title": "Parse error rate (10m)",
+      "datasource": "$datasource",
+      "gridPos": { "h": 4, "w": 8, "x": 8, "y": 0 },
+      "targets": [
+        { "expr": "sum(increase(auditforge_retrieval_latency_ms_count{source=\"trace_parse_error\"}[10m]))", "refId": "A" }
+      ]
+    },
+    {
+      "id": 3,
+      "type": "stat",
+      "title": "p95 trace ingest latency",
+      "datasource": "$datasource",
+      "gridPos": { "h": 4, "w": 8, "x": 16, "y": 0 },
+      "targets": [
+        { "expr": "histogram_quantile(0.95, sum(rate(auditforge_retrieval_latency_ms_bucket{source=\"trace_ingest\"}[5m])) by (le))", "refId": "A" }
+      ],
+      "fieldConfig": { "defaults": { "unit": "ms" } }
+    },
+    {
+      "id": 4,
+      "type": "timeseries",
+      "title": "Trace ingestion latency distribution",
+      "datasource": "$datasource",
+      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 4 },
+      "targets": [
+        { "expr": "histogram_quantile(0.50, sum(rate(auditforge_retrieval_latency_ms_bucket{source=\"trace_ingest\"}[5m])) by (le))", "refId": "A", "legendFormat": "p50" },
+        { "expr": "histogram_quantile(0.95, sum(rate(auditforge_retrieval_latency_ms_bucket{source=\"trace_ingest\"}[5m])) by (le))", "refId": "B", "legendFormat": "p95" },
+        { "expr": "histogram_quantile(0.99, sum(rate(auditforge_retrieval_latency_ms_bucket{source=\"trace_ingest\"}[5m])) by (le))", "refId": "C", "legendFormat": "p99" }
+      ],
+      "fieldConfig": { "defaults": { "unit": "ms" } }
+    },
+    {
+      "id": 5,
+      "type": "timeseries",
+      "title": "Large trace timing (analysis pipeline)",
+      "datasource": "$datasource",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 12 },
+      "targets": [
+        { "expr": "histogram_quantile(0.95, sum(rate(auditforge_retrieval_latency_ms_bucket{source=\"large_trace\"}[5m])) by (le))", "refId": "A", "legendFormat": "p95" }
+      ],
+      "fieldConfig": { "defaults": { "unit": "ms" } }
+    },
+    {
+      "id": 6,
+      "type": "timeseries",
+      "title": "Parse errors over time",
+      "datasource": "$datasource",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 12 },
+      "targets": [
+        { "expr": "rate(auditforge_retrieval_latency_ms_count{source=\"trace_parse_error\"}[5m])", "refId": "A", "legendFormat": "errors/s" }
+      ]
+    }
+  ]
+}

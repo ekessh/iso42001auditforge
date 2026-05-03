@@ -1,21 +1,45 @@
 // SPDX-License-Identifier: BUSL-1.1
-import { NodeSDK } from '@opentelemetry/sdk-node';
-import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-http';
-import { getNodeAutoInstrumentations } from '@opentelemetry/auto-instrumentations-node';
+/**
+ * Thin shim that delegates OTel initialisation to the shared `@auditforge/observability` package.
+ *
+ * The shim exists for backward compatibility with `main.ts`, which used to call `startOtel()`
+ * directly. New code should import from `@auditforge/observability` instead.
+ */
+import { initOtel, shutdownOtel as shutdownSharedOtel } from '@auditforge/observability';
 
-let started = false;
+import type { AppConfig } from './config/config.schema.js';
 
-export function startOtel(serviceName: string, otlpEndpoint?: string): void {
-  if (started) return;
-  if (!otlpEndpoint) return;
-  const sdk = new NodeSDK({
-    serviceName,
-    traceExporter: new OTLPTraceExporter({ url: `${otlpEndpoint}/v1/traces` }),
-    instrumentations: [getNodeAutoInstrumentations({
-      '@opentelemetry/instrumentation-fs': { enabled: false },
-    })],
+/**
+ * Boot the OTel SDK using the shared init module. No-ops when the OTLP endpoint is unset.
+ */
+export function startOtel(cfg: AppConfig, serviceVersion?: string): void {
+  // Logging into the bootstrap pre-Nest is best-effort; we use console here so the warning
+  // appears even when pino is not yet wired.
+  if (
+    (cfg.NODE_ENV === 'production' || cfg.NODE_ENV === 'staging') &&
+    (cfg.OTEL_EXPORTER_OTLP_ENDPOINT === undefined || cfg.OTEL_EXPORTER_OTLP_ENDPOINT.length === 0)
+  ) {
+    // eslint-disable-next-line no-console
+    console.warn(
+      '[otel] OTEL_EXPORTER_OTLP_ENDPOINT is unset in %s — distributed tracing is disabled.',
+      cfg.NODE_ENV,
+    );
+  }
+
+  initOtel({
+    serviceName: cfg.OTEL_SERVICE_NAME,
+    ...(serviceVersion !== undefined ? { serviceVersion } : {}),
+    environment: cfg.NODE_ENV,
+    ...(cfg.OTEL_EXPORTER_OTLP_ENDPOINT !== undefined
+      ? { otlpEndpoint: cfg.OTEL_EXPORTER_OTLP_ENDPOINT }
+      : {}),
+    sampler: cfg.OTEL_TRACES_SAMPLER_ARG,
+    protocol: cfg.OTEL_EXPORTER_OTLP_PROTOCOL,
+    component: 'api',
   });
-  sdk.start();
-  started = true;
-  process.on('SIGTERM', () => { void sdk.shutdown(); });
+}
+
+/** Awaitable shutdown for use in `app.enableShutdownHooks` lifecycle. */
+export async function shutdownOtel(): Promise<void> {
+  await shutdownSharedOtel();
 }

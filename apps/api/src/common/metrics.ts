@@ -1,27 +1,35 @@
 // SPDX-License-Identifier: BUSL-1.1
-import { Counter, Histogram, Registry, collectDefaultMetrics } from 'prom-client';
+/**
+ * Re-exports the canonical metrics registry from `@auditforge/observability`.
+ *
+ * Historical names (`metricsRegistry`, `httpRequests`, `httpLatencyMs`, `ledgerEvents`) are kept
+ * as thin aliases on top of the shared bundle so that existing callers do not need to be touched
+ * while the codebase migrates to the new metric names.
+ */
+import { getMetrics, getRegistry, hashIdToBucket } from '@auditforge/observability';
 
-export const metricsRegistry = new Registry();
-collectDefaultMetrics({ register: metricsRegistry });
+const m = getMetrics();
 
-export const httpRequests = new Counter({
-  name: 'auditforge_http_requests_total',
-  help: 'Total HTTP requests',
-  labelNames: ['method', 'route', 'status', 'firm'] as const,
-  registers: [metricsRegistry],
-});
+/** Canonical prom-client registry. Use this anywhere you previously created your own. */
+export const metricsRegistry = getRegistry();
 
-export const httpLatencyMs = new Histogram({
-  name: 'auditforge_http_request_duration_ms',
-  help: 'HTTP request duration in ms',
-  labelNames: ['method', 'route', 'status'] as const,
-  buckets: [5, 10, 25, 50, 100, 200, 400, 800, 1600, 3200],
-  registers: [metricsRegistry],
-});
+/** Histogram for HTTP request duration (ms). Replaces the old per-app `httpLatencyMs`. */
+export const httpLatencyMs = m.requestDuration;
 
-export const ledgerEvents = new Counter({
-  name: 'auditforge_ledger_events_total',
-  help: 'Audit ledger events emitted',
-  labelNames: ['type', 'entity', 'firm'] as const,
-  registers: [metricsRegistry],
-});
+/**
+ * Backward-compatible counter alias. The new world favours observing the histogram +
+ * `ledgerEmitTotal`. We keep the symbol so legacy imports keep compiling, but it's now an alias
+ * for the canonical `ledger_emit_total` series.
+ */
+export const ledgerEvents = m.ledgerEmitTotal;
+
+/**
+ * Used to be a stand-alone counter; equivalent information is now derived from the
+ * `auditforge_http_request_duration_ms` histogram count. Re-exported for source compatibility.
+ */
+export const httpRequests = m.requestDuration;
+
+/** Helper for hashing tenant ids before they are used as Prom labels. */
+export const hashFirmIdForLabel = (firmId: string): string => hashIdToBucket(firmId, 64);
+
+export { getMetrics };

@@ -1,0 +1,131 @@
+{
+  "$schema": "https://grafana.com/schemas/dashboard/v10.0.0",
+  "uid": "auditforge-api-overview",
+  "title": "AuditForge — API Overview",
+  "tags": ["auditforge", "api", "slo"],
+  "timezone": "",
+  "schemaVersion": 39,
+  "version": 1,
+  "editable": true,
+  "graphTooltip": 1,
+  "time": { "from": "now-6h", "to": "now" },
+  "refresh": "30s",
+  "annotations": {
+    "list": [
+      { "name": "Deploys", "datasource": "$datasource", "enable": true, "iconColor": "rgba(0, 211, 255, 1)", "tags": ["deploy"] }
+    ]
+  },
+  "templating": {
+    "list": [
+      { "name": "datasource", "type": "datasource", "query": "prometheus", "current": { "text": "Prometheus", "value": "Prometheus" } },
+      { "name": "firm_bucket", "type": "query", "datasource": "$datasource", "query": "label_values(auditforge_http_request_duration_ms_count, firm_id_hashed)", "includeAll": true, "multi": true, "current": { "text": "All", "value": "$__all" } }
+    ]
+  },
+  "panels": [
+    {
+      "id": 1,
+      "type": "stat",
+      "title": "Requests / sec",
+      "datasource": "$datasource",
+      "gridPos": { "h": 4, "w": 6, "x": 0, "y": 0 },
+      "targets": [
+        {
+          "expr": "sum(rate(auditforge_http_request_duration_ms_count{firm_id_hashed=~\"$firm_bucket\"}[1m]))",
+          "refId": "A",
+          "legendFormat": "rps"
+        }
+      ],
+      "fieldConfig": { "defaults": { "unit": "reqps" } }
+    },
+    {
+      "id": 2,
+      "type": "stat",
+      "title": "5xx error rate",
+      "datasource": "$datasource",
+      "gridPos": { "h": 4, "w": 6, "x": 6, "y": 0 },
+      "targets": [
+        {
+          "expr": "sum(rate(auditforge_http_request_duration_ms_count{status=~\"5..\",firm_id_hashed=~\"$firm_bucket\"}[5m])) / clamp_min(sum(rate(auditforge_http_request_duration_ms_count{firm_id_hashed=~\"$firm_bucket\"}[5m])),1)",
+          "refId": "A",
+          "legendFormat": "err rate"
+        }
+      ],
+      "fieldConfig": { "defaults": { "unit": "percentunit" } }
+    },
+    {
+      "id": 3,
+      "type": "stat",
+      "title": "Error budget remaining (30d)",
+      "datasource": "$datasource",
+      "gridPos": { "h": 4, "w": 6, "x": 12, "y": 0 },
+      "targets": [
+        {
+          "expr": "1 - (sum(rate(auditforge_http_request_duration_ms_count{status=~\"5..\"}[30d])) / clamp_min(sum(rate(auditforge_http_request_duration_ms_count[30d])),1)) / 0.001",
+          "refId": "A",
+          "legendFormat": "budget"
+        }
+      ],
+      "fieldConfig": { "defaults": { "unit": "percentunit", "max": 1, "min": 0 } }
+    },
+    {
+      "id": 4,
+      "type": "stat",
+      "title": "p95 latency",
+      "datasource": "$datasource",
+      "gridPos": { "h": 4, "w": 6, "x": 18, "y": 0 },
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.95, sum(rate(auditforge_http_request_duration_ms_bucket[5m])) by (le))",
+          "refId": "A",
+          "legendFormat": "p95"
+        }
+      ],
+      "fieldConfig": { "defaults": { "unit": "ms", "thresholds": { "mode": "absolute", "steps": [ { "color": "green", "value": null }, { "color": "yellow", "value": 200 }, { "color": "red", "value": 500 } ] } } }
+    },
+    {
+      "id": 5,
+      "type": "timeseries",
+      "title": "Latency p50 / p95 / p99",
+      "datasource": "$datasource",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 4 },
+      "targets": [
+        { "expr": "histogram_quantile(0.50, sum(rate(auditforge_http_request_duration_ms_bucket[5m])) by (le))", "refId": "A", "legendFormat": "p50" },
+        { "expr": "histogram_quantile(0.95, sum(rate(auditforge_http_request_duration_ms_bucket[5m])) by (le))", "refId": "B", "legendFormat": "p95" },
+        { "expr": "histogram_quantile(0.99, sum(rate(auditforge_http_request_duration_ms_bucket[5m])) by (le))", "refId": "C", "legendFormat": "p99" }
+      ],
+      "fieldConfig": { "defaults": { "unit": "ms" } }
+    },
+    {
+      "id": 6,
+      "type": "timeseries",
+      "title": "Status code mix",
+      "datasource": "$datasource",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 4 },
+      "targets": [
+        { "expr": "sum by (status) (rate(auditforge_http_request_duration_ms_count[5m]))", "refId": "A", "legendFormat": "{{status}}" }
+      ],
+      "fieldConfig": { "defaults": { "unit": "reqps" } }
+    },
+    {
+      "id": 7,
+      "type": "table",
+      "title": "Top 10 endpoints by RPS",
+      "datasource": "$datasource",
+      "gridPos": { "h": 9, "w": 12, "x": 0, "y": 12 },
+      "targets": [
+        { "expr": "topk(10, sum by (route, method) (rate(auditforge_http_request_duration_ms_count[5m])))", "refId": "A", "format": "table", "instant": true }
+      ]
+    },
+    {
+      "id": 8,
+      "type": "timeseries",
+      "title": "Multi-window burn rate (1h / 6h)",
+      "datasource": "$datasource",
+      "gridPos": { "h": 9, "w": 12, "x": 12, "y": 12 },
+      "targets": [
+        { "expr": "auditforge:api_burn_rate:1h", "refId": "A", "legendFormat": "burn 1h" },
+        { "expr": "auditforge:api_burn_rate:6h", "refId": "B", "legendFormat": "burn 6h" }
+      ]
+    }
+  ]
+}
