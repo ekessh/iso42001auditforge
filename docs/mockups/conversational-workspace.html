@@ -1,0 +1,368 @@
+<!--
+  SPDX-License-Identifier: BUSL-1.1
+  AuditForge ISO 42001 — Conversational Audit Workspace mockup (v3 Section 15.11).
+  Static HTML, no build, no JS framework. Open directly in a browser.
+-->
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Conversational Audit Workspace — AuditForge</title>
+<style>
+  :root {
+    --bg: #0b1220;
+    --panel: #0f172a;
+    --panel-2: #111c34;
+    --border: #1f2a44;
+    --text: #e2e8f0;
+    --muted: #94a3b8;
+    --accent: #34d399;
+    --warn: #f59e0b;
+    --danger: #ef4444;
+    --info: #60a5fa;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; height: 100%; }
+  body {
+    font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+    background: var(--bg); color: var(--text);
+    font-size: 14px; line-height: 1.5;
+    font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11', 'tnum';
+  }
+  .app { display: grid; grid-template-rows: 48px 1fr; height: 100vh; }
+  header.top {
+    display: flex; align-items: center; gap: 16px;
+    background: var(--panel); border-bottom: 1px solid var(--border);
+    padding: 0 16px;
+  }
+  header .brand { font-weight: 600; letter-spacing: 0.02em; }
+  header .scope { color: var(--muted); font-size: 13px; }
+  header .scope b { color: var(--text); font-weight: 500; }
+  header .timer { margin-left: auto; color: var(--muted); font-variant-numeric: tabular-nums; font-size: 13px; }
+  header .mode-pill {
+    background: rgba(52, 211, 153, 0.12); color: var(--accent);
+    padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600;
+    letter-spacing: 0.04em; text-transform: uppercase;
+  }
+  .main { display: grid; grid-template-columns: 62% 38%; min-height: 0; }
+  .left, .right { min-height: 0; display: flex; flex-direction: column; }
+  .left { background: var(--bg); }
+  .right { background: var(--panel); border-left: 1px solid var(--border); }
+
+  .stream { flex: 1; overflow-y: auto; padding: 16px; }
+  .stream .msg { margin-bottom: 12px; max-width: 78ch; }
+  .msg.system { padding: 12px 14px; background: var(--panel-2); border: 1px solid var(--border); border-radius: 10px; }
+  .msg.system .label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); margin-bottom: 4px; }
+  .msg.system .body { font-size: 14px; }
+  .msg.system .provenance { margin-top: 6px; color: var(--muted); font-size: 12px; }
+  .msg.system .provenance a { color: var(--info); text-decoration: none; border-bottom: 1px dotted var(--info); }
+  .msg.system .actions { margin-top: 10px; display: flex; gap: 8px; flex-wrap: wrap; }
+  .msg.system .actions button {
+    background: transparent; border: 1px solid var(--border); color: var(--text);
+    padding: 4px 10px; border-radius: 6px; font-size: 12px; cursor: pointer;
+  }
+  .msg.system .actions button.primary {
+    background: var(--accent); color: #052e1a; border-color: var(--accent);
+  }
+
+  .msg.auditor { margin-left: auto; max-width: 78ch; }
+  .msg.auditor .bubble {
+    background: var(--info); color: #06203b; padding: 10px 14px; border-radius: 10px 10px 2px 10px;
+    display: inline-block;
+  }
+  .msg.auditor .meta { font-size: 11px; color: var(--muted); margin-top: 4px; text-align: right; }
+
+  .msg.auditee .bubble {
+    background: #1a253f; padding: 10px 14px; border-radius: 10px 10px 10px 2px;
+    display: inline-block; max-width: 78ch;
+  }
+  .msg.auditee .meta { font-size: 11px; color: var(--muted); margin-top: 4px; }
+
+  .msg.alert {
+    border-left: 3px solid var(--warn); background: rgba(245, 158, 11, 0.08);
+    padding: 10px 12px; border-radius: 0 8px 8px 0; font-size: 13px;
+  }
+  .msg.alert .what { font-weight: 500; }
+  .msg.alert .actions { margin-top: 6px; }
+  .msg.alert .actions button {
+    background: var(--warn); color: #2a1a04; border: 0; padding: 4px 10px; border-radius: 6px; font-size: 12px; cursor: pointer;
+  }
+
+  .composer {
+    border-top: 1px solid var(--border); padding: 10px 12px; display: flex; gap: 8px; align-items: center;
+    background: var(--panel);
+  }
+  .composer .modes { display: flex; gap: 4px; }
+  .composer .mode-tab {
+    padding: 4px 10px; border-radius: 6px; font-size: 12px; cursor: pointer;
+    background: transparent; color: var(--muted); border: 1px solid transparent;
+  }
+  .composer .mode-tab.active { background: var(--bg); color: var(--text); border-color: var(--border); }
+  .composer textarea {
+    flex: 1; resize: none; min-height: 36px; max-height: 96px;
+    background: var(--bg); color: var(--text); border: 1px solid var(--border); border-radius: 8px;
+    padding: 8px 10px; font: inherit;
+  }
+  .composer .icon-btn {
+    width: 32px; height: 32px; border-radius: 6px; border: 1px solid var(--border);
+    background: transparent; color: var(--muted); cursor: pointer;
+  }
+  .composer .send {
+    background: var(--accent); color: #052e1a; border: 0; padding: 6px 14px;
+    border-radius: 6px; font-weight: 500; cursor: pointer;
+  }
+
+  /* Right pane */
+  .right .tabs { display: flex; gap: 0; border-bottom: 1px solid var(--border); }
+  .right .tab {
+    padding: 10px 14px; font-size: 13px; cursor: pointer; color: var(--muted);
+    border-bottom: 2px solid transparent;
+  }
+  .right .tab.active { color: var(--text); border-bottom-color: var(--accent); }
+  .right .tab .count {
+    background: var(--border); color: var(--muted); padding: 0 6px;
+    border-radius: 999px; font-size: 11px; margin-left: 4px;
+  }
+  .right .tab.active .count { background: rgba(52,211,153,0.18); color: var(--accent); }
+  .right .pane { flex: 1; overflow-y: auto; padding: 12px; }
+
+  .card {
+    background: var(--panel-2); border: 1px solid var(--border); border-radius: 10px;
+    padding: 12px; margin-bottom: 10px;
+  }
+  .card.major { border-left: 3px solid var(--danger); }
+  .card.minor { border-left: 3px solid var(--warn); }
+  .card.ofi   { border-left: 3px solid var(--info); }
+  .card .row1 { display: flex; gap: 8px; align-items: center; }
+  .card .badge {
+    font-size: 10px; font-weight: 600; letter-spacing: 0.05em;
+    padding: 2px 6px; border-radius: 4px; text-transform: uppercase;
+  }
+  .badge.major { background: rgba(239,68,68,0.18); color: var(--danger); }
+  .badge.minor { background: rgba(245,158,11,0.18); color: var(--warn); }
+  .badge.ofi   { background: rgba(96,165,250,0.18); color: var(--info); }
+  .card .conf { margin-left: auto; font-size: 11px; color: var(--muted); }
+  .card .conf .dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); margin-right: 4px; vertical-align: middle; }
+  .card .conf .dot.med { background: var(--warn); }
+  .card .conf .dot.low { background: var(--muted); }
+  .card .stmt { margin: 8px 0 6px; font-size: 13px; }
+  .card .chips { display: flex; gap: 4px; flex-wrap: wrap; margin-bottom: 6px; }
+  .card .chip {
+    background: var(--bg); border: 1px solid var(--border); color: var(--muted);
+    font-size: 11px; padding: 2px 6px; border-radius: 4px;
+  }
+  .card .source { font-size: 11px; color: var(--muted); margin-bottom: 8px; }
+  .card .actions { display: flex; gap: 6px; }
+  .card .actions button {
+    background: transparent; border: 1px solid var(--border); color: var(--text);
+    padding: 4px 10px; border-radius: 6px; font-size: 12px; cursor: pointer;
+  }
+  .card .actions button.add {
+    background: var(--accent); color: #052e1a; border-color: var(--accent); font-weight: 500;
+  }
+
+  /* Coverage heatmap */
+  .heatmap { display: grid; grid-template-columns: repeat(6, 1fr); gap: 4px; }
+  .heatmap .cell {
+    aspect-ratio: 1.6 / 1; border-radius: 4px; padding: 6px; font-size: 11px; color: var(--text);
+    display: flex; flex-direction: column; justify-content: space-between;
+  }
+  .cell.green { background: rgba(52,211,153,0.18); border: 1px solid rgba(52,211,153,0.3); }
+  .cell.amber { background: rgba(245,158,11,0.16); border: 1px solid rgba(245,158,11,0.3); }
+  .cell.red   { background: rgba(239,68,68,0.16); border: 1px solid rgba(239,68,68,0.3); }
+  .cell.grey  { background: var(--panel-2); border: 1px solid var(--border); color: var(--muted); }
+  .cell .id { font-weight: 600; }
+  .cell .lbl { font-size: 10px; opacity: 0.85; }
+
+  .strip {
+    background: var(--panel-2); border-bottom: 1px solid var(--border); padding: 8px 12px;
+    display: flex; gap: 16px; font-size: 12px; align-items: center;
+  }
+  .strip .stat { color: var(--muted); }
+  .strip .stat b { color: var(--text); font-variant-numeric: tabular-nums; }
+  .strip .stat .ok { color: var(--accent); }
+  .strip .stat .warn { color: var(--warn); }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <header class="top">
+    <span class="brand">AuditForge</span>
+    <span class="scope"><b>Atlas Diagnostics Inc.</b> &middot; AIMS — clinical decision support &middot; Stage 2 &middot; Area: A.7 Data</span>
+    <span class="mode-pill">Audit Mode</span>
+    <span class="timer">14:32 / day 3 of 5</span>
+  </header>
+
+  <div class="strip">
+    <span class="stat"><b>62%</b> coverage</span>
+    <span class="stat"><b class="ok">31</b>/47 working papers</span>
+    <span class="stat"><b class="warn">7</b> candidate findings</span>
+    <span class="stat"><b>11</b>/18 man-days</span>
+    <span class="stat"><b>84</b> probes run</span>
+    <span class="stat" style="margin-left:auto"><span class="ok">●</span> Local &middot; Llama 3.1 8B / Qwen 32B</span>
+  </div>
+
+  <div class="main">
+
+    <!-- LEFT: chat -->
+    <section class="left" aria-label="Audit conversation">
+      <div class="stream" id="stream">
+
+        <div class="msg system">
+          <div class="label">System suggestion</div>
+          <div class="body">"Walk me through how training-data lineage is recorded for the radiology triage model — from raw acquisition through versioned features into the deployed model."</div>
+          <div class="provenance">From <a href="#">A.7.4 Quality of data</a> + RAG-class system, library Q-A7-004 v3 &middot; coverage gap on <a href="#">A.6.2.7 operation</a></div>
+          <div class="actions">
+            <button class="primary">Accept &amp; ask</button>
+            <button>Edit</button>
+            <button>Skip</button>
+            <button>Why this?</button>
+          </div>
+        </div>
+
+        <div class="msg auditor">
+          <div class="bubble">Walk me through how training-data lineage is recorded for the radiology triage model — from raw acquisition through versioned features into the deployed model.</div>
+          <div class="meta">M. Castellanos &middot; to: Dr. K. Ito (Data Lead) &middot; 14:18</div>
+        </div>
+
+        <div class="msg auditee">
+          <div class="bubble">We capture every cohort export with a hash and the DICOM source. The feature pipeline is in MLflow with run IDs pinned to model versions. We don't currently document retraining decisions in a written form — that gets discussed in the weekly review meeting and the meeting notes are stored in Confluence.</div>
+          <div class="meta">Dr. K. Ito &middot; 14:21 &middot; transcribed locally (whisper.cpp)</div>
+        </div>
+
+        <div class="msg alert">
+          <div class="what">⚠ Coverage gap detected — original question targeted A.6.2.7 (operation) but the answer didn't address how lineage is verified at deployment.</div>
+          <div class="actions"><button>Inject follow-up</button></div>
+        </div>
+
+        <div class="msg system">
+          <div class="label">Next suggestion (follow-up)</div>
+          <div class="body">"You mentioned retraining decisions are discussed in the weekly review and stored as meeting notes. Can you show me how those notes are referenced when a model version is approved for production?"</div>
+          <div class="provenance">Follow-up to claim <a href="#">C-1421-04</a> &middot; raises <a href="#">A.6.2.6 deployment governance</a></div>
+          <div class="actions">
+            <button class="primary">Accept &amp; ask</button>
+            <button>Edit</button>
+            <button>Skip</button>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="composer">
+        <div class="modes">
+          <button class="mode-tab">Question</button>
+          <button class="mode-tab active">Live interview</button>
+          <button class="mode-tab">Note</button>
+        </div>
+        <textarea placeholder="Recording — speak naturally. Speakers: M. Castellanos (Auditor), Dr. K. Ito (Data Lead)..."></textarea>
+        <button class="icon-btn" title="Attach evidence">📎</button>
+        <button class="icon-btn" title="Voice">🎙</button>
+        <button class="send">Send</button>
+      </div>
+    </section>
+
+    <!-- RIGHT: live findings -->
+    <aside class="right" aria-label="Candidate findings and coverage">
+      <div class="tabs">
+        <div class="tab active">Candidate findings <span class="count">4</span></div>
+        <div class="tab">Coverage</div>
+        <div class="tab">Claims <span class="count">23</span></div>
+        <div class="tab">Parked <span class="count">2</span></div>
+      </div>
+      <div class="pane">
+
+        <div class="card minor">
+          <div class="row1">
+            <span class="badge minor">Minor NC</span>
+            <span class="conf"><span class="dot"></span> High</span>
+          </div>
+          <div class="stmt">Retraining decisions for the radiology triage model are not documented in a written, version-pinned form. Discussions occur in a weekly review captured only in Confluence meeting notes.</div>
+          <div class="chips">
+            <span class="chip">A.6.2.6 Deployment</span>
+            <span class="chip">A.6.2.8 Operation</span>
+          </div>
+          <div class="source">From answer at 14:21 by Dr. K. Ito · claim C-1421-04</div>
+          <div class="actions">
+            <button class="add">Add</button>
+            <button>Edit</button>
+            <button>Park</button>
+            <button>Delete</button>
+          </div>
+        </div>
+
+        <div class="card ofi">
+          <div class="row1">
+            <span class="badge ofi">OFI</span>
+            <span class="conf"><span class="dot med"></span> Medium</span>
+          </div>
+          <div class="stmt">Pipeline lineage is well captured in MLflow but the link between cohort hash, feature run ID, and approved deployment is implicit. Recommend automated lineage-link generation for audit trail clarity.</div>
+          <div class="chips">
+            <span class="chip">A.7.4 Data quality</span>
+          </div>
+          <div class="source">From answer at 14:21 · claim C-1421-02</div>
+          <div class="actions">
+            <button class="add">Add</button>
+            <button>Edit</button>
+            <button>Park</button>
+            <button>Delete</button>
+          </div>
+        </div>
+
+        <div class="card minor">
+          <div class="row1">
+            <span class="badge minor">Minor NC</span>
+            <span class="conf"><span class="dot med"></span> Medium</span>
+          </div>
+          <div class="stmt">Auditee asserts cohort hashes are captured but did not produce evidence of the SHA-256 register at the time of interview.</div>
+          <div class="chips">
+            <span class="chip">A.7.4 Data quality</span>
+          </div>
+          <div class="source">Evidence absence — interview block 14:18–14:24</div>
+          <div class="actions">
+            <button class="add">Add</button>
+            <button>Edit</button>
+            <button>Park</button>
+            <button>Delete</button>
+          </div>
+        </div>
+
+        <div class="card major">
+          <div class="row1">
+            <span class="badge major">Major NC (candidate)</span>
+            <span class="conf"><span class="dot low"></span> Low</span>
+          </div>
+          <div class="stmt">Possible contradiction: 10:15 interview with the MLOps Lead asserted retraining decisions are formally documented. 14:21 answer from Data Lead asserts they are not. Engine raised a contradiction-resolution question.</div>
+          <div class="chips">
+            <span class="chip">A.6.2.6</span>
+            <span class="chip">Contradiction</span>
+          </div>
+          <div class="source">Cross-claim conflict · C-1015-12 vs C-1421-04</div>
+          <div class="actions">
+            <button class="add">Add</button>
+            <button>Edit</button>
+            <button>Park</button>
+            <button>Delete</button>
+          </div>
+        </div>
+
+        <div style="margin-top: 16px;">
+          <div style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); margin-bottom: 8px;">Coverage — A.7 Data</div>
+          <div class="heatmap" aria-label="A.7 clause coverage">
+            <div class="cell green"><div class="id">A.7.2</div><div class="lbl">Evidenced</div></div>
+            <div class="cell green"><div class="id">A.7.3</div><div class="lbl">Evidenced</div></div>
+            <div class="cell amber"><div class="id">A.7.4</div><div class="lbl">Partial</div></div>
+            <div class="cell red"><div class="id">A.7.5</div><div class="lbl">Contradicted</div></div>
+            <div class="cell grey"><div class="id">A.7.6</div><div class="lbl">Untouched</div></div>
+            <div class="cell grey"><div class="id">A.7.7</div><div class="lbl">Untouched</div></div>
+          </div>
+        </div>
+
+      </div>
+    </aside>
+
+  </div>
+</div>
+</body>
+</html>
