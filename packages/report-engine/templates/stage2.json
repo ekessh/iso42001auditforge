@@ -1,0 +1,91 @@
+{
+  "id": "stage2.v1",
+  "type": "stage2",
+  "isoAnchor": "9.4.8",
+  "version": "1.0.0",
+  "defaultLocale": "en",
+  "variables": {
+    "cb": { "type": "object", "required": true },
+    "auditee": { "type": "object", "required": true },
+    "leadAuditor": { "type": "object", "required": true },
+    "auditTeam": { "type": "array", "required": true, "itemShape": { "name": "string", "role": "string" } },
+    "executiveSummary": { "type": "string", "required": true },
+    "scope": { "type": "string", "required": true },
+    "auditProgramme": { "type": "object", "required": true },
+    "methodology": { "type": "string", "required": true },
+    "findingsSummary": { "type": "object", "required": true, "description": "{majorNc:n, minorNc:n, ofi:n}" },
+    "ncs": { "type": "array", "required": true, "itemShape": { "number": "string", "type": "string", "clause": "string", "title": "string", "statement": "string" } },
+    "ofis": { "type": "array", "required": false, "itemShape": { "number": "string", "clause": "string", "title": "string", "statement": "string" } },
+    "conformityStatement": { "type": "string", "required": true },
+    "recommendation": { "type": "string", "required": true, "description": "recommend | conditional | not_recommended" },
+    "auditDate": { "type": "date", "required": true }
+  },
+  "sections": [
+    {
+      "id": "cover",
+      "title": "Cover",
+      "body": "# Stage 2 Audit Report\n\n**Standard**: ISO/IEC 42001:2023\n**Auditee**: {{auditee.legalName}}\n**Certification Body**: {{cb.name}}\n**Lead Auditor**: {{leadAuditor.name}}\n**Audit Date**: {{dateFormat auditDate \"long\"}}\n",
+      "required": true
+    },
+    {
+      "id": "executive-summary",
+      "title": "Executive Summary",
+      "body": "## Executive Summary\n\n{{executiveSummary}}\n",
+      "required": true
+    },
+    {
+      "id": "scope",
+      "title": "Scope",
+      "body": "## Scope of Certification\n\n{{scope}}\n\nThe audit was conducted in accordance with {{clauseLink \"9.4.8\"}} of ISO/IEC 17021-1:2015.\n",
+      "required": true
+    },
+    {
+      "id": "audit-team",
+      "title": "Audit Team",
+      "body": "## Audit Team\n\n{{#each auditTeam}}- {{name}} ({{role}})\n{{/each}}",
+      "required": true
+    },
+    {
+      "id": "programme",
+      "title": "Audit Programme",
+      "body": "## Audit Programme\n\nDates: {{dateFormat auditProgramme.startDate \"date\"}} - {{dateFormat auditProgramme.endDate \"date\"}}\n\nSites: {{auditProgramme.sites}}\n\nClauses sampled: {{auditProgramme.clausesSampled}}\n",
+      "required": true
+    },
+    {
+      "id": "methodology",
+      "title": "Methodology",
+      "body": "## Methodology\n\n{{methodology}}\n",
+      "required": true
+    },
+    {
+      "id": "findings-summary",
+      "title": "Findings Summary",
+      "body": "## Findings Summary\n\n- Major NC: {{findingsSummary.majorNc}}\n- Minor NC: {{findingsSummary.minorNc}}\n- OFI: {{findingsSummary.ofi}}\n",
+      "required": true
+    },
+    {
+      "id": "nc-list",
+      "title": "Non-conformities",
+      "body": "## Non-conformities\n\n{{#each ncs}}### {{number}} {{verdictPill type}} {{clauseLink clause}}\n\n**{{title}}**\n\n{{statement}}\n\n{{/each}}",
+      "required": true
+    },
+    {
+      "id": "ofi-list",
+      "title": "Opportunities for Improvement",
+      "body": "## Opportunities for Improvement\n\n{{#each ofis}}- {{number}} ({{clauseLink clause}}) — **{{title}}**: {{statement}}\n{{else}}_None recorded._\n{{/each}}",
+      "required": false
+    },
+    {
+      "id": "conformity",
+      "title": "Conformity Statement",
+      "body": "## Conformity Statement\n\n{{conformityStatement}}\n",
+      "required": true
+    },
+    {
+      "id": "recommendation",
+      "title": "Recommendation",
+      "body": "## Recommendation\n\nThe lead auditor recommends: **{{recommendation}}**.\n",
+      "required": true
+    }
+  ]
+}

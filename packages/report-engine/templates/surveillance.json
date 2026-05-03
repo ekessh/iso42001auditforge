@@ -1,0 +1,50 @@
+{
+  "id": "surveillance.v1",
+  "type": "surveillance",
+  "isoAnchor": "9.6.3",
+  "version": "1.0.0",
+  "defaultLocale": "en",
+  "variables": {
+    "cb": { "type": "object", "required": true },
+    "auditee": { "type": "object", "required": true },
+    "leadAuditor": { "type": "object", "required": true },
+    "auditDate": { "type": "date", "required": true },
+    "cycleYear": { "type": "number", "required": true },
+    "ncFollowUp": { "type": "array", "required": true, "itemShape": { "number": "string", "originalDate": "string", "status": "string", "evidence": "string" } },
+    "sampledAreas": { "type": "array", "required": true, "itemShape": { "area": "string", "verdict": "string", "note": "string" } },
+    "trends": { "type": "object", "required": true },
+    "recommendation": { "type": "string", "required": true }
+  },
+  "sections": [
+    {
+      "id": "cover",
+      "title": "Cover",
+      "body": "# Surveillance Audit Report (Year {{cycleYear}})\n\n**Standard**: ISO/IEC 42001:2023\n**Auditee**: {{auditee.legalName}}\n**Certification Body**: {{cb.name}}\n**Lead Auditor**: {{leadAuditor.name}}\n**Audit Date**: {{dateFormat auditDate \"long\"}}\n",
+      "required": true
+    },
+    {
+      "id": "nc-followup",
+      "title": "NC Follow-Up",
+      "body": "## NC Follow-Up\n\n{{#each ncFollowUp}}- **{{number}}** (raised {{dateFormat originalDate \"date\"}}) — Status: {{status}} — Evidence: {{evidence}}\n{{else}}_No prior non-conformities._\n{{/each}}",
+      "required": true
+    },
+    {
+      "id": "sampled-areas",
+      "title": "Sample of Areas Audited",
+      "body": "## Areas Sampled This Cycle\n\n{{#each sampledAreas}}- **{{area}}** {{verdictPill verdict}} — {{note}}\n{{/each}}",
+      "required": true
+    },
+    {
+      "id": "trends",
+      "title": "Trends",
+      "body": "## Trends\n\nIncident rate trend: {{trends.incidentRate}}\nDrift trend: {{trends.drift}}\nRisk score change: {{trends.riskScoreDelta}}\nManagement review effectiveness: {{trends.managementReview}}\n",
+      "required": true
+    },
+    {
+      "id": "recommendation",
+      "title": "Recommendation",
+      "body": "## Recommendation\n\n{{recommendation}}\n",
+      "required": true
+    }
+  ]
+}

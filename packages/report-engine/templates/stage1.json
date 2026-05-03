@@ -1,0 +1,69 @@
+{
+  "id": "stage1.v1",
+  "type": "stage1",
+  "isoAnchor": "9.4.1",
+  "version": "1.0.0",
+  "defaultLocale": "en",
+  "variables": {
+    "cb": { "type": "object", "required": true, "description": "Certification Body details" },
+    "auditee": { "type": "object", "required": true, "description": "Auditee organization" },
+    "leadAuditor": { "type": "object", "required": true },
+    "auditDate": { "type": "date", "required": true },
+    "scope": { "type": "string", "required": true },
+    "documentReview": { "type": "array", "required": true, "itemShape": { "doc": "string", "verdict": "string", "note": "string" } },
+    "readiness": { "type": "string", "required": true },
+    "decision": { "type": "string", "required": true, "description": "proceed_to_stage2 | hold | abort" },
+    "stage2Plan": { "type": "object", "required": true },
+    "attachments": { "type": "array", "required": false, "itemShape": { "name": "string", "ref": "string" } }
+  },
+  "sections": [
+    {
+      "id": "cover",
+      "title": "Cover",
+      "body": "# Stage 1 Audit Report\n\n**Standard**: ISO/IEC 42001:2023\n**Auditee**: {{auditee.legalName}}\n**Certification Body**: {{cb.name}}\n**Lead Auditor**: {{leadAuditor.name}}\n**Audit Date**: {{dateFormat auditDate \"long\"}}\n**Reference**: {{auditee.engagementRef}}\n",
+      "required": true
+    },
+    {
+      "id": "scope",
+      "title": "Scope of Audit",
+      "body": "## Scope\n\n{{scope}}\n\nThe Stage 1 audit was conducted in accordance with {{clauseLink \"9.4.1\"}} of ISO/IEC 17021-1:2015.\n",
+      "required": true
+    },
+    {
+      "id": "doc-review",
+      "title": "Document Review Summary",
+      "body": "## Document Review\n\n{{#each documentReview}}- **{{doc}}** {{verdictPill verdict}} {{note}}\n{{/each}}",
+      "required": true
+    },
+    {
+      "id": "readiness",
+      "title": "Readiness Assessment",
+      "body": "## Readiness Assessment\n\n{{readiness}}\n",
+      "required": true
+    },
+    {
+      "id": "decision",
+      "title": "Decision",
+      "body": "## Decision\n\nThe lead auditor's decision following Stage 1: **{{decision}}**.\n",
+      "required": true
+    },
+    {
+      "id": "stage2-plan",
+      "title": "Plan for Stage 2",
+      "body": "## Plan for Stage 2\n\n- Planned Stage 2 dates: {{dateFormat stage2Plan.startDate \"date\"}} - {{dateFormat stage2Plan.endDate \"date\"}}\n- Audit team: {{stage2Plan.team}}\n- Sampling plan: {{stage2Plan.samplingPlan}}\n- Sites: {{stage2Plan.sites}}\n- Areas of attention: {{?stage2Plan.attention}}\n",
+      "required": true
+    },
+    {
+      "id": "attachments",
+      "title": "Attachments",
+      "body": "## Attachments\n\n{{#each attachments}}- {{name}} ({{ref}})\n{{else}}_None._\n{{/each}}",
+      "required": false
+    },
+    {
+      "id": "signatures",
+      "title": "Signatures",
+      "body": "## Signatures\n\nLead Auditor: {{leadAuditor.name}}\nDate: {{dateFormat auditDate \"date\"}}\n",
+      "required": true
+    }
+  ]
+}

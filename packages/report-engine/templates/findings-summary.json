@@ -1,0 +1,34 @@
+{
+  "id": "findings-summary.v1",
+  "type": "findings_summary",
+  "isoAnchor": "9.4.8.h",
+  "version": "1.0.0",
+  "defaultLocale": "en",
+  "variables": {
+    "cb": { "type": "object", "required": true },
+    "auditee": { "type": "object", "required": true },
+    "auditDate": { "type": "date", "required": true },
+    "ncs": { "type": "array", "required": true, "itemShape": { "number": "string", "type": "string", "clause": "string", "title": "string", "statement": "string", "status": "string" } },
+    "ofis": { "type": "array", "required": false, "itemShape": { "number": "string", "clause": "string", "title": "string", "statement": "string", "status": "string" } }
+  },
+  "sections": [
+    {
+      "id": "cover",
+      "title": "Cover",
+      "body": "# Findings Summary\n\n**Auditee**: {{auditee.legalName}}\n**Audit Date**: {{dateFormat auditDate \"long\"}}\n",
+      "required": true
+    },
+    {
+      "id": "ncs",
+      "title": "Non-conformities",
+      "body": "## Non-conformities\n\n{{#each ncs}}- **{{number}}** {{verdictPill type}} {{clauseLink clause}} — {{title}} (status: {{status}})\n  {{statement}}\n{{else}}_None._\n{{/each}}",
+      "required": true
+    },
+    {
+      "id": "ofis",
+      "title": "Opportunities for Improvement",
+      "body": "## Opportunities for Improvement\n\n{{#each ofis}}- {{number}} ({{clauseLink clause}}) — **{{title}}** (status: {{status}})\n  {{statement}}\n{{else}}_None._\n{{/each}}",
+      "required": false
+    }
+  ]
+}

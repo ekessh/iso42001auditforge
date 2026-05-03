@@ -1,0 +1,63 @@
+{
+  "id": "recertification.v1",
+  "type": "recertification",
+  "isoAnchor": "9.6.3.2",
+  "version": "1.0.0",
+  "defaultLocale": "en",
+  "variables": {
+    "cb": { "type": "object", "required": true },
+    "auditee": { "type": "object", "required": true },
+    "leadAuditor": { "type": "object", "required": true },
+    "auditTeam": { "type": "array", "required": true, "itemShape": { "name": "string", "role": "string" } },
+    "auditDate": { "type": "date", "required": true },
+    "fullAudit": { "type": "object", "required": true, "description": "Same shape as Stage 2 audit body" },
+    "performanceTrend": { "type": "object", "required": true },
+    "ncs": { "type": "array", "required": true, "itemShape": { "number": "string", "type": "string", "clause": "string", "title": "string", "statement": "string" } },
+    "ofis": { "type": "array", "required": false, "itemShape": { "number": "string", "clause": "string", "title": "string", "statement": "string" } },
+    "recommendation": { "type": "string", "required": true }
+  },
+  "sections": [
+    {
+      "id": "cover",
+      "title": "Cover",
+      "body": "# Recertification Audit Report\n\n**Standard**: ISO/IEC 42001:2023\n**Auditee**: {{auditee.legalName}}\n**Certification Body**: {{cb.name}}\n**Lead Auditor**: {{leadAuditor.name}}\n**Audit Date**: {{dateFormat auditDate \"long\"}}\n",
+      "required": true
+    },
+    {
+      "id": "team",
+      "title": "Audit Team",
+      "body": "## Audit Team\n\n{{#each auditTeam}}- {{name}} ({{role}})\n{{/each}}",
+      "required": true
+    },
+    {
+      "id": "full-audit",
+      "title": "Full Re-Audit Findings",
+      "body": "## Full Re-Audit\n\n{{fullAudit.summary}}\n\nClauses examined: {{fullAudit.clausesExamined}}\nAnnex A controls examined: {{fullAudit.annexAExamined}}\n",
+      "required": true
+    },
+    {
+      "id": "performance-trend",
+      "title": "Performance Trend",
+      "body": "## Performance Trend (3-year cycle)\n\n- Cycle Year 1: {{performanceTrend.year1}}\n- Cycle Year 2: {{performanceTrend.year2}}\n- Cycle Year 3 (current): {{performanceTrend.year3}}\n- Net trend: {{performanceTrend.netTrend}}\n",
+      "required": true
+    },
+    {
+      "id": "ncs",
+      "title": "Non-conformities",
+      "body": "## Non-conformities\n\n{{#each ncs}}### {{number}} {{verdictPill type}} {{clauseLink clause}}\n\n**{{title}}**\n\n{{statement}}\n\n{{/each}}",
+      "required": true
+    },
+    {
+      "id": "ofis",
+      "title": "Opportunities for Improvement",
+      "body": "## Opportunities for Improvement\n\n{{#each ofis}}- {{number}} ({{clauseLink clause}}) — **{{title}}**: {{statement}}\n{{else}}_None._\n{{/each}}",
+      "required": false
+    },
+    {
+      "id": "recommendation",
+      "title": "Recommendation",
+      "body": "## Recommendation\n\n{{recommendation}}\n",
+      "required": true
+    }
+  ]
+}

@@ -1,0 +1,33 @@
+{
+  "id": "cross-framework-annex.v1",
+  "type": "cross_framework_annex",
+  "isoAnchor": "9.4.8.f",
+  "version": "1.0.0",
+  "defaultLocale": "en",
+  "variables": {
+    "auditee": { "type": "object", "required": true },
+    "primary": { "type": "string", "required": true, "description": "ISO 42001" },
+    "frameworks": { "type": "array", "required": true, "itemShape": { "name": "string", "version": "string", "applicable": "boolean", "rationale": "string" } },
+    "coverage": { "type": "array", "required": true, "itemShape": { "iso42001": "string", "framework": "string", "frameworkRef": "string", "verdict": "string", "note": "string" } }
+  },
+  "sections": [
+    {
+      "id": "cover",
+      "title": "Cover",
+      "body": "# Cross-Framework Annex\n\n**Auditee**: {{auditee.legalName}}\n**Primary**: {{primary}}\n",
+      "required": true
+    },
+    {
+      "id": "frameworks",
+      "title": "Applicable Frameworks",
+      "body": "## Applicable Frameworks\n\n{{#each frameworks}}- **{{name}}** {{version}} — {{#if applicable}}APPLICABLE{{else}}NOT APPLICABLE{{/if}} — {{rationale}}\n{{/each}}",
+      "required": true
+    },
+    {
+      "id": "coverage",
+      "title": "Coverage Map",
+      "body": "## Coverage Map\n\n| ISO 42001 | Framework | Reference | Verdict | Note |\n| --- | --- | --- | --- | --- |\n{{#each coverage}}| {{clauseLink iso42001}} | {{framework}} | {{clauseLink frameworkRef}} | {{verdictPill verdict}} | {{note}} |\n{{/each}}",
+      "required": true
+    }
+  ]
+}
