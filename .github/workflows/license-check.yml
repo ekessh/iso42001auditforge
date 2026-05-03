@@ -1,0 +1,35 @@
+# SPDX-License-Identifier: BUSL-1.1
+name: License & DCO
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  spdx-headers:
+    name: SPDX Header Enforcement (BUSL-1.1)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '20' }
+      - run: node scripts/license-check.mjs
+
+  dco:
+    name: DCO Sign-off
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    steps:
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 0 }
+      - shell: bash
+        run: |
+          missing=$(git log --invert-grep --grep='Signed-off-by:' origin/${{ github.base_ref }}..HEAD --pretty=format:'%H %s' || true)
+          if [ -n "$missing" ]; then
+            echo "::error::Commits missing DCO sign-off:"; echo "$missing"; exit 1
+          fi

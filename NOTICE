@@ -1,0 +1,26 @@
+AuditForge ISO 42001
+Copyright 2026 AuditForge Contributors
+
+Licensed under the Business Source License 1.1 (the "License");
+you may not use this software except in compliance with the License.
+A copy of the License accompanies this software (see LICENSE) and is
+also available at https://mariadb.com/bsl11.
+
+The Licensed Work will convert to the Apache License, Version 2.0 on
+the Change Date defined in the LICENSE file.
+
+Every source file in this repository carries an
+"SPDX-License-Identifier: BUSL-1.1" header. Continuous integration
+enforces this convention.
+
+Trademarks
+----------
+"AuditForge" and "AuditForge Certified" are trademarks. Trademark rights
+are not granted under this License. See TRADEMARK.md for the trademark
+policy. Forks must rename.
+
+Third-Party Notices
+-------------------
+This product depends on third-party open-source software. Attributions
+for those components are aggregated in `docs/THIRD-PARTY-NOTICES.md` and
+generated automatically as part of the release pipeline.
