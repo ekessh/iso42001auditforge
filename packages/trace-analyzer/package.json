@@ -1,0 +1,45 @@
+{
+  "name": "@auditforge/trace-analyzer",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "description": "AuditForge ISO 42001 Phase 6: Agent topology importer, trace ingestion (OTel/Langfuse/Phoenix), trace analysis, tool ACL drift, HITL gate verification, autonomy classification.",
+  "license": "BUSL-1.1",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./types": "./src/types/index.ts",
+    "./services": "./src/services/index.ts",
+    "./importers": "./src/importers/index.ts",
+    "./reports": "./src/reports/index.ts"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "lint": "eslint src tests",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "peerDependencies": {
+    "@auditforge/audit-engine": "workspace:*",
+    "@auditforge/shared": "workspace:*"
+  },
+  "peerDependenciesMeta": {
+    "@auditforge/audit-engine": { "optional": true },
+    "@auditforge/shared": { "optional": true }
+  },
+  "dependencies": {
+    "stream-json": "^1.8.0",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/node": "^22.7.0",
+    "@types/stream-json": "^1.7.7",
+    "@vitest/coverage-v8": "^2.1.1",
+    "fast-check": "^3.22.0",
+    "typescript": "^5.6.2",
+    "vitest": "^2.1.1"
+  }
+}
