@@ -1,0 +1,29 @@
+Business Source License 1.1
+
+Licensor:             AuditForge Contributors
+Licensed Work:        AuditForge ISO 42001 (this repository)
+Additional Use Grant: You may make production use of the Licensed Work,
+                      provided your use does not include offering the
+                      Licensed Work to third parties on a hosted or
+                      embedded basis as a competing certification, audit
+                      management, or AI-governance service.
+Change Date:          Four (4) years from the date each version is first
+                      made available under this License.
+Change License:       Apache License, Version 2.0
+
+For the full text of the Business Source License 1.1, see:
+https://mariadb.com/bsl11
+
+Notice
+------
+
+The Business Source License (this "License") is not an Open Source license.
+However, the Licensed Work will eventually be made available under an
+Open Source License, as stated in this License.
+
+Trademarks. The "AuditForge" and "AuditForge Certified" names and logos
+are trademarks. This License does not grant rights to use those marks.
+See TRADEMARK.md.
+
+All copyrights are reserved by the Licensor. See NOTICE for attribution
+requirements.
