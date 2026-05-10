@@ -39,3 +39,38 @@ helm test release -n auditforge
 - cert-manager
 - prometheus-operator (CRDs: `ServiceMonitor`, `PrometheusRule`)
 - external-secrets-operator (only when `externalSecrets.enabled=true`)
+
+## Subcharts (`charts/`)
+
+The umbrella chart composes four service subcharts plus optional Bitnami
+managed-data subcharts:
+
+| Subchart                  | Purpose                                                  |
+|---------------------------|----------------------------------------------------------|
+| `mcp-server`              | AuditForge MCP server (Phase 15+)                        |
+| `audit-evidence-runner`   | Probe sandbox (garak / PyRIT / HarmBench wrappers)       |
+| `transcription-py`        | WhisperX + Pyannote 3.1 service                          |
+| `vlm-py`                  | Qwen2.5-VL / DeepSeek-OCR vision-language extraction     |
+
+Optional Bitnami dependencies — pinned in `Chart.yaml`:
+
+| Dependency                | Version    | Use as alt to in-cluster StatefulSet |
+|---------------------------|------------|--------------------------------------|
+| `postgresql` (Bitnami)    | 15.5.20    | postgres                             |
+| `redis` (Bitnami)         | 20.1.7     | redis                                |
+| `minio` (Bitnami)         | 14.7.13    | objectStorage                        |
+
+These are gated by their `*.enabled` toggles in values.yaml. Pinning is by
+reproducible-deploy policy. To upgrade, bump version + run `helm dependency
+update` and validate via the `infra-validate` workflow.
+
+## Air-gap mode
+
+Set `global.airGapMode=true`. This:
+
+1. Tightens NetworkPolicies in every subchart (egress allows only DNS +
+   intra-namespace AuditForge traffic — no internet).
+2. Surfaces an `AUDITFORGE_AIRGAP=true` env var so the LLM provider layer
+   blocks all cloud routes.
+
+For full air-gap deployment see `infra/runbooks/air-gap-deployment.md`.

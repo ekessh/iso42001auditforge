@@ -1,0 +1,44 @@
+{{/* SPDX-License-Identifier: BUSL-1.1 */}}
+{{/*
+Optional namespace-scoped resource quotas and limit ranges. Helm cannot label
+the release namespace itself (it owns it externally), so PSS labels must be
+applied via Terraform / kubectl at namespace-create time. This template only
+emits ResourceQuota + LimitRange when .Values.namespace.applyQuotas is true.
+*/}}
+{{- if .Values.namespace.applyQuotas }}
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: {{ include "auditforge.fullname" . }}-quota
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "auditforge.labels" . | nindent 4 }}
+spec:
+  hard:
+    requests.cpu: {{ .Values.namespace.quota.requestsCpu | quote }}
+    requests.memory: {{ .Values.namespace.quota.requestsMemory | quote }}
+    limits.cpu: {{ .Values.namespace.quota.limitsCpu | quote }}
+    limits.memory: {{ .Values.namespace.quota.limitsMemory | quote }}
+    persistentvolumeclaims: {{ .Values.namespace.quota.pvcCount | quote }}
+    pods: {{ .Values.namespace.quota.pods | quote }}
+---
+apiVersion: v1
+kind: LimitRange
+metadata:
+  name: {{ include "auditforge.fullname" . }}-limits
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "auditforge.labels" . | nindent 4 }}
+spec:
+  limits:
+    - type: Container
+      default:
+        cpu: {{ .Values.namespace.limitRange.defaultLimitsCpu | quote }}
+        memory: {{ .Values.namespace.limitRange.defaultLimitsMemory | quote }}
+      defaultRequest:
+        cpu: {{ .Values.namespace.limitRange.defaultRequestsCpu | quote }}
+        memory: {{ .Values.namespace.limitRange.defaultRequestsMemory | quote }}
+      max:
+        cpu: {{ .Values.namespace.limitRange.maxCpu | quote }}
+        memory: {{ .Values.namespace.limitRange.maxMemory | quote }}
+{{- end }}

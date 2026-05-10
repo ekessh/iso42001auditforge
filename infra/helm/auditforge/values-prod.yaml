@@ -95,3 +95,53 @@ observability:
   otel:
     endpoint: https://otel.auditforge.example.com:4318
     insecure: false
+
+# Sub-charts: enable services for prod.
+mcp-server:
+  enabled: true
+  replicaCount: 3
+  global:
+    imageRegistry: ""
+    airGapMode: false
+  ingress:
+    enabled: true
+    hosts:
+      - host: mcp.auditforge.example.com
+        paths: [{ path: /, pathType: Prefix }]
+    tls:
+      - secretName: auditforge-mcp-tls
+        hosts: [mcp.auditforge.example.com]
+
+audit-evidence-runner:
+  enabled: true
+  replicaCount: 3
+  runtimeClassName: gvisor
+  resources:
+    requests: { cpu: 1000m, memory: 2Gi }
+    limits:   { cpu: 8000m, memory: 16Gi }
+
+transcription-py:
+  enabled: true
+  replicaCount: 2
+  resources:
+    requests: { cpu: 2000m, memory: 8Gi, nvidia.com/gpu: 1 }
+    limits:   { cpu: 8000m, memory: 32Gi, nvidia.com/gpu: 1 }
+  nodeSelector:
+    accelerator: nvidia
+  tolerations:
+    - key: nvidia.com/gpu
+      operator: Exists
+      effect: NoSchedule
+
+vlm-py:
+  enabled: true
+  replicaCount: 2
+  resources:
+    requests: { cpu: 4000m, memory: 16Gi, nvidia.com/gpu: 1 }
+    limits:   { cpu: 16000m, memory: 64Gi, nvidia.com/gpu: 1 }
+  nodeSelector:
+    accelerator: nvidia
+  tolerations:
+    - key: nvidia.com/gpu
+      operator: Exists
+      effect: NoSchedule

@@ -18,6 +18,12 @@ global:
   labels: {}
   # -- Common annotations.
   annotations: {}
+  # -- Air-gap mode: when true, NetworkPolicies block all egress except internal.
+  # Cloud LLM providers are blocked at the provider layer in the API.
+  airGapMode: false
+  # -- Tenancy: number of audit firms per cluster (capacity hint for sizing).
+  tenancy:
+    firmsCount: 1
 
 nameOverride: ""
 fullnameOverride: ""
@@ -484,3 +490,105 @@ prometheusRule:
   enabled: false
   additionalLabels:
     role: auditforge-alerts
+
+# ----------------------------------------------------------------------------
+# Namespace policy — ResourceQuota and LimitRange.
+# Apply PodSecurityStandards "restricted" via Terraform on the namespace itself
+# (Helm cannot label its own release namespace).
+# ----------------------------------------------------------------------------
+namespace:
+  applyQuotas: false
+  quota:
+    requestsCpu: "20"
+    requestsMemory: "40Gi"
+    limitsCpu: "80"
+    limitsMemory: "160Gi"
+    pvcCount: "30"
+    pods: "100"
+  limitRange:
+    defaultRequestsCpu: "100m"
+    defaultRequestsMemory: "128Mi"
+    defaultLimitsCpu: "2"
+    defaultLimitsMemory: "2Gi"
+    maxCpu: "16"
+    maxMemory: "64Gi"
+
+# ----------------------------------------------------------------------------
+# Sub-charts (charts/) — disabled by default. Each maps to one workspace service.
+# ----------------------------------------------------------------------------
+mcp-server:
+  enabled: false
+  global:
+    imageRegistry: ""
+    imagePullPolicy: IfNotPresent
+    imagePullSecrets: []
+    airGapMode: false
+
+audit-evidence-runner:
+  enabled: true
+  global:
+    imageRegistry: ""
+    imagePullPolicy: IfNotPresent
+    imagePullSecrets: []
+    airGapMode: false
+
+transcription-py:
+  enabled: false
+  global:
+    imageRegistry: ""
+    imagePullPolicy: IfNotPresent
+    imagePullSecrets: []
+    airGapMode: false
+
+vlm-py:
+  enabled: false
+  global:
+    imageRegistry: ""
+    imagePullPolicy: IfNotPresent
+    imagePullSecrets: []
+    airGapMode: false
+
+# ----------------------------------------------------------------------------
+# Bitnami dependencies — disabled by default. Enable as alternative to the
+# in-cluster StatefulSets for postgres/redis/minio. When using managed
+# (RDS/ElastiCache/S3), keep these disabled and set postgres.mode=external etc.
+# ----------------------------------------------------------------------------
+postgresql:
+  enabled: false
+  auth:
+    existingSecret: auditforge-postgres
+    secretKeys:
+      adminPasswordKey: postgres-password
+      userPasswordKey: password
+    database: auditforge
+    username: auditforge
+  primary:
+    persistence:
+      size: 50Gi
+    extendedConfiguration: |
+      shared_preload_libraries = 'pg_stat_statements,pgaudit'
+  image:
+    repository: bitnami/postgresql
+    tag: 16.4.0-debian-12-r17
+
+redis:
+  enabled: false
+  auth:
+    existingSecret: auditforge-redis
+    existingSecretPasswordKey: password
+  architecture: replication
+  master:
+    persistence:
+      size: 10Gi
+  replica:
+    replicaCount: 2
+
+minio:
+  enabled: false
+  auth:
+    existingSecret: auditforge-minio
+    rootUserSecretKey: username
+    rootPasswordSecretKey: password
+  defaultBuckets: "auditforge-evidence auditforge-archive auditforge-reports"
+  persistence:
+    size: 100Gi

@@ -1,0 +1,67 @@
+# SPDX-License-Identifier: BUSL-1.1
+# Dev overlay: minimal replicas, in-cluster data services, no GPU.
+global:
+  imagePullPolicy: Always
+  airGapMode: false
+  tenancy:
+    firmsCount: 1
+
+api:
+  replicaCount: 1
+  autoscaling:
+    enabled: false
+    minReplicas: 1
+    maxReplicas: 2
+
+worker:
+  replicaCount: 1
+  autoscaling:
+    enabled: false
+
+web:
+  replicaCount: 1
+  autoscaling:
+    enabled: false
+
+postgres:
+  mode: in-cluster
+  persistence:
+    size: 10Gi
+
+redis:
+  mode: in-cluster
+  persistence:
+    size: 2Gi
+
+objectStorage:
+  mode: in-cluster
+  minio:
+    persistence:
+      size: 20Gi
+
+backup:
+  enabled: false
+
+prometheusRule:
+  enabled: false
+
+mcp-server:
+  enabled: true
+  replicaCount: 1
+  autoscaling:
+    enabled: false
+
+audit-evidence-runner:
+  enabled: true
+  replicaCount: 1
+  resources:
+    requests: { cpu: 250m, memory: 512Mi }
+    limits:   { cpu: 2000m, memory: 4Gi }
+  autoscaling:
+    enabled: false
+
+transcription-py:
+  enabled: false
+
+vlm-py:
+  enabled: false

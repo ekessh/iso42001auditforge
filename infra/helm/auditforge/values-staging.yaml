@@ -1,0 +1,88 @@
+# SPDX-License-Identifier: BUSL-1.1
+# Staging overlay: HA, external managed Postgres, mid-size resources, no GPU.
+global:
+  imagePullPolicy: IfNotPresent
+  storageClass: gp3-encrypted
+
+api:
+  replicaCount: 2
+  autoscaling: { minReplicas: 2, maxReplicas: 8 }
+  ingress:
+    hosts:
+      - host: api-staging.auditforge.example.com
+        paths: [{ path: /, pathType: Prefix }]
+    tls:
+      - secretName: auditforge-api-tls
+        hosts: [api-staging.auditforge.example.com]
+
+worker:
+  replicaCount: 2
+  autoscaling: { minReplicas: 2, maxReplicas: 10 }
+
+web:
+  replicaCount: 2
+  ingress:
+    hosts:
+      - host: app-staging.auditforge.example.com
+        paths: [{ path: /, pathType: Prefix }]
+    tls:
+      - secretName: auditforge-web-tls
+        hosts: [app-staging.auditforge.example.com]
+
+postgres:
+  mode: external
+  external:
+    host: auditforge-staging.cluster-xyz.us-east-1.rds.amazonaws.com
+    port: 5432
+    database: auditforge
+    user: auditforge
+    sslmode: verify-full
+    secretName: auditforge-postgres
+
+redis:
+  mode: external
+  external:
+    host: auditforge-staging.xyz.0001.use1.cache.amazonaws.com
+    port: 6379
+    secretName: auditforge-redis
+
+objectStorage:
+  mode: s3
+  s3:
+    region: us-east-1
+    evidenceBucket: auditforge-staging-evidence
+    archiveBucket: auditforge-staging-archive
+    reportsBucket: auditforge-staging-reports
+    credentialsSecretRef: auditforge-s3
+
+externalSecrets:
+  enabled: true
+  storeKind: ClusterSecretStore
+  storeName: aws-secrets-manager
+
+backup:
+  enabled: true
+  schedule: "0 1 * * *"
+  retention: 14
+  s3:
+    bucket: auditforge-staging-backups
+    region: us-east-1
+    secretName: auditforge-backup-s3
+
+prometheusRule:
+  enabled: true
+
+mcp-server:
+  enabled: true
+  replicaCount: 2
+
+audit-evidence-runner:
+  enabled: true
+  replicaCount: 2
+  runtimeClassName: gvisor
+
+transcription-py:
+  enabled: false
+
+vlm-py:
+  enabled: false

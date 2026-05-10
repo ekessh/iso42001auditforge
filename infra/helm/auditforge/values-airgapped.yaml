@@ -7,6 +7,7 @@ global:
   imagePullPolicy: IfNotPresent
   imagePullSecrets:
     - name: airgap-registry
+  airGapMode: true
 
 api:
   image:
@@ -76,3 +77,28 @@ observability:
   otel:
     endpoint: http://otel-collector.observability.svc.cluster.local:4318
     insecure: true
+
+mcp-server:
+  enabled: true
+  global:
+    imageRegistry: registry.internal.example.com/auditforge
+    airGapMode: true
+
+audit-evidence-runner:
+  enabled: true
+  runtimeClassName: gvisor
+  global:
+    imageRegistry: registry.internal.example.com/auditforge
+    airGapMode: true
+
+transcription-py:
+  enabled: true
+  global:
+    imageRegistry: registry.internal.example.com/auditforge
+    airGapMode: true
+
+vlm-py:
+  enabled: true
+  global:
+    imageRegistry: registry.internal.example.com/auditforge
+    airGapMode: true
