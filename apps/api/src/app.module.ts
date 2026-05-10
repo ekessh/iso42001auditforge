@@ -42,6 +42,7 @@ import { ProbesModule } from './modules/probes/probes.module.js';
 import { ReportsModule } from './modules/reports/reports.module.js';
 import { RisksModule } from './modules/risks/risks.module.js';
 import { SamplesModule } from './modules/samples/samples.module.js';
+import { SearchModule } from './modules/search/search.module.js';
 import { SoaModule } from './modules/soa/soa.module.js';
 import { SurveillanceModule } from './modules/surveillance/surveillance.module.js';
 import { TenancyModule } from './modules/tenancy/tenancy.module.js';
@@ -91,6 +92,7 @@ import type { AppConfig } from './config/config.schema.js';
     ReportsModule,
     RisksModule,
     SamplesModule,
+    SearchModule,
     SoaModule,
     SurveillanceModule,
     TenancyModule,

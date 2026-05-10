@@ -36,6 +36,20 @@
       "when": 1714694404000,
       "tag": "0004_append_only_triggers",
       "breakpoints": false
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1714694405000,
+      "tag": "0005_webauthn_credentials",
+      "breakpoints": false
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1714694406000,
+      "tag": "0006_search_hnsw_and_catalogue_embeddings",
+      "breakpoints": false
     }
   ]
 }

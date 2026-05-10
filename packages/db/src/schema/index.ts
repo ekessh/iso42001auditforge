@@ -23,3 +23,4 @@ export * from './surveillance.js';
 export * from './claims.js';
 export * from './soa.js';
 export * from './webauthn-credentials.js';
+export * from './catalogue_embeddings.js';

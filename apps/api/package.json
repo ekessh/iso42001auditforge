@@ -52,6 +52,7 @@
     "@auditforge/probe-engine": "workspace:*",
     "@auditforge/risks": "workspace:*",
     "@auditforge/sampling": "workspace:*",
+    "@auditforge/search": "workspace:*",
     "@auditforge/shared": "workspace:*",
     "@auditforge/soa": "workspace:*",
     "@auditforge/surveillance": "workspace:*",
