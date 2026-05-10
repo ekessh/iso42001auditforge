@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: BUSL-1.1
 import { NextResponse, type NextRequest } from 'next/server';
-import { buildCsp } from './next.config';
+import { buildCsp } from './lib/csp';
 
 /**
  * Per-request CSP nonce middleware.
