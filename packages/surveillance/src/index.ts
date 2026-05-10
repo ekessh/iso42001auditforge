@@ -19,3 +19,6 @@ export * from './alert-dispatcher.js';
 export * from './risk-score-engine.js';
 export * from './scope-adjuster.js';
 export * from './incident-watch.js';
+export * from './surveillance-plan.js';
+export * from './anomaly-detector.js';
+export * from './timeline.js';
