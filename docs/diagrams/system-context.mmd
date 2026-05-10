@@ -1,0 +1,25 @@
+%%{init:{"theme":"neutral"}}%%
+C4Context
+  title AuditForge System Context
+  Person(auditor, "Lead Auditor", "ISO 42001 certified; performs AIMS audits")
+  Person(co_auditor, "Co-Auditor", "Supports the lead; limited write access")
+  Person(operator, "Platform Operator", "Deploys and manages AuditForge")
+
+  System(af, "AuditForge", "ISO 42001 audit workbench:\nengagements, working papers,\nfindings, reports, probes")
+
+  System_Ext(aims, "AIMS Under Audit", "Client AI Management System;\nmodels, agents, workflows")
+  System_Ext(tsa, "RFC 3161 TSA", "External timestamping authority\n(FreeTSA / DigiCert)")
+  System_Ext(llm_local, "Local LLM", "Ollama / vLLM / llama.cpp\n(default; air-gap safe)")
+  System_Ext(llm_cloud, "Cloud LLM", "Anthropic / OpenAI\n(opt-in; written consent required)")
+  System_Ext(s3, "Object Storage", "MinIO / S3 (evidence vault)")
+  System_Ext(mcp, "MCP Clients", "Claude Desktop or IDE\ntriggering audit tool calls")
+
+  Rel(auditor, af, "Plans, executes, signs audits", "HTTPS + WebAuthn")
+  Rel(co_auditor, af, "Assists; edits working papers", "HTTPS + WebAuthn")
+  Rel(operator, af, "Deploys, monitors, rotates keys", "Helm / Kubernetes")
+  Rel(af, tsa, "Obtains RFC 3161 timestamp tokens", "HTTPS")
+  Rel(af, llm_local, "Inference (default)", "HTTP/gRPC local")
+  Rel(af, llm_cloud, "Inference (opt-in)", "HTTPS")
+  Rel(af, s3, "Evidence upload / download", "S3 API")
+  Rel(mcp, af, "Calls registered audit tools", "MCP protocol")
+  Rel(af, aims, "Probes, trace ingest, inventory", "HTTP / OTel / file")

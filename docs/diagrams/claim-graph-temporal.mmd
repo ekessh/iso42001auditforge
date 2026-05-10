@@ -1,0 +1,45 @@
+%%{init:{"theme":"neutral"}}%%
+erDiagram
+  CLAIMS {
+    uuid id PK
+    uuid engagement_id FK
+    text entity_type
+    text relation_type
+    jsonb payload
+    float4 confidence
+    timestamptz event_time_start
+    timestamptz event_time_end
+    timestamptz ingestion_time
+    bool auditor_confirmed
+    text source_episode_id FK
+  }
+
+  CLAIM_RELATIONS {
+    uuid id PK
+    uuid from_claim_id FK
+    uuid to_claim_id FK
+    text relation
+    float4 weight
+  }
+
+  EPISODES {
+    uuid id PK
+    uuid engagement_id FK
+    text episode_type
+    jsonb raw_payload
+    timestamptz recorded_at
+  }
+
+  CLAUSE_COVERAGE {
+    uuid id PK
+    uuid engagement_id FK
+    text clause_id
+    text status
+    float4 score
+    timestamptz as_of
+  }
+
+  CLAIMS }o--|| EPISODES : "sourced_from"
+  CLAIM_RELATIONS }o--|| CLAIMS : "from_claim"
+  CLAIM_RELATIONS }o--|| CLAIMS : "to_claim"
+  CLAIMS }o--o{ CLAUSE_COVERAGE : "covers"

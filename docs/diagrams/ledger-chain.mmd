@@ -1,0 +1,22 @@
+%%{init:{"theme":"neutral"}}%%
+flowchart LR
+  subgraph Genesis
+    G["seq=0\nprev_hash=0x00…00\npayload_hash=sha256(genesis)\nsignature=Ed25519(platform_key)\ntsa_token=∅"]
+  end
+  subgraph Event_1
+    E1["seq=1\nprev_hash=sig(G)\npayload_hash=sha256(e1)\nsignature=Ed25519(firm_key)\ntsa_token=∅"]
+  end
+  subgraph Event_N
+    EN["seq=N (report.publish)\nprev_hash=sig(N-1)\npayload_hash=sha256(eN)\nsignature=Ed25519(firm_key)\ntsa_token=RFC3161 token"]
+  end
+
+  Genesis-->|prev_hash links|Event_1
+  Event_1-->|…|Event_N
+
+  subgraph Verifier["chain-verifier.ts"]
+    V1["1. recompute payload_hash"]
+    V2["2. check prev_hash links"]
+    V3["3. verify Ed25519 sig"]
+    V4["4. validate TSA token (report rows)"]
+    V1-->V2-->V3-->V4
+  end

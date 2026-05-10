@@ -1,0 +1,42 @@
+%%{init:{"theme":"neutral"}}%%
+sequenceDiagram
+  autonumber
+  actor A as Lead Auditor
+  participant W as Web UI
+  participant API as NestJS API
+  participant DB as Postgres (RLS)
+  participant L as Audit Ledger
+  participant LLM as LLM Provider
+
+  A->>W: Create engagement (mode, scope)
+  W->>API: POST /v1/engagements
+  API->>DB: INSERT engagement row
+  API->>L: Emit engagement.created event (signed)
+  L-->>API: seq + signature
+  API-->>W: 201 engagement
+
+  A->>W: Start interview session
+  W->>API: POST /v1/interviews (live)
+  API->>LLM: Generate opening questions (tier: medium)
+  LLM-->>API: Question set (draft)
+  API->>L: Emit interview.started (signed)
+  API-->>W: Session token + questions
+
+  A->>W: Record answer; request attribution
+  W->>API: POST answer chunk
+  API->>LLM: Attribute to clause (tier: medium)
+  LLM-->>API: Clause refs + confidence
+  API->>DB: Upsert claim rows (bi-temporal)
+  API->>L: Emit answer.attributed (signed)
+  API-->>W: Attribution + coverage delta
+
+  A->>W: Confirm attribution (auditor gate)
+  W->>API: PATCH claim (auditor_confirmed=true)
+  API->>L: Emit claim.confirmed (signed)
+  API-->>W: Updated coverage
+
+  A->>W: Promote candidate finding
+  W->>API: POST /candidate-findings/:id/promote
+  API->>DB: INSERT formal finding
+  API->>L: Emit finding.promoted (signed)
+  API-->>W: Finding record

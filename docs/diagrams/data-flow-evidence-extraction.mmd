@@ -1,0 +1,33 @@
+%%{init:{"theme":"neutral"}}%%
+sequenceDiagram
+  autonumber
+  actor A as Lead Auditor
+  participant API as NestJS API
+  participant W as BullMQ Worker
+  participant VLM as VLM Sidecar (vlm-py)
+  participant S3 as MinIO / S3
+  participant DB as Postgres
+  participant L as Audit Ledger
+
+  A->>API: POST /v1/evidence/uploads/presign
+  API-->>A: Presigned S3 URL + upload_id
+
+  A->>S3: PUT file (PDF / image / video)
+  A->>API: POST /v1/evidence/uploads/finalize (upload_id)
+  API->>DB: INSERT evidence_file row (pending_extraction)
+  API->>W: Enqueue evidence.extract job
+  API->>L: Emit evidence.uploaded (signed)
+  API-->>A: evidence_id
+
+  W->>S3: GET file bytes
+  W->>VLM: gRPC ExtractClaims(bytes, schema)
+  Note over VLM: Qwen2.5-VL or DeepSeek-OCR\nschema-constrained output only
+  VLM-->>W: Structured claims JSON
+  W->>DB: Bulk UPSERT claim rows
+  W->>DB: UPDATE evidence_file (extracted)
+  W->>L: Emit evidence.extracted (signed)
+
+  A->>API: GET /v1/evidence/:id (poll or SSE)
+  API-->>A: Extracted claims + confidence
+  A->>API: PATCH claim (auditor_confirmed)
+  API->>L: Emit claim.confirmed (signed)

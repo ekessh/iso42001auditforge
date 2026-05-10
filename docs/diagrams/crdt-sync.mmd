@@ -1,0 +1,25 @@
+%%{init:{"theme":"neutral"}}%%
+sequenceDiagram
+  actor A as Auditor (Browser A)
+  actor B as Co-Auditor (Browser B)
+  participant YS as y-websocket\n(API gateway)
+  participant IDB_A as IndexedDB (A)
+  participant IDB_B as IndexedDB (B)
+  participant DB as Postgres ledger
+
+  A->>IDB_A: Persist Y.Doc update (offline)
+  Note over A: Network offline
+
+  B->>YS: Connect (token auth)
+  YS->>B: Sync current Doc state
+  B->>IDB_B: Persist update
+  B->>YS: CRDT op (awareness update)
+  YS->>DB: Emit working_paper.edited (signed)
+
+  Note over A: Network restored
+  A->>YS: Connect (token auth; RBAC check)
+  YS->>A: Replay missed ops
+  A->>IDB_A: Merge + persist
+  A->>YS: Send offline ops (Y.applyUpdate)
+  YS->>B: Broadcast merged ops
+  YS->>DB: Emit working_paper.synced (signed, diff_summary)

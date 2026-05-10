@@ -1,0 +1,20 @@
+%%{init:{"theme":"neutral"}}%%
+sequenceDiagram
+  actor C as MCP Client\n(Claude Desktop / IDE)
+  participant MCP as apps/mcp-server
+  participant Auth as auth-core\n(RBAC + receipts)
+  participant API as NestJS API
+  participant L as Audit Ledger
+
+  C->>MCP: tool call (e.g. get_coverage)
+  MCP->>Auth: Resolve principal + tool RBAC
+  Auth-->>MCP: allowed / denied
+  alt denied
+    MCP-->>C: MCP error (permission denied)
+  else allowed
+    MCP->>API: Internal HTTP call (service account)
+    API->>L: Emit mcp.tool_call (signed)
+    API-->>MCP: Result payload
+    MCP->>Auth: Write signed receipt (.receipts/YYYYMMDD-*.json)
+    MCP-->>C: Tool result
+  end
