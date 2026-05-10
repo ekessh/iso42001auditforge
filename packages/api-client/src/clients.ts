@@ -34,3 +34,47 @@ export function listClients(
 export function getClient(id: string, options: ApiFetchOptions = {}) {
   return apiFetch(`/clients/${encodeURIComponent(id)}`, ClientSchema, options);
 }
+
+export const CreateClientSchema = z.object({
+  name: z.string().min(1).max(200),
+  metadata: z.record(z.unknown()).optional(),
+});
+export type CreateClientInput = z.infer<typeof CreateClientSchema>;
+
+export function createClient(body: CreateClientInput, options: ApiFetchOptions = {}) {
+  return apiFetch('/clients', ClientSchema, {
+    ...options,
+    method: 'POST',
+    body,
+  });
+}
+
+export const UpdateClientSchema = z.object({
+  name: z.string().min(1).max(200).optional(),
+  metadata: z.record(z.unknown()).optional(),
+});
+export type UpdateClientInput = z.infer<typeof UpdateClientSchema>;
+
+export function updateClient(
+  id: string,
+  body: UpdateClientInput,
+  options: ApiFetchOptions = {},
+) {
+  return apiFetch(`/clients/${encodeURIComponent(id)}`, ClientSchema, {
+    ...options,
+    method: 'PATCH',
+    body,
+  });
+}
+
+/**
+ * Soft-delete a client. Uses DELETE semantics (the mock + production server
+ * both treat this as soft archival; no body returned on 204).
+ */
+export async function archiveClient(id: string, options: ApiFetchOptions = {}): Promise<void> {
+  const { apiFetchRaw } = await import('./fetcher.js');
+  await apiFetchRaw<void>(`/clients/${encodeURIComponent(id)}`, {
+    ...options,
+    method: 'DELETE',
+  });
+}

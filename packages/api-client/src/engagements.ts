@@ -89,3 +89,72 @@ export function createEngagement(
     body,
   });
 }
+
+export const UpdateEngagementSchema = z.object({
+  scopeStatement: z.string().min(1).max(4000).optional(),
+  mode: EngagementModeSchema.optional(),
+  stage: EngagementStageSchema.optional(),
+  status: EngagementStatusSchema.optional(),
+  startsOn: z.string().optional(),
+  endsOn: z.string().optional(),
+  leadAuditorId: z.string().optional(),
+  teamMemberIds: z.array(z.string()).optional(),
+  metadata: z.record(z.unknown()).optional(),
+});
+export type UpdateEngagementInput = z.infer<typeof UpdateEngagementSchema>;
+
+export function updateEngagement(
+  id: string,
+  body: UpdateEngagementInput,
+  options: ApiFetchOptions = {},
+) {
+  return apiFetch(`/engagements/${encodeURIComponent(id)}`, EngagementSchema, {
+    ...options,
+    method: 'PATCH',
+    body,
+  });
+}
+
+export const AuditTrailEntrySchema = z.object({
+  id: z.string(),
+  engagementId: z.string(),
+  kind: z.string(),
+  actor: z.string().optional(),
+  payload: z.record(z.unknown()).optional(),
+  hashPrefix: z.string().optional(),
+  createdAt: z.string(),
+});
+export type AuditTrailEntry = z.infer<typeof AuditTrailEntrySchema>;
+
+export const AuditTrailPageSchema = PaginatedSchema(AuditTrailEntrySchema);
+
+export function getAuditTrail(
+  engagementId: string,
+  options: ApiFetchOptions = {},
+) {
+  return apiFetch(
+    `/engagements/${encodeURIComponent(engagementId)}/audit-trail`,
+    AuditTrailPageSchema,
+    options,
+  );
+}
+
+export const ReportDraftSchema = z.object({
+  id: z.string(),
+  engagementId: z.string(),
+  status: z.string(),
+  generatedAt: z.string(),
+  body: z.unknown(),
+});
+export type ReportDraft = z.infer<typeof ReportDraftSchema>;
+
+export function generateReportDraft(
+  engagementId: string,
+  options: ApiFetchOptions = {},
+) {
+  return apiFetch('/reports/draft', ReportDraftSchema, {
+    ...options,
+    method: 'POST',
+    body: { engagementId },
+  });
+}

@@ -73,3 +73,23 @@ export function listProbeExecutions(
     query: { engagementId },
   });
 }
+
+export const CreateProbeExecutionSchema = z.object({
+  engagementId: z.string(),
+  probeId: z.string(),
+  target: z.string().min(1).max(2000).optional(),
+  budgetUsd: z.number().nonnegative().optional(),
+  parameters: z.record(z.unknown()).optional(),
+});
+export type CreateProbeExecutionInput = z.infer<typeof CreateProbeExecutionSchema>;
+
+export function createProbeExecution(
+  body: CreateProbeExecutionInput,
+  options: ApiFetchOptions = {},
+) {
+  return apiFetch('/probes/executions', ProbeExecutionSchema, {
+    ...options,
+    method: 'POST',
+    body,
+  });
+}

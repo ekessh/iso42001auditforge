@@ -20,13 +20,38 @@ export * as liveInterview from './live-interview.js';
 export * as evidenceExtraction from './evidence-extraction.js';
 export * as qaChecklist from './qa-checklist.js';
 
-export type { Engagement, EngagementMode, EngagementStage, EngagementStatus } from './engagements.js';
-export type { Finding, FindingSeverity, FindingStatus } from './findings.js';
+export type {
+  Engagement,
+  EngagementMode,
+  EngagementStage,
+  EngagementStatus,
+  CreateEngagementInput,
+  UpdateEngagementInput,
+  AuditTrailEntry,
+  ReportDraft,
+} from './engagements.js';
+export type {
+  Finding,
+  FindingSeverity,
+  FindingStatus,
+  CreateFindingInput,
+  UpdateFindingInput,
+  CapaFindingInput,
+} from './findings.js';
 export type { CandidateFinding, CandidateFindingType } from './candidate-findings.js';
-export type { ProbeDefinition, ProbeExecution, ProbeMode } from './probes.js';
-export type { Trace } from './traces.js';
-export type { Client } from './clients.js';
-export type { WorkingPaper } from './working-papers.js';
+export type {
+  ProbeDefinition,
+  ProbeExecution,
+  ProbeMode,
+  CreateProbeExecutionInput,
+} from './probes.js';
+export type { Trace, UploadTraceInput } from './traces.js';
+export type { Client, CreateClientInput, UpdateClientInput } from './clients.js';
+export type {
+  WorkingPaper,
+  CreateWorkingPaperInput,
+  UpdateWorkingPaperInput,
+} from './working-papers.js';
 export type { CoverageArea, CoverageCell, CoverageStatus, AuditDashboard } from './coverage.js';
 export type { Readiness, AnnexFamily } from './readiness.js';
 export type { LibraryEntry, LibraryEntryKind } from './library.js';

@@ -58,3 +58,48 @@ export function getWorkingPaper(id: string, options: ApiFetchOptions = {}) {
     options,
   );
 }
+
+export const CreateWorkingPaperSchema = z.object({
+  engagementId: z.string(),
+  controlRef: z.string().min(1).max(64),
+  title: z.string().min(1).max(200),
+  bodyMarkdown: z.string().default(''),
+  templateId: z.string().optional(),
+  evidenceRefs: z.array(EvidenceRefSchema).default([]),
+});
+export type CreateWorkingPaperInput = z.infer<typeof CreateWorkingPaperSchema>;
+
+export function createWorkingPaper(
+  body: CreateWorkingPaperInput,
+  options: ApiFetchOptions = {},
+) {
+  return apiFetch('/working-papers', WorkingPaperSchema, {
+    ...options,
+    method: 'POST',
+    body,
+  });
+}
+
+export const UpdateWorkingPaperSchema = z.object({
+  title: z.string().optional(),
+  bodyMarkdown: z.string().optional(),
+  status: WorkingPaperStatusSchema.optional(),
+  evidenceRefs: z.array(EvidenceRefSchema).optional(),
+});
+export type UpdateWorkingPaperInput = z.infer<typeof UpdateWorkingPaperSchema>;
+
+export function updateWorkingPaper(
+  id: string,
+  body: UpdateWorkingPaperInput,
+  options: ApiFetchOptions = {},
+) {
+  return apiFetch(
+    `/working-papers/${encodeURIComponent(id)}`,
+    WorkingPaperSchema,
+    {
+      ...options,
+      method: 'PATCH',
+      body,
+    },
+  );
+}
