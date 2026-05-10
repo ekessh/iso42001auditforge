@@ -1,0 +1,114 @@
+# SPDX-License-Identifier: BUSL-1.1
+enabled: false
+
+image:
+  repository: ghcr.io/auditforge/mcp-server
+  tag: ""
+  pullPolicy: IfNotPresent
+
+replicaCount: 2
+containerPort: 7800
+
+service:
+  type: ClusterIP
+  port: 80
+  annotations: {}
+
+ingress:
+  enabled: false
+  className: nginx
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/proxy-body-size: "16m"
+  hosts:
+    - host: mcp.auditforge.local
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - secretName: auditforge-mcp-tls
+      hosts:
+        - mcp.auditforge.local
+
+env: []
+envFrom: []
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 256Mi
+  limits:
+    cpu: 500m
+    memory: 1Gi
+
+autoscaling:
+  enabled: true
+  minReplicas: 2
+  maxReplicas: 6
+  targetCPUUtilizationPercentage: 70
+  targetMemoryUtilizationPercentage: 80
+  customMetrics: []
+
+podDisruptionBudget:
+  enabled: true
+  minAvailable: 1
+
+networkPolicy:
+  enabled: true
+  allowedIngressNamespaces:
+    - kubernetes.io/metadata.name: ingress-nginx
+
+serviceMonitor:
+  enabled: true
+  interval: 30s
+  scrapeTimeout: 10s
+  additionalLabels:
+    release: kube-prometheus-stack
+
+livenessProbe:
+  httpGet:
+    path: /healthz/live
+    port: http
+  initialDelaySeconds: 15
+  periodSeconds: 30
+  timeoutSeconds: 30
+
+readinessProbe:
+  httpGet:
+    path: /healthz/ready
+    port: http
+  initialDelaySeconds: 5
+  periodSeconds: 10
+  timeoutSeconds: 30
+
+startupProbe:
+  httpGet:
+    path: /healthz/live
+    port: http
+  failureThreshold: 30
+  periodSeconds: 10
+  timeoutSeconds: 30
+
+podSecurityContext:
+  runAsNonRoot: true
+  runAsUser: 10001
+  runAsGroup: 10001
+  fsGroup: 10001
+  seccompProfile:
+    type: RuntimeDefault
+
+containerSecurityContext:
+  allowPrivilegeEscalation: false
+  privileged: false
+  readOnlyRootFilesystem: true
+  capabilities:
+    drop: [ALL]
+  runAsNonRoot: true
+  runAsUser: 10001
+
+podAnnotations: {}
+nodeSelector: {}
+tolerations: []
+affinity: {}
+topologySpreadConstraints: []

@@ -1,0 +1,7 @@
+{{/* SPDX-License-Identifier: BUSL-1.1 */}}
+AuditForge MCP server has been installed.
+
+To verify:
+  kubectl -n {{ .Release.Namespace }} get pods -l app.kubernetes.io/component=mcp-server
+
+Auditor MCP allowlist enforcement is configured per CLAUDE.md P-MCP-02.

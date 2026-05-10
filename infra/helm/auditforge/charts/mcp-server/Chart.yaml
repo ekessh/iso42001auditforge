@@ -1,0 +1,20 @@
+# SPDX-License-Identifier: BUSL-1.1
+apiVersion: v2
+name: mcp-server
+description: |
+  AuditForge MCP server subchart — exposes AuditForge tools as a Model Context
+  Protocol server. Deployed only in environments with explicit MCP enablement.
+type: application
+version: 0.14.0
+appVersion: "0.14.0"
+kubeVersion: ">=1.27.0-0"
+keywords:
+  - mcp
+  - auditforge
+  - iso42001
+maintainers:
+  - name: AuditForge Maintainers
+    email: maintainers@auditforge.example
+annotations:
+  category: Compliance
+  licenses: BUSL-1.1
