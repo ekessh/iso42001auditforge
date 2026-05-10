@@ -38,12 +38,14 @@ import { EngagementsModule } from './modules/engagements/engagements.module.js';
 import { EvidenceVaultModule } from './modules/evidence-vault/evidence-vault.module.js';
 import { FindingsModule } from './modules/findings/findings.module.js';
 import { HealthModule } from './modules/health/health.module.js';
+import { ObservabilityModule } from './observability/observability.module.js';
 import { IdentityModule } from './modules/identity/identity.module.js';
 import { InterviewsModule } from './modules/interviews/interviews.module.js';
 import { LibraryModule } from './modules/library/library.module.js';
 import { ReadinessModule } from './modules/readiness/readiness.module.js';
 import { PeerReviewModule } from './modules/peer-review/peer-review.module.js';
 import { ProbesModule } from './modules/probes/probes.module.js';
+import { QaChecklistModule } from './modules/qa-checklist/qa-checklist.module.js';
 import { ReportsModule } from './modules/reports/reports.module.js';
 import { RisksModule } from './modules/risks/risks.module.js';
 import { SamplesModule } from './modules/samples/samples.module.js';
@@ -95,10 +97,12 @@ import type { AppConfig } from './config/config.schema.js';
     FindingsModule,
     HealthModule,
     IdentityModule,
+    ObservabilityModule,
     InterviewsModule,
     LibraryModule,
     PeerReviewModule,
     ProbesModule,
+    QaChecklistModule,
     ReadinessModule,
     ReportsModule,
     RisksModule,
