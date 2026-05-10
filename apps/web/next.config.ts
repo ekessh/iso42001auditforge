@@ -39,6 +39,7 @@ const config: NextConfig = {
 type WithPwaWrapper = (opts: Record<string, unknown>) => (cfg: NextConfig) => NextConfig;
 
 function loadPwa(): WithPwaWrapper | null {
+  if (process.env['NEXT_DISABLE_PWA'] === '1') return null;
   try {
     const mod: unknown = requireFromHere('next-pwa');
     if (typeof mod === 'function') return mod as WithPwaWrapper;

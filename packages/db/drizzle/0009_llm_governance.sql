@@ -54,6 +54,19 @@ CREATE TABLE IF NOT EXISTS llm_invocations (
     created_at               timestamptz NOT NULL DEFAULT now()
 );
 
+-- Earlier migration (0002) created llm_invocations without the governance
+-- columns this migration relies on. Bring the existing table up to spec.
+ALTER TABLE llm_invocations ADD COLUMN IF NOT EXISTS task text;
+ALTER TABLE llm_invocations ADD COLUMN IF NOT EXISTS tier llm_invocation_tier;
+ALTER TABLE llm_invocations ADD COLUMN IF NOT EXISTS model_version text;
+ALTER TABLE llm_invocations ADD COLUMN IF NOT EXISTS prompt_template_version text;
+ALTER TABLE llm_invocations ADD COLUMN IF NOT EXISTS prompt_template_hash text;
+ALTER TABLE llm_invocations ADD COLUMN IF NOT EXISTS input_tokens integer NOT NULL DEFAULT 0;
+ALTER TABLE llm_invocations ADD COLUMN IF NOT EXISTS output_tokens integer NOT NULL DEFAULT 0;
+ALTER TABLE llm_invocations ADD COLUMN IF NOT EXISTS decision_by_auditor_id uuid;
+ALTER TABLE llm_invocations ADD COLUMN IF NOT EXISTS decided_at timestamptz;
+ALTER TABLE llm_invocations ADD COLUMN IF NOT EXISTS metadata jsonb NOT NULL DEFAULT '{}'::jsonb;
+
 CREATE INDEX IF NOT EXISTS llm_invocations_engagement_ix
     ON llm_invocations (engagement_id);
 CREATE INDEX IF NOT EXISTS llm_invocations_task_ix

@@ -761,7 +761,6 @@ DECLARE
         'auditor_competences',
         'auditor_webauthn_credentials',
         'auditor_assignments',
-        'audit_firms',
         'clients',
         'engagements',
         'audit_events',
@@ -826,6 +825,19 @@ BEGIN
     END LOOP;
 END
 $rls$;
+
+-- audit_firms is the tenancy root: RLS scopes by `id`, not `firm_id`.
+ALTER TABLE audit_firms ENABLE ROW LEVEL SECURITY;
+ALTER TABLE audit_firms FORCE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS tenant_isolation ON audit_firms;
+CREATE POLICY tenant_isolation ON audit_firms
+    AS PERMISSIVE FOR ALL TO app_request_role
+    USING (id = current_setting('app.current_firm_id', true)::uuid)
+    WITH CHECK (id = current_setting('app.current_firm_id', true)::uuid);
+DROP POLICY IF EXISTS service_role_passthrough ON audit_firms;
+CREATE POLICY service_role_passthrough ON audit_firms
+    AS PERMISSIVE FOR ALL TO app_service_role
+    USING (true) WITH CHECK (true);
 
 -- =========================================================================
 -- 11. Append-only carve-outs for audit_ledger_events + audit_file_archives
