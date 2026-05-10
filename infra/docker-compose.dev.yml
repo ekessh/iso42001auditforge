@@ -104,6 +104,34 @@ services:
       retries: 5
       start_period: 240s
 
+  audit-evidence-runner:
+    build:
+      context: ../services/audit-evidence-runner
+      dockerfile: Dockerfile
+    container_name: auditforge-audit-evidence-runner
+    restart: unless-stopped
+    ports:
+      - '8088:8088'
+    environment:
+      AUDIT_RUNNER_HOST: '0.0.0.0'
+      AUDIT_RUNNER_PORT: '8088'
+      AUDIT_RUNNER_EGRESS_PROXY: ${AUDIT_RUNNER_EGRESS_PROXY:-}
+      AUDIT_RUNNER_ALLOWED_HOSTS: ${AUDIT_RUNNER_ALLOWED_HOSTS:-}
+      AUDIT_RUNNER_FS_ROOT: '/tmp/auditforge-checks'
+      AUDIT_RUNNER_ENGAGEMENT_JWT_SECRET: ${AUDIT_RUNNER_ENGAGEMENT_JWT_SECRET:-auditforge_dev_only_engagement_secret}
+      AUDIT_RUNNER_ENGAGEMENT_JWT_ALGORITHM: 'HS256'
+      AUDIT_RUNNER_ENGAGEMENT_JWT_AUDIENCE: 'auditforge-audit-evidence-runner'
+      AUDIT_RUNNER_ENGAGEMENT_JWT_ISSUER: 'auditforge-api'
+      AUDIT_RUNNER_ENGAGEMENT_JWT_REQUIRED: 'true'
+      AUDIT_RUNNER_SIGNING_ENDPOINT: ${AUDIT_RUNNER_SIGNING_ENDPOINT:-}
+      AUDIT_RUNNER_SIGNING_SIGNER_ID: 'audit-evidence-runner'
+      AUDIT_RUNNER_MAX_CONCURRENT_RUNS: '8'
+    healthcheck:
+      test: ['CMD', 'python', '-c', "import urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://127.0.0.1:8088/healthz', timeout=3).status==200 else 1)"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+
 volumes:
   postgres-data:
   redis-data:

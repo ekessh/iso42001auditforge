@@ -42,3 +42,56 @@ export * from './sandbox.js';
 export * from './test-set-manager.js';
 export * from './budget-controller.js';
 export * from './wp-linker.js';
+
+// External (Python sidecar) audit-evidence runner.
+export {
+  ExternalAuditEvidenceRunner,
+  ExternalAuditEvidenceRunnerError,
+  type ExternalRunnerOptions,
+  type ExternalRunnerStartArgs,
+  type ExternalRunnerStreamEvent,
+  type ExternalTarget,
+  type ExternalBudget,
+  type ExternalSandbox,
+  type ExternalCatalogueEntry,
+  type ExternalCheckResult,
+  type ExternalRunStatus,
+  type ExternalFinding,
+  type ExternalMetrics,
+  type ExternalCheckOutcome,
+  type ExternalRunState,
+  type ExternalSeverity,
+  type ExternalArtifactRef,
+} from './external-runner.js';
+
+export {
+  STANDARD_EVIDENCE_PACK,
+  buildStandardEvidencePack,
+  type StandardEvidencePackEntry,
+  type StandardEvidencePackOptions,
+  type StandardEvidenceParams,
+} from './checks/standard-evidence-pack.js';
+
+export {
+  MCP_CONFORMANCE_CATALOGUE,
+  buildMcpConformancePack,
+  buildPMcp01,
+  buildPMcp02,
+  buildPMcp03,
+  buildPMcp04,
+  buildPMcp05,
+  buildPMcp06,
+  buildPMcp07,
+  buildPMcp08,
+  P_MCP_01_META as P_MCP_01_CONFORMANCE_META,
+  P_MCP_02_META as P_MCP_02_CONFORMANCE_META,
+  P_MCP_03_META as P_MCP_03_CONFORMANCE_META,
+  P_MCP_04_META as P_MCP_04_CONFORMANCE_META,
+  P_MCP_05_META as P_MCP_05_CONFORMANCE_META,
+  P_MCP_06_META as P_MCP_06_CONFORMANCE_META,
+  P_MCP_07_META as P_MCP_07_CONFORMANCE_META,
+  P_MCP_08_META as P_MCP_08_CONFORMANCE_META,
+  type McpConformanceEntry,
+  type McpConformanceAdapterOptions,
+  type McpConformanceParams,
+} from './checks/mcp-conformance/index.js';

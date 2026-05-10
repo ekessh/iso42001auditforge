@@ -35,7 +35,10 @@
     "mobile:build": "pnpm --filter @auditforge/web build",
     "mcp:build": "pnpm --filter @auditforge/mcp-server build",
     "mcp:start": "pnpm --filter @auditforge/mcp-server start",
-    "icons:gen": "node scripts/gen-placeholder-icons.mjs"
+    "icons:gen": "node scripts/gen-placeholder-icons.mjs",
+    "audit-runner:dev": "cd services/audit-evidence-runner && uv run uvicorn services.audit_evidence_runner.main:app --reload --host 0.0.0.0 --port 8088",
+    "audit-runner:test": "cd services/audit-evidence-runner && uv run pytest",
+    "audit-runner:lint": "cd services/audit-evidence-runner && uv run ruff check ."
   },
   "devDependencies": {
     "@types/node": "^22.7.0",
