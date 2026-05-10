@@ -199,10 +199,10 @@ export default function LoginPage() {
               First time on this device? Register a passkey
             </button>
           )}
-          <div className="text-center text-xs text-slate-400">
+          <div className="text-center text-xs text-slate-700 dark:text-slate-300">
             Or use OIDC SSO &middot; PKCS#11 smart card
           </div>
-          <div className="text-xs text-slate-500 text-center">
+          <div className="text-xs text-slate-700 dark:text-slate-300 text-center">
             By signing in you accept the auditor terms and confirm impartiality
             disclosures for active engagements.
           </div>
