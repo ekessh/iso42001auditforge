@@ -83,28 +83,28 @@ test.describe('Edge — 404 + server error injection @smoke', () => {
     await expect(page.getByRole('main').getByText(/HTTP 500|error|failed|unable/i).first()).toBeVisible({ timeout: 10_000 });
   });
 
-  test('malformed JSON from /v1/findings surfaces schema-validation message', async ({ page }) => {
-    await login(page);
-    await page.route(`${API}/v1/findings*`, async (route) => {
-      await route.fulfill({ status: 200, body: '{not-valid-json' });
+  test('malformed JSON from /v1/findings surfaces schema-validation message', async ({ context, page }) => {
+    await context.route(`${API}/v1/findings*`, async (route) => {
+      await route.fulfill({ status: 200, contentType: 'application/json', body: '{not-valid-json' });
     });
-    await page.getByRole('link', { name: /Findings/i }).first().click();
+    await login(page);
+    await page.goto(`${BASE}/findings`);
     await expect(page).toHaveURL(/\/findings$/);
-    await expect(page.getByText(/error|failed|invalid/i).first()).toBeVisible({ timeout: 10_000 });
+    await expect(page.getByRole('main').getByText(/error|failed|invalid|unable/i).first()).toBeVisible({ timeout: 10_000 });
   });
 
-  test('schema-violating response (missing required fields) surfaces error', async ({ page }) => {
-    await login(page);
-    await page.route(`${API}/v1/clients*`, async (route) => {
+  test('schema-violating response (missing required fields) surfaces error', async ({ context, page }) => {
+    await context.route(`${API}/v1/clients*`, async (route) => {
       await route.fulfill({
         status: 200,
         contentType: 'application/json',
         body: JSON.stringify({ items: [{ id: 'broken' }], nextCursor: null, prevCursor: null }),
       });
     });
-    await page.getByRole('link', { name: /Clients/i }).first().click();
+    await login(page);
+    await page.goto(`${BASE}/clients`);
     await expect(page).toHaveURL(/\/clients$/);
-    await expect(page.getByText(/error|failed|validation|invalid/i).first()).toBeVisible({ timeout: 10_000 });
+    await expect(page.getByRole('main').getByText(/error|failed|validation|invalid|unable/i).first()).toBeVisible({ timeout: 10_000 });
   });
 });
 

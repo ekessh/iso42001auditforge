@@ -157,15 +157,22 @@ export class FindingsPage extends BasePage {
   }
 
   async filterBySeverity(severity: 'major_nc' | 'minor_nc' | 'ofi' | 'conformity'): Promise<void> {
-    const sel = this.page.getByLabel(/Severity/i);
-    await expect(sel, 'Severity filter should exist on findings page').toBeVisible();
-    await sel.selectOption(severity);
+    const labelMap: Record<typeof severity, RegExp> = {
+      major_nc: /^Major NC$/,
+      minor_nc: /^Minor NC$/,
+      ofi: /^OFI$/,
+      conformity: /^Conformity$/,
+    };
+    const btn = this.page.getByRole('button', { name: labelMap[severity] });
+    await expect(btn, 'Severity filter chip should exist on findings page').toBeVisible();
+    await btn.click();
   }
 
   async filterByStatus(status: string): Promise<void> {
-    const sel = this.page.getByLabel(/Status/i);
-    await expect(sel, 'Status filter should exist on findings page').toBeVisible();
-    await sel.selectOption(status);
+    const label = status.replace(/_/g, ' ');
+    const btn = this.page.getByRole('button', { name: new RegExp(`^${label}$`, 'i') });
+    await expect(btn, 'Status filter chip should exist on findings page').toBeVisible();
+    await btn.click();
   }
 
   async expectRowCount(min: number, max?: number): Promise<void> {
@@ -257,9 +264,21 @@ export class LibraryPage extends BasePage {
   }
 
   async filterByKind(kind: string): Promise<void> {
-    const sel = this.page.getByLabel('Filter by source');
-    await expect(sel).toBeAttached();
-    await sel.selectOption(kind);
+    const group = this.page.getByRole('group', { name: 'Filter by source' });
+    await expect(group).toBeAttached();
+    const labelMap: Record<string, RegExp> = {
+      iso42001_clause: /ISO 42001 clause/i,
+      annex_a_control: /Annex A control/i,
+      eu_ai_act_article: /EU AI Act/i,
+      nist_ai_rmf: /NIST AI RMF/i,
+      owasp_llm: /OWASP/i,
+      mitre_atlas: /MITRE ATLAS/i,
+      avid: /AVID/i,
+      mit_air: /MIT AI Risk/i,
+      question: /^Question$/i,
+    };
+    const label = labelMap[kind] ?? new RegExp(kind, 'i');
+    await group.getByRole('button', { name: label }).click();
   }
 
   async expectResultCount(min: number, max?: number): Promise<void> {
