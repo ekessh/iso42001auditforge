@@ -1015,9 +1015,18 @@ importers:
 
   packages/report-engine:
     dependencies:
+      '@auditforge/audit-engine':
+        specifier: workspace:*
+        version: link:../audit-engine
       '@auditforge/shared':
         specifier: workspace:*
         version: link:../shared
+      '@auditforge/signing':
+        specifier: workspace:*
+        version: link:../signing
+      '@auditforge/tsa':
+        specifier: workspace:*
+        version: link:../tsa
       zod:
         specifier: ^3.23.8
         version: 3.25.76
