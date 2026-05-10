@@ -59,6 +59,7 @@ postgres-data/
 redis-data/
 minio-data/
 ollama-data/
+scripts/dev-mock-data/
 
 # Secrets
 *.pem
