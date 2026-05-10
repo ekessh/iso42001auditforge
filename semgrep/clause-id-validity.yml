@@ -1,0 +1,54 @@
+# SPDX-License-Identifier: BUSL-1.1
+rules:
+  - id: af-reranker-invalid-clause-id
+    message: >-
+      Re-ranker output contains strings that don't match the ISO 42001
+      clause-id grammar. CLAUDE.md hard rule: "Re-ranker outputs only
+      clause IDs from the catalog." Probe P-AF-CLAUSE-01 enforces.
+      Valid pattern: ^(?:[4-9]|10)(\\.\\d+){0,4}$ or ^A\\.\\d+(\\.\\d+){0,3}$
+    severity: WARNING
+    languages: [typescript, javascript]
+    metadata:
+      category: correctness
+      claudemd_rule: "Re-ranker outputs only clause IDs from the catalog"
+    paths:
+      include:
+        - "packages/conversational-engine/**/*.ts"
+        - "packages/audit-memory/**/*.ts"
+        - "packages/search/**/*.ts"
+    pattern-either:
+      - patterns:
+          - pattern: |
+              return [$...IDS];
+          - metavariable-pattern:
+              metavariable: $...IDS
+              patterns:
+                # any string-literal-looking clause id that doesn't match
+                - pattern-regex: '"(?!(?:(?:[4-9]|10)(?:\.\d+){0,4})|(?:A\.\d+(?:\.\d+){0,3}))[^"]+"'
+      - patterns:
+          - pattern-inside: |
+              function rerank($...ARGS) {
+                ...
+              }
+          - pattern: |
+              return $X;
+          - metavariable-pattern:
+              metavariable: $X
+              patterns:
+                - pattern-regex: '"[A-Za-z]+"'
+
+  - id: af-clause-id-string-coercion
+    message: >-
+      Casting an arbitrary string to ClauseId without validating against
+      the catalogue. Use `parseClauseId(s)` from @auditforge/catalogues
+      which returns a typed Result.
+    severity: WARNING
+    languages: [typescript]
+    metadata:
+      category: correctness
+      claudemd_rule: "Re-ranker outputs only clause IDs from the catalog"
+    pattern-either:
+      - pattern: |
+          $X as ClauseId
+      - pattern: |
+          <ClauseId>$X

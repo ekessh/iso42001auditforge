@@ -1,0 +1,63 @@
+# SPDX-License-Identifier: BUSL-1.1
+rules:
+  - id: af-llm-free-form-no-schema
+    message: >-
+      LLM call appears to lack a zod schema. CLAUDE.md hard rule:
+      "Schema-constrained extraction. Free-form LLM output is a bug."
+      Use provider.reasonStructured(prompt, schema, opts) — never
+      provider.complete()/reason()/extract() without a schema arg.
+    severity: WARNING
+    languages: [typescript, javascript]
+    metadata:
+      category: correctness
+      reference: https://github.com/auditforge/iso42001auditforge/blob/main/CLAUDE.md
+      claudemd_rule: "Schema-constrained extraction first"
+    pattern-either:
+      - patterns:
+          - pattern: |
+              $PROVIDER.complete($PROMPT)
+          - pattern-not: |
+              $PROVIDER.complete($PROMPT, $SCHEMA, ...)
+      - patterns:
+          - pattern: |
+              $PROVIDER.reason($PROMPT)
+          - pattern-not: |
+              $PROVIDER.reasonStructured($PROMPT, $SCHEMA, ...)
+      - patterns:
+          - pattern: |
+              $PROVIDER.extract($PROMPT)
+          - pattern-not: |
+              $PROVIDER.extract($PROMPT, $SCHEMA, ...)
+
+  - id: af-llm-no-eval-newfunction
+    message: >-
+      `eval` and `new Function` are forbidden in first-party code (ADR-0027
+      compensating control for the CSP `unsafe-eval` interim).
+    severity: ERROR
+    languages: [typescript, javascript]
+    metadata:
+      category: security
+      claudemd_rule: "ADR-0027 CSP compensating control"
+    pattern-either:
+      - pattern: eval($X)
+      - pattern: new Function($...ARGS)
+
+  - id: af-rls-bypass-direct-db
+    message: >-
+      Repository methods must go through `withRls(principal, fn)` rather
+      than calling `db.transaction` or `db.execute` directly. ADR-0017 RLS
+      session vars must be set on every transaction.
+    severity: WARNING
+    languages: [typescript]
+    metadata:
+      category: security
+      claudemd_rule: "Postgres RLS for tenant isolation (defense in depth + app guards)"
+    paths:
+      include:
+        - "packages/*/src/**/*.repository.ts"
+        - "apps/api/src/**/*.repository.ts"
+    pattern-either:
+      - pattern: |
+          this.db.transaction(...)
+      - pattern: |
+          this.db.execute(...)

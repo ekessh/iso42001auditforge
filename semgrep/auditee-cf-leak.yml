@@ -1,0 +1,48 @@
+# SPDX-License-Identifier: BUSL-1.1
+rules:
+  - id: af-auditee-candidate-finding-leak
+    message: >-
+      Route exposes candidate-finding data on a path accessible to the
+      'auditee' role. CLAUDE.md hard rule: "Candidate findings never
+      visible to auditee. Only formal Findings post-promotion."
+    severity: ERROR
+    languages: [typescript]
+    metadata:
+      category: security
+      claudemd_rule: "Candidate findings never visible to auditee"
+    pattern-either:
+      - patterns:
+          - pattern: |
+              @Rbac($ROLES, ...)
+              $METHOD($...ARGS) { $...BODY }
+          - metavariable-pattern:
+              metavariable: $ROLES
+              patterns:
+                - pattern-either:
+                    - pattern: "'auditee'"
+                    - pattern: "\"auditee\""
+                    - pattern: "['auditee', ...]"
+                    - pattern: "[..., 'auditee', ...]"
+                    - pattern: "[..., 'auditee']"
+          - metavariable-pattern:
+              metavariable: $METHOD
+              patterns:
+                - pattern-regex: ".*(candidate|cf|CandidateFinding).*"
+
+      - pattern: |
+          @Get($PATH)
+          @Rbac('auditee', ...)
+          $METHOD($...ARGS) { $...BODY }
+        # any auditee-readable GET on a *candidate* route
+      - patterns:
+          - pattern: |
+              @Get($PATH)
+              @Rbac($ROLES, ...)
+              $METHOD($...ARGS) { $...BODY }
+          - metavariable-pattern:
+              metavariable: $PATH
+              pattern-regex: ".*candidate.*"
+          - metavariable-pattern:
+              metavariable: $ROLES
+              patterns:
+                - pattern-regex: ".*auditee.*"

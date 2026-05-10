@@ -1,0 +1,47 @@
+# SPDX-License-Identifier: BUSL-1.1
+rules:
+  - id: af-missing-spdx-header-ts
+    message: >-
+      File is missing the SPDX-License-Identifier header. CLAUDE.md per-PR
+      gate §7: "SPDX header on every new source file."
+    severity: ERROR
+    languages: [typescript, javascript]
+    metadata:
+      category: license
+      claudemd_rule: "SPDX header on every new source file"
+    paths:
+      include:
+        - "**/*.ts"
+        - "**/*.tsx"
+        - "**/*.mts"
+        - "**/*.cts"
+        - "**/*.js"
+        - "**/*.jsx"
+        - "**/*.mjs"
+        - "**/*.cjs"
+      exclude:
+        - "**/node_modules/**"
+        - "**/dist/**"
+        - "**/build/**"
+        - "**/.next/**"
+        - "**/*.d.ts"
+        - "**/coverage/**"
+    patterns:
+      - pattern-not-regex: 'SPDX-License-Identifier:\s*BUSL-1\.1'
+
+  - id: af-missing-spdx-header-py
+    message: >-
+      Python file is missing SPDX-License-Identifier header.
+    severity: ERROR
+    languages: [python]
+    metadata:
+      category: license
+      claudemd_rule: "SPDX header on every new source file"
+    paths:
+      include:
+        - "**/*.py"
+      exclude:
+        - "**/.venv/**"
+        - "**/venv/**"
+    patterns:
+      - pattern-not-regex: 'SPDX-License-Identifier:\s*BUSL-1\.1'
