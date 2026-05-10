@@ -1,0 +1,74 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "AuditForge",
+  "version": "0.0.1",
+  "identifier": "com.auditforge.desktop",
+  "build": {
+    "beforeDevCommand": "pnpm --filter @auditforge/web dev",
+    "beforeBuildCommand": "pnpm --filter @auditforge/web build",
+    "devUrl": "http://localhost:3000",
+    "frontendDist": "../../web/.next"
+  },
+  "app": {
+    "windows": [
+      {
+        "title": "AuditForge",
+        "width": 1440,
+        "height": 900,
+        "minWidth": 1024,
+        "minHeight": 768,
+        "decorations": true,
+        "resizable": true,
+        "fullscreen": false,
+        "theme": null
+      }
+    ],
+    "security": {
+      "csp": "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self' http://localhost:3000 http://localhost:4000 ws://localhost:3000; frame-ancestors 'none'; base-uri 'self'; form-action 'self'"
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": "all",
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.png"
+    ],
+    "category": "Productivity",
+    "shortDescription": "AuditForge ISO 42001 auditor workbench",
+    "longDescription": "ISO/IEC 42001 Lead Auditor workbench. Auditor-only tool. BUSL-1.1.",
+    "publisher": "AuditForge"
+  },
+  "plugins": {
+    "updater": {
+      "active": true,
+      "endpoints": [
+        "https://updates.auditforge.invalid/{{target}}/{{current_version}}"
+      ],
+      "dialog": true,
+      "pubkey": "REPLACE_WITH_TAURI_UPDATER_PUBKEY"
+    },
+    "fs": {
+      "scope": {
+        "allow": [
+          "$APPDATA/AuditForge/vault/**",
+          "$DOCUMENT/AuditForge/**",
+          "$DOWNLOAD/AuditForge-Export/**"
+        ],
+        "deny": ["$APPDATA/AuditForge/vault/.keys/**"]
+      }
+    },
+    "dialog": {
+      "open": { "allow": true },
+      "save": { "allow": true },
+      "message": { "allow": true },
+      "ask": { "allow": true },
+      "confirm": { "allow": true }
+    },
+    "shell": {
+      "open": "^https?://"
+    }
+  }
+}

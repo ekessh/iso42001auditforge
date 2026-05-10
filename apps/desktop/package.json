@@ -1,0 +1,20 @@
+{
+  "name": "@auditforge/desktop",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "description": "AuditForge ISO 42001 - Tauri 2 desktop wrapper around @auditforge/web. Auditor-only workbench (BUSL-1.1).",
+  "license": "BUSL-1.1",
+  "scripts": {
+    "dev": "tauri dev",
+    "build": "tauri build",
+    "tauri": "tauri",
+    "typecheck": "node -e \"JSON.parse(require('node:fs').readFileSync('src-tauri/tauri.conf.json', 'utf8')); console.log('tauri.conf.json: ok')\""
+  },
+  "dependencies": {
+    "@auditforge/web": "workspace:*"
+  },
+  "devDependencies": {
+    "@tauri-apps/cli": "^2.0.0"
+  }
+}

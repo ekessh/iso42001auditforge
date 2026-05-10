@@ -1,0 +1,28 @@
+# SPDX-License-Identifier: BUSL-1.1
+[package]
+name = "auditforge-desktop"
+version = "0.0.1"
+description = "AuditForge ISO 42001 desktop"
+authors = ["AuditForge"]
+license = "BUSL-1.1"
+edition = "2021"
+rust-version = "1.77"
+
+[lib]
+name = "auditforge_desktop_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+serde_json = "1"
+serde = { version = "1", features = ["derive"] }
+tauri = { version = "2", features = [] }
+tauri-plugin-shell = "2"
+tauri-plugin-dialog = "2"
+tauri-plugin-fs = "2"
+tauri-plugin-updater = "2"
+
+[features]
+custom-protocol = ["tauri/custom-protocol"]
