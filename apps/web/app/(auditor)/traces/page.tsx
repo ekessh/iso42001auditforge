@@ -1,9 +1,68 @@
 // SPDX-License-Identifier: BUSL-1.1
+'use client';
+
+import Link from 'next/link';
+import { Activity } from 'lucide-react';
+import { Alert, EmptyState, Skeleton } from '@auditforge/ui-kit';
+import { useTraces } from '@/lib/hooks/use-traces';
+
 export default function TracesPage() {
+  const { data, isLoading, error } = useTraces({ limit: 100 });
+  const items = data?.items ?? [];
+
   return (
     <div className="p-8 max-w-7xl mx-auto">
       <h1 className="text-2xl font-semibold">Traces</h1>
-      <p className="text-sm text-slate-500 mt-1">Ingest agent traces (LangGraph, CrewAI, AutoGen, OTel, Langfuse, Phoenix) and analyze tool ACL drift, HITL gates, recursion limits.</p>
+      <p className="text-sm text-slate-500 mt-1">
+        Ingest agent traces (LangGraph, CrewAI, AutoGen, OTel, Langfuse, Phoenix) and analyze tool ACL drift, HITL gates, recursion limits.
+      </p>
+
+      {error && (
+        <Alert tone="danger" className="mt-4">
+          {error instanceof Error ? error.message : 'Failed to load traces'}
+        </Alert>
+      )}
+
+      {isLoading ? (
+        <div className="mt-6 space-y-2" aria-busy="true">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <Skeleton key={i} className="h-12 w-full" />
+          ))}
+        </div>
+      ) : items.length === 0 ? (
+        <EmptyState
+          className="mt-6"
+          icon={<Activity />}
+          title="No traces ingested"
+          description="Upload a trace from your agent platform to begin analysis."
+        />
+      ) : (
+        <table className="mt-6 w-full text-sm" aria-label="Traces">
+          <thead>
+            <tr className="text-left text-xs uppercase tracking-wide text-slate-500">
+              <th className="py-2 pr-3">Name</th>
+              <th className="py-2 pr-3">Created</th>
+              <th className="py-2 pr-3">Updated</th>
+            </tr>
+          </thead>
+          <tbody>
+            {items.map((t) => (
+              <tr key={t.id} className="border-t border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-900">
+                <td className="py-2 pr-3">
+                  <Link
+                    href={`/traces/${t.id}`}
+                    className="font-medium hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                  >
+                    {t.name}
+                  </Link>
+                </td>
+                <td className="py-2 pr-3 tabular-nums text-slate-500">{new Date(t.createdAt).toLocaleString()}</td>
+                <td className="py-2 pr-3 tabular-nums text-slate-500">{new Date(t.updatedAt).toLocaleString()}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
     </div>
   );
 }

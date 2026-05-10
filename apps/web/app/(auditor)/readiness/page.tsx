@@ -5,18 +5,11 @@
  * Readiness Dashboard — v3 §15.14.
  *
  * Read-only for lead auditors during Audit Mode engagements; primary
- * surface for AIMS owners in Readiness Mode. Real-time when WebSocket
- * push lands; mocked here.
- *
- * Layout (top → bottom, responsive):
- *   1. Hero strip (overall %, trend deltas, target cert countdown,
- *      "How is this calculated?")
- *   2. Annex A control grid (A.2-A.10) as 9 cards
- *   3. Drill-down clause heatmap on family selection
- *   4. Open items / blockers / trend / AI system breakdown
+ * surface for AIMS owners in Readiness Mode.
  */
 
-import { Skeleton } from '@auditforge/ui-kit';
+import { Alert, EmptyState, Skeleton } from '@auditforge/ui-kit';
+import { Calendar } from 'lucide-react';
 import * as React from 'react';
 
 import { AiSystemBars } from '@/components/dashboards/AiSystemBars';
@@ -27,19 +20,52 @@ import { ReadinessHero } from '@/components/dashboards/ReadinessHero';
 import { ReadinessTrendChart } from '@/components/dashboards/ReadinessTrendChart';
 import { CoverageHeatmap } from '@/components/workspace/CoverageHeatmap';
 import { useReadiness } from '@/lib/hooks/use-coverage';
+import { useEngagements } from '@/lib/hooks/use-engagement';
 import { useWorkspace } from '@/lib/hooks/use-workspace';
 
 export default function ReadinessDashboardPage() {
-  const { data: readiness, isLoading } = useReadiness();
-  // Reuse the workspace mock to source a clause-level heatmap for the
-  // currently-selected family. Production: separate ClauseGrid query.
-  const { data: workspace } = useWorkspace('eng-001', 'audit');
+  const engagementsQ = useEngagements({ limit: 50 });
+  const items = engagementsQ.data?.items ?? [];
+  const firstReadiness = items.find((e) => e.mode === 'readiness') ?? items[0];
+  const engagementId = firstReadiness?.id ?? '';
+
+  const readinessQ = useReadiness(engagementId);
+  const workspaceQ = useWorkspace(engagementId, firstReadiness?.mode ?? 'audit');
 
   const [selectedFamily, setSelectedFamily] = React.useState<string | undefined>('A.7');
 
-  if (isLoading || !readiness) {
+  if (engagementsQ.isLoading) {
     return <ReadinessSkeleton />;
   }
+
+  if (!engagementId) {
+    return (
+      <div className="mx-auto max-w-7xl p-6">
+        <EmptyState
+          icon={<Calendar />}
+          title="No engagement available"
+          description="Create or open an engagement to see readiness data."
+        />
+      </div>
+    );
+  }
+
+  if (readinessQ.error) {
+    return (
+      <div className="mx-auto max-w-7xl p-6">
+        <Alert tone="danger">
+          {readinessQ.error instanceof Error ? readinessQ.error.message : 'Failed to load readiness dashboard'}
+        </Alert>
+      </div>
+    );
+  }
+
+  if (readinessQ.isLoading || !readinessQ.data) {
+    return <ReadinessSkeleton />;
+  }
+
+  const readiness = readinessQ.data;
+  const workspace = workspaceQ.data;
 
   return (
     <div className="mx-auto max-w-7xl space-y-6 p-6">
@@ -51,7 +77,7 @@ export default function ReadinessDashboardPage() {
           </p>
         </div>
         <span className="rounded bg-muted px-2 py-0.5 text-2xs uppercase tracking-wider text-muted-foreground">
-          Read-only · lead auditor view
+          Read-only &middot; lead auditor view
         </span>
       </header>
 
@@ -97,7 +123,13 @@ export default function ReadinessDashboardPage() {
 
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
         <div className="lg:col-span-2">
-          <ReadinessTrendChart points={readiness.trend} />
+          <ReadinessTrendChart
+            points={readiness.trend.map((p) => ({
+              date: p.date,
+              readinessPct: p.readinessPct,
+              ...(p.event ? { event: p.event } : {}),
+            }))}
+          />
         </div>
         <AiSystemBars systems={readiness.aiSystems} />
       </div>
@@ -107,7 +139,7 @@ export default function ReadinessDashboardPage() {
 
 function ReadinessSkeleton() {
   return (
-    <div className="mx-auto max-w-7xl space-y-6 p-6">
+    <div className="mx-auto max-w-7xl space-y-6 p-6" aria-busy="true">
       <Skeleton className="h-8 w-64" />
       <Skeleton className="h-32 w-full" />
       <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">

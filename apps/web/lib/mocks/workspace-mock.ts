@@ -1,9 +1,13 @@
 // SPDX-License-Identifier: BUSL-1.1
 /**
- * Mock fixtures for the v3 Conversational Audit Workspace.
+ * DEPRECATED for runtime data — kept only as an offline fallback for
+ * Storybook stories, unit tests, and as the canonical TypeScript type
+ * declarations the workspace components consume. Production hooks read
+ * from `@auditforge/api-client` via TanStack Query.
  *
- * Mirrors the data shape that the Conversational Audit Engine will produce
- * once the backend lands (Phase 7.6). Used to develop the UI in isolation.
+ * Mock fixtures for the v3 Conversational Audit Workspace. Mirrors the
+ * data shape that the Conversational Audit Engine produces once Phase 7.6
+ * lands; until then the api-client schema mirrors these types.
  */
 
 export type EngagementMode = 'audit' | 'readiness';

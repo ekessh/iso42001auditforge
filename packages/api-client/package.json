@@ -1,0 +1,84 @@
+{
+  "name": "@auditforge/api-client",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "description": "AuditForge typed API client (zod-validated fetcher, no React deps)",
+  "license": "BUSL-1.1",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./engagements": {
+      "types": "./dist/engagements.d.ts",
+      "default": "./dist/engagements.js"
+    },
+    "./findings": {
+      "types": "./dist/findings.d.ts",
+      "default": "./dist/findings.js"
+    },
+    "./candidate-findings": {
+      "types": "./dist/candidate-findings.d.ts",
+      "default": "./dist/candidate-findings.js"
+    },
+    "./probes": {
+      "types": "./dist/probes.d.ts",
+      "default": "./dist/probes.js"
+    },
+    "./traces": {
+      "types": "./dist/traces.d.ts",
+      "default": "./dist/traces.js"
+    },
+    "./clients": {
+      "types": "./dist/clients.d.ts",
+      "default": "./dist/clients.js"
+    },
+    "./readiness": {
+      "types": "./dist/readiness.d.ts",
+      "default": "./dist/readiness.js"
+    },
+    "./working-papers": {
+      "types": "./dist/working-papers.d.ts",
+      "default": "./dist/working-papers.js"
+    },
+    "./coverage": {
+      "types": "./dist/coverage.d.ts",
+      "default": "./dist/coverage.js"
+    },
+    "./library": {
+      "types": "./dist/library.d.ts",
+      "default": "./dist/library.js"
+    },
+    "./auth": {
+      "types": "./dist/auth.d.ts",
+      "default": "./dist/auth.js"
+    },
+    "./fetcher": {
+      "types": "./dist/fetcher.d.ts",
+      "default": "./dist/fetcher.js"
+    },
+    "./errors": {
+      "types": "./dist/errors.d.ts",
+      "default": "./dist/errors.js"
+    }
+  },
+  "files": [
+    "dist",
+    "src",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/node": "^22.7.0",
+    "typescript": "^5.6.2"
+  }
+}

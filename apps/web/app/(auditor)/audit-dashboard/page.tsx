@@ -5,13 +5,12 @@
  * Audit Dashboard — v3 §15.14.
  *
  * Real-time progress view for the lead auditor during an active engagement.
- * Simpler than the Readiness Dashboard; built for spotting coverage gaps
- * mid-audit. The compact strip is also embedded at the top of the
- * Conversational Workspace via MiniAuditDashboard.
+ * Picks the first in-progress engagement automatically; users can switch via
+ * the Engagement picker.
  */
 
-import { Skeleton } from '@auditforge/ui-kit';
-import { ArrowRight } from 'lucide-react';
+import { Alert, EmptyState, Skeleton } from '@auditforge/ui-kit';
+import { ArrowRight, Calendar } from 'lucide-react';
 import Link from 'next/link';
 import * as React from 'react';
 
@@ -19,10 +18,41 @@ import { AreaCoverageBars } from '@/components/dashboards/AreaCoverageBars';
 import { ManDayBurndown } from '@/components/dashboards/ManDayBurndown';
 import { RiskIndicator } from '@/components/dashboards/RiskIndicator';
 import { useAuditDashboard } from '@/lib/hooks/use-coverage';
+import { useEngagements } from '@/lib/hooks/use-engagement';
 
 export default function AuditDashboardPage() {
-  const engagementId = 'eng-001';
-  const { data, isLoading } = useAuditDashboard(engagementId);
+  const engagementsQ = useEngagements({ limit: 50 });
+  const items = engagementsQ.data?.items ?? [];
+  const firstActive = items.find((e) => e.status === 'in_progress') ?? items[0];
+  const engagementId = firstActive?.id ?? '';
+
+  const { data, isLoading, error } = useAuditDashboard(engagementId);
+
+  if (engagementsQ.isLoading) {
+    return <DashboardSkeleton />;
+  }
+
+  if (!engagementId) {
+    return (
+      <div className="mx-auto max-w-7xl p-6">
+        <EmptyState
+          icon={<Calendar />}
+          title="No engagement selected"
+          description="Open or create an engagement to view the audit dashboard."
+        />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="mx-auto max-w-7xl p-6">
+        <Alert tone="danger">
+          {error instanceof Error ? error.message : 'Failed to load audit dashboard'}
+        </Alert>
+      </div>
+    );
+  }
 
   if (isLoading || !data) {
     return <DashboardSkeleton />;
@@ -70,7 +100,7 @@ export default function AuditDashboardPage() {
         <Kpi
           label="Man-days"
           value={`${data.manDaysSpent}/${data.manDaysPlanned}`}
-          sublabel={`${Math.round((data.manDaysSpent / data.manDaysPlanned) * 100)}% spent`}
+          sublabel={`${data.manDaysPlanned > 0 ? Math.round((data.manDaysSpent / data.manDaysPlanned) * 100) : 0}% spent`}
           tone="info"
         />
       </section>
@@ -88,7 +118,7 @@ export default function AuditDashboardPage() {
           id="attention-areas"
           className="text-2xs font-semibold uppercase tracking-wider text-muted-foreground"
         >
-          Quick-jump · areas needing attention
+          Quick-jump &middot; areas needing attention
         </h2>
         <ul className="mt-3 space-y-2">
           {data.attentionAreas.map((a) => (
@@ -135,7 +165,7 @@ function Kpi({ label, value, sublabel, tone = 'info' }: KpiProps) {
 
 function DashboardSkeleton() {
   return (
-    <div className="mx-auto max-w-7xl space-y-6 p-6">
+    <div className="mx-auto max-w-7xl space-y-6 p-6" aria-busy="true">
       <Skeleton className="h-8 w-64" />
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-5">
         {Array.from({ length: 5 }).map((_, i) => (

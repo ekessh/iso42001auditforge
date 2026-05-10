@@ -17,6 +17,7 @@
     "react-dom": "^19.0.0",
     "@auditforge/ui-kit": "workspace:*",
     "@auditforge/shared": "workspace:*",
+    "@auditforge/api-client": "workspace:*",
     "@tanstack/react-query": "^5.59.0",
     "zustand": "^5.0.0",
     "zod": "^3.23.8",

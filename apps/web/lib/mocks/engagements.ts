@@ -1,4 +1,9 @@
 // SPDX-License-Identifier: BUSL-1.1
+/**
+ * DEPRECATED for runtime data — kept only as an offline fallback for
+ * Storybook stories and unit tests. Production hooks read from
+ * `@auditforge/api-client` via TanStack Query (`apps/web/lib/hooks/*`).
+ */
 
 export interface MockEngagement {
   id: string;
