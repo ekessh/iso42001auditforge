@@ -2,7 +2,7 @@
 [build]
   base = "apps/web"
   command = "cd ../.. && pnpm install --frozen-lockfile=false && pnpm --filter @auditforge/web... run build"
-  publish = "apps/web/.next"
+  publish = ".next"
 
 [build.environment]
   NODE_VERSION = "20"
