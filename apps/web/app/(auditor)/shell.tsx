@@ -4,7 +4,7 @@ import type { ReactNode } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
-  LayoutDashboard, Users, Calendar, FileText, AlertTriangle,
+  LayoutDashboard, Users, Calendar, AlertTriangle,
   Beaker, Activity, BookOpen, Settings, Command as CommandIcon,
   ShieldCheck,
 } from 'lucide-react';

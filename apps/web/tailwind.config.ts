@@ -9,6 +9,6 @@ const config: Config = {
     './lib/**/*.{ts,tsx}',
     '../../packages/ui-kit/src/**/*.{ts,tsx}',
   ],
-  presets: [preset],
+  presets: [preset as Config],
 };
 export default config;

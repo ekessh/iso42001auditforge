@@ -1,6 +1,5 @@
 // SPDX-License-Identifier: BUSL-1.1
 import type { Meta, StoryObj } from '@storybook/react';
-import * as React from 'react';
 
 import { RiskIndicator } from './RiskIndicator';
 
