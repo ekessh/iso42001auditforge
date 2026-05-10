@@ -1,0 +1,106 @@
+# SPDX-License-Identifier: BUSL-1.1
+name: DAST (ZAP staging)
+
+# Nightly + on every release tag. Skipped silently if STAGING_URL is not
+# configured at the repo / org level — keeps forks unaffected.
+
+on:
+  schedule:
+    - cron: '0 3 * * *'
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      target_override:
+        description: 'Override staging URL (optional)'
+        required: false
+        default: ''
+
+permissions:
+  contents: read
+  security-events: write
+
+jobs:
+  zap-baseline:
+    name: ZAP Baseline + Active Scan (staging)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Resolve staging URL
+        id: target
+        env:
+          STAGING_URL: ${{ vars.STAGING_URL }}
+          OVERRIDE: ${{ github.event.inputs.target_override }}
+        run: |
+          URL="${OVERRIDE:-$STAGING_URL}"
+          if [ -z "$URL" ]; then
+            echo "STAGING_URL not configured and no override supplied; skipping."
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          echo "url=$URL" >> "$GITHUB_OUTPUT"
+          echo "skip=false" >> "$GITHUB_OUTPUT"
+
+      - name: Prepare ZAP working dir
+        if: steps.target.outputs.skip == 'false'
+        run: |
+          mkdir -p .zap-work
+          cp .zap/auditforge-context.yaml .zap-work/context.yaml
+          cp .zap/scan-policy.yaml .zap-work/scan-policy.yaml
+          cp .zap/allowlist.yaml .zap-work/allowlist.yaml
+
+      - name: ZAP Baseline scan
+        if: steps.target.outputs.skip == 'false'
+        uses: zaproxy/action-baseline@v0.12.0
+        with:
+          target: ${{ steps.target.outputs.url }}
+          rules_file_name: '.zap/scan-policy.yaml'
+          cmd_options: '-a -j -d -T 10'
+          fail_action: false
+          allow_issue_writing: false
+          artifact_name: 'zap-baseline-report'
+
+      - name: ZAP Full active scan
+        if: steps.target.outputs.skip == 'false'
+        uses: zaproxy/action-full-scan@v0.10.0
+        env:
+          ZAP_AUTH_HEADER_VALUE: ${{ secrets.ZAP_API_TOKEN }}
+        with:
+          target: ${{ steps.target.outputs.url }}
+          rules_file_name: '.zap/scan-policy.yaml'
+          cmd_options: '-a -j -d -T 30'
+          fail_action: false
+          allow_issue_writing: false
+          artifact_name: 'zap-full-report'
+
+      - name: Enforce HIGH severity gate
+        if: steps.target.outputs.skip == 'false'
+        run: |
+          REPORT="report_html.html"
+          if [ ! -f "$REPORT" ]; then
+            echo "ZAP report missing; failing."
+            exit 1
+          fi
+          # Count HIGH alerts; subtract anything explicitly allowlisted.
+          HIGH=$(grep -ic 'risk="High"' "$REPORT" || true)
+          ALLOWED=$(grep -c '^- ' .zap/allowlist.yaml || true)
+          NET=$((HIGH - ALLOWED))
+          if [ "$NET" -gt 0 ]; then
+            echo "Net HIGH severity findings = $NET (raw=$HIGH, allowlisted=$ALLOWED). Failing."
+            exit 1
+          fi
+          echo "Net HIGH severity findings = $NET. OK."
+
+      - name: Upload ZAP work artifacts
+        if: always() && steps.target.outputs.skip == 'false'
+        uses: actions/upload-artifact@v4
+        with:
+          name: zap-context-and-policy
+          path: |
+            .zap-work/
+            report_html.html
+            report_md.md
+            report_json.json
+          if-no-files-found: ignore

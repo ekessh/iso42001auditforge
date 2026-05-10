@@ -1,0 +1,95 @@
+# SPDX-License-Identifier: BUSL-1.1
+# AuditForge ZAP DAST context — staging.
+#
+# Auditees never run this tool. ZAP scans AuditForge's own staging API
+# surface to validate that we, the auditor's workbench, do not regress on
+# common web AppSec issues during release.
+#
+# Authentication: bearer token issued for a synthetic auditor account.
+# Spider scope: only the documented v1 API. WebSocket sync and admin paths
+# are excluded — admin requires hardware-token MFA we cannot script, and
+# /sync/* is a Yjs WebSocket the spider would mis-classify.
+
+env:
+  contexts:
+    - name: 'auditforge-staging'
+      urls:
+        - 'https://staging.auditforge.invalid/'
+      includePaths:
+        - 'https://staging.auditforge.invalid/v1/.*'
+        - 'https://staging.auditforge.invalid/openapi.json'
+        - 'https://staging.auditforge.invalid/healthz'
+      excludePaths:
+        - 'https://staging.auditforge.invalid/admin/.*'
+        - 'https://staging.auditforge.invalid/sync/.*'
+        - 'https://staging.auditforge.invalid/internal/.*'
+        - 'https://staging.auditforge.invalid/.well-known/.*'
+        - 'https://staging.auditforge.invalid/sso/.*'
+      authentication:
+        method: 'http'
+        parameters:
+          method: 'bearer'
+          # Token sourced from secret ZAP_API_TOKEN at runtime; the literal
+          # string ${ZAP_AUTH_HEADER_VALUE} is replaced by ZAP at scan time.
+          tokenEnv: 'ZAP_AUTH_HEADER_VALUE'
+        verification:
+          method: 'response'
+          loggedInRegex: '"role":"auditor"'
+          loggedOutRegex: '"error":"unauthorized"'
+          pollFrequency: 60
+          pollUnits: 'requests'
+      sessionManagement:
+        method: 'cookie'
+        parameters: { }
+      users:
+        - name: 'staging-auditor'
+          credentials:
+            username: 'auditor@staging.test'
+            password: '${ZAP_AUTH_HEADER_VALUE}'
+      technology:
+        exclude:
+          - 'Db.IBM_DB2'
+          - 'Db.Oracle'
+          - 'OS.MacOS'
+
+jobs:
+  - type: 'spider'
+    parameters:
+      context: 'auditforge-staging'
+      user: 'staging-auditor'
+      maxDepth: 5
+      maxDuration: 5
+      maxChildren: 0
+      acceptCookies: true
+      handleODataParametersVisited: true
+  - type: 'spiderAjax'
+    parameters:
+      context: 'auditforge-staging'
+      user: 'staging-auditor'
+      maxDuration: 5
+      browserId: 'firefox-headless'
+  - type: 'passiveScan-wait'
+    parameters:
+      maxDuration: 5
+  - type: 'activeScan'
+    parameters:
+      context: 'auditforge-staging'
+      user: 'staging-auditor'
+      policy: 'auditforge-active-policy'
+      maxRuleDurationInMins: 5
+      maxScanDurationInMins: 30
+  - type: 'report'
+    parameters:
+      template: 'traditional-html'
+      reportDir: '.'
+      reportFile: 'report_html.html'
+  - type: 'report'
+    parameters:
+      template: 'traditional-md'
+      reportDir: '.'
+      reportFile: 'report_md.md'
+  - type: 'report'
+    parameters:
+      template: 'traditional-json'
+      reportDir: '.'
+      reportFile: 'report_json.json'

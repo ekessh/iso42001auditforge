@@ -1,0 +1,12 @@
+# SPDX-License-Identifier: BUSL-1.1
+# ZAP HIGH-severity allowlist.
+#
+# Format: one entry per line beginning with `- ` (matches the count grep
+# in dast-staging.yml). Add a one-line rationale below each entry. Empty
+# means strict mode — every HIGH finding fails the build.
+#
+# Example (commented out):
+# - 10054
+#   # 2026-05-10: Cookies on /healthz are intentionally non-secure for
+#   # bare-metal load-balancer probes. Ticket AF-1234 tracks an SSL-only
+#   # alternative; allowlisted until replaced.

@@ -1,0 +1,180 @@
+# SPDX-License-Identifier: BUSL-1.1
+# AuditForge ISO 42001 conformance rules.
+#
+# Each rule encodes a CLAUDE.md hard rule or an ISO 42001 evidence
+# requirement at static-analysis time, so review-blockers surface in CI
+# before they ship.
+
+rules:
+  # --- 1. CandidateFinding endpoints must NOT permit the auditee role.
+  # CLAUDE.md: "Candidate findings never visible to auditee."
+  - id: af-iso42001-cf-rbac-includes-auditee
+    message: >-
+      Endpoint that returns CandidateFinding data must NOT include the
+      'auditee' role in @Rbac. CLAUDE.md hard rule.
+    severity: ERROR
+    languages: [typescript]
+    metadata:
+      iso42001: '8.3'
+      claudemd_rule: 'Candidate findings never visible to auditee'
+    pattern-either:
+      - patterns:
+          - pattern-either:
+              - pattern: |
+                  @Rbac($ROLES, ...)
+                  $METHOD($...A): CandidateFinding { ... }
+              - pattern: |
+                  @Rbac($ROLES, ...)
+                  $METHOD($...A): CandidateFinding[] { ... }
+              - pattern: |
+                  @Rbac($ROLES, ...)
+                  $METHOD($...A): Promise<CandidateFinding> { ... }
+              - pattern: |
+                  @Rbac($ROLES, ...)
+                  $METHOD($...A): Promise<CandidateFinding[]> { ... }
+          - metavariable-pattern:
+              metavariable: $ROLES
+              patterns:
+                - pattern-regex: ".*['\"]auditee['\"].*"
+
+  # --- 2. LLM provider calls must pass a zod schema.
+  # CLAUDE.md: "Schema-constrained extraction. Free-form LLM output is a bug."
+  - id: af-iso42001-llm-call-without-schema
+    message: >-
+      LLM call missing a schema argument. Use reasonStructured(prompt, schema, opts).
+      CLAUDE.md hard rule.
+    severity: ERROR
+    languages: [typescript, javascript]
+    metadata:
+      iso42001: '8.3'
+      claudemd_rule: 'Schema-constrained extraction first'
+    pattern-either:
+      - patterns:
+          - pattern-either:
+              - pattern: |
+                  $P.reason($PROMPT)
+              - pattern: |
+                  $P.reasonStructured($PROMPT)
+          - pattern-not: |
+              $P.reasonStructured($PROMPT, $SCHEMA, ...)
+      - patterns:
+          - pattern-either:
+              - pattern: |
+                  $P.complete($PROMPT)
+          - pattern-not: |
+              $P.complete($PROMPT, $SCHEMA, ...)
+
+  # --- 3. Audit ledger emit calls must include firmId + engagementId.
+  # ISO 42001 9.1 + Annex A.6.2.8: complete event logs.
+  - id: af-iso42001-ledger-missing-tenant-fields
+    message: >-
+      Audit ledger emit must include both firmId and engagementId fields.
+    severity: ERROR
+    languages: [typescript]
+    metadata:
+      iso42001: '9.1'
+      annex_a: 'A.6.2.8'
+      claudemd_rule: 'Postgres RLS for tenant isolation'
+    pattern-either:
+      - patterns:
+          - pattern-either:
+              - pattern: |
+                  ledger.emit({...})
+              - pattern: |
+                  this.ledger.emit({...})
+              - pattern: |
+                  $L.emit({...})
+          - pattern-not: |
+              $X.emit({..., engagementId: $E, ...})
+          - pattern-not: |
+              $X.emit({..., firmId: $F, ...})
+
+  # --- 4. Report-engine publish must call qa-checklist.evaluate() first.
+  - id: af-iso42001-publish-without-qa
+    message: >-
+      report-engine publish must be preceded by qa-checklist.evaluate().
+      ISO 42001 9.2 (internal audit) + ISO 17021-1 review process.
+    severity: ERROR
+    languages: [typescript]
+    metadata:
+      iso42001: '9.2'
+      claudemd_rule: 'Auditor confirmation is the only state-transition trigger'
+    patterns:
+      - pattern: |
+          $RE.publish($REPORT)
+      - pattern-not-inside: |
+          $QA.evaluate($...);
+          ...
+          $RE.publish($REPORT)
+
+  # --- 5. Readiness-mode reports must include the non-certification
+  # disclaimer string. CLAUDE.md: 'mandatory non-certification disclaimer'.
+  - id: af-iso42001-readiness-missing-disclaimer
+    message: >-
+      Readiness-mode report payload must include the non-certification
+      disclaimer string.
+    severity: ERROR
+    languages: [typescript]
+    metadata:
+      iso42001: '9.1'
+      claudemd_rule: 'Output uses appears ready language; mandatory disclaimer'
+    patterns:
+      - pattern-either:
+          - pattern: |
+              {
+                ...,
+                mode: 'readiness',
+                ...
+              }
+          - pattern: |
+              {
+                ...,
+                mode: "readiness",
+                ...
+              }
+      - pattern-not-regex: '(?s)This (engagement|report) (does not constitute|is not) a certification'
+
+  # --- 6. crypto.randomBytes outside packages/signing flagged for review.
+  # The signing package owns RNG so audit-trail provenance is centralised.
+  - id: af-iso42001-rng-outside-signing
+    message: >-
+      crypto.randomBytes used outside packages/signing. Centralise RNG
+      in the signing package so the audit ledger has a single provenance
+      origin.
+    severity: WARNING
+    languages: [typescript, javascript]
+    metadata:
+      iso42001: '7.5'
+      annex_a: 'A.7.5'
+    paths:
+      include:
+        - 'packages/**/*.ts'
+        - 'apps/**/*.ts'
+      exclude:
+        - 'packages/signing/**'
+        - 'packages/probe-engine/src/rng.ts'
+    pattern-either:
+      - pattern: crypto.randomBytes($...)
+      - pattern: randomBytes($...)
+
+  # --- 7. Math.random forbidden in any *.ts under packages/.
+  # Audit reproducibility requires deterministic RNG (seeded).
+  - id: af-iso42001-deterministic-rng-only
+    message: >-
+      Math.random() is forbidden in packages/. Use the seeded RNG from
+      packages/probe-engine/src/rng.ts so audit runs are reproducible.
+    severity: ERROR
+    languages: [typescript, javascript]
+    metadata:
+      iso42001: '8.3'
+      claudemd_rule: 'Deterministic-only requirement for audit reproducibility'
+    paths:
+      include:
+        - 'packages/**/*.ts'
+        - 'packages/**/*.tsx'
+      exclude:
+        - '**/*.test.ts'
+        - '**/*.spec.ts'
+        - '**/tests/**'
+        - '**/__tests__/**'
+    pattern: Math.random()

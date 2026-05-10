@@ -1,0 +1,93 @@
+# SPDX-License-Identifier: BUSL-1.1
+# AuditForge ZAP active-scan policy.
+#
+# Each rule choice is documented. We err on the side of higher signal
+# for injection / authentication / session classes since those break
+# audit-evidence integrity. We disable scans that target server-side
+# software stacks we don't ship (e.g. classic PHP, ASP) so the run stays
+# under 30 minutes.
+
+policy:
+  name: 'auditforge-active-policy'
+  defaultStrength: 'medium'
+  defaultThreshold: 'medium'
+  rules:
+    # --- Injection class: raise to HIGH; these directly threaten
+    # audit-evidence integrity and tenant isolation.
+    - id: 40018  # SQL Injection
+      strength: 'high'
+      threshold: 'low'
+    - id: 90019  # Server-side code injection
+      strength: 'high'
+      threshold: 'low'
+    - id: 90020  # Remote OS command injection
+      strength: 'high'
+      threshold: 'low'
+    - id: 40012  # Cross Site Scripting (Reflected)
+      strength: 'high'
+      threshold: 'low'
+    - id: 40014  # Cross Site Scripting (Persistent)
+      strength: 'high'
+      threshold: 'low'
+    - id: 40016  # Cross Site Scripting (Persistent) - prime
+      strength: 'high'
+      threshold: 'low'
+    - id: 40017  # Cross Site Scripting (Persistent) - spider
+      strength: 'high'
+      threshold: 'low'
+
+    # --- Authentication / session: any finding here is grounds to fail
+    # the build — the auditor's tool MUST treat session integrity as
+    # non-negotiable.
+    - id: 10202  # Absence of Anti-CSRF Tokens
+      strength: 'high'
+      threshold: 'low'
+    - id: 10054  # Cookie without Secure flag
+      strength: 'high'
+      threshold: 'low'
+    - id: 10063  # Permissions Policy Header Not Set
+      strength: 'medium'
+      threshold: 'medium'
+    - id: 10038  # Content Security Policy (CSP) Header Not Set
+      strength: 'high'
+      threshold: 'low'
+    - id: 10098  # Cross-Domain Misconfiguration
+      strength: 'high'
+      threshold: 'low'
+    - id: 90033  # Loosely Scoped Cookie
+      strength: 'high'
+      threshold: 'low'
+
+    # --- Sensitive data exposure: medium; we want signal, but ZAP often
+    # mistakes synthetic test fixtures for real PII so threshold = medium.
+    - id: 10051  # Information disclosure - debug error
+      strength: 'medium'
+      threshold: 'medium'
+    - id: 10052  # Information disclosure - sensitive info in URL
+      strength: 'medium'
+      threshold: 'medium'
+
+    # --- Outdated software / known CVE: medium. We rely on Trivy for
+    # the SBOM-anchored answer; ZAP just confirms the running surface.
+    - id: 10095  # Backup file disclosure
+      strength: 'medium'
+      threshold: 'medium'
+    - id: 90011  # Charset Mismatch
+      strength: 'low'
+      threshold: 'high'
+
+    # --- Disabled: would target stacks we don't ship.
+    - id: 40015  # LDAP injection
+      strength: 'low'
+      threshold: 'high'
+    - id: 90017  # XSLT Injection
+      strength: 'low'
+      threshold: 'high'
+    - id: 90021  # XPath Injection
+      strength: 'low'
+      threshold: 'high'
+
+    # --- API hygiene: medium signal.
+    - id: 90022  # Application Error Disclosure
+      strength: 'medium'
+      threshold: 'medium'
