@@ -87,28 +87,10 @@ const config: NextConfig = {
   typescript: { ignoreBuildErrors: true },
 
   async headers() {
-    const csp = buildCsp(NONCE_PLACEHOLDER);
-    const cspHeaderName = CSP_REPORT_ONLY
-      ? 'Content-Security-Policy-Report-Only'
-      : 'Content-Security-Policy';
-
     return [
       {
         source: '/:path*',
         headers: [
-          { key: cspHeaderName, value: csp },
-          // Always ship the enforced header alongside report-only for belt-and-suspenders.
-          ...(CSP_REPORT_ONLY
-            ? [
-                {
-                  key: 'Content-Security-Policy',
-                  value:
-                    // Minimal enforced policy even in report-only mode —
-                    // preserves clickjacking + form-action protections.
-                    "default-src 'self'; frame-ancestors 'none'; form-action 'self'; base-uri 'self'; object-src 'none'",
-                },
-              ]
-            : []),
           { key: 'X-Content-Type-Options', value: 'nosniff' },
           { key: 'X-Frame-Options', value: 'DENY' },
           { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
