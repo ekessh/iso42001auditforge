@@ -174,7 +174,6 @@ describe('SignedActionInterceptor', () => {
         },
         next: () => reject(new Error('should not emit')),
       });
-      vi.restoreAllMocks();
     });
   });
 
@@ -216,7 +215,6 @@ describe('SignedActionInterceptor', () => {
         },
         error: (e: unknown) => reject(e),
       });
-      vi.restoreAllMocks();
     });
   });
 
@@ -261,7 +259,6 @@ describe('SignedActionInterceptor', () => {
         },
         next: () => reject(new Error('should not emit value on replay')),
       });
-      vi.restoreAllMocks();
     });
   });
 
@@ -310,7 +307,6 @@ describe('SignedActionInterceptor', () => {
         },
         next: () => reject(new Error('should not emit value on sql-layer replay')),
       });
-      vi.restoreAllMocks();
     });
   });
 
@@ -349,7 +345,6 @@ describe('SignedActionInterceptor', () => {
         },
         next: () => reject(new Error('should not emit for mismatch')),
       });
-      vi.restoreAllMocks();
     });
   });
 });

@@ -1,17 +1,18 @@
 // SPDX-License-Identifier: BUSL-1.1
-import {
+import type {
   CallHandler,
   ExecutionContext,
+  NestInterceptor} from '@nestjs/common';
+import {
   Inject,
   Injectable,
-  NestInterceptor,
   Optional,
   SetMetadata,
   UnauthorizedException,
 } from '@nestjs/common';
 import type { FastifyRequest } from 'fastify';
 import { Observable } from 'rxjs';
-import { WebAuthnService } from '@auditforge/auth-core';
+import { WebAuthnService, type StoredCredential } from '@auditforge/auth-core';
 import type { AuthenticationResponseJSON } from '@simplewebauthn/types';
 import type { LedgerSink } from './auth.guard.js';
 import type { WebAuthnCredentialRepository } from './webauthn-credential.repository.js';
@@ -190,8 +191,8 @@ export class SignedActionInterceptor implements NestInterceptor {
     }
 
     // Build a StoredCredential compatible with @auditforge/auth-core.
-    const transports = credRecord.transports as import('@auditforge/auth-core').StoredCredential['transports'];
-    const storedCredential: import('@auditforge/auth-core').StoredCredential = {
+    const transports = credRecord.transports as StoredCredential['transports'];
+    const storedCredential: StoredCredential = {
       credentialId: credRecord.credentialId,
       publicKey: credRecord.publicKey,
       counter: credRecord.counter,
