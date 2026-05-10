@@ -95,3 +95,17 @@ export {
   type McpConformanceAdapterOptions,
   type McpConformanceParams,
 } from './checks/mcp-conformance/index.js';
+
+// Wave-5 conformance evidence packs (declarative checks, not adversarial probes).
+export {
+  type ConformanceEntry,
+  type ConformanceAdapterOptions,
+  type ConformanceParams,
+  ConformanceParamsSchema,
+} from './checks/conformance-shared.js';
+export { LLM_CONFORMANCE_PACK, buildLlmConformancePack } from './checks/llm-pack.js';
+export { DATA_CONFORMANCE_PACK, buildDataConformancePack } from './checks/data-pack.js';
+export { RISK_CONFORMANCE_PACK, buildRiskConformancePack } from './checks/risk-pack.js';
+export { GOVERNANCE_CONFORMANCE_PACK, buildGovernanceConformancePack } from './checks/governance-pack.js';
+export { AGENT_CONFORMANCE_PACK, buildAgentConformancePack } from './checks/agent-pack.js';
+export { CHAIN_CONFORMANCE_PACK, buildChainConformancePack } from './checks/chain-pack.js';
