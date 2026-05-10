@@ -44,7 +44,6 @@ export function createSyncProvider(opts: CreateSyncProviderOpts): SyncProvider {
       resolve();
     };
     persistence.once('synced', fire);
-    websocket.once('synced', fire);
     websocket.once('sync', fire);
   });
 

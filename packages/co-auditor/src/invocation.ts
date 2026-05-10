@@ -75,7 +75,7 @@ export class CoAuditorService {
       return { ...refused, ledgerEventId: ev.eventId };
     }
 
-    const parser = TASK_PARSERS[opts.taskType];
+    const parser = TASK_PARSERS[opts.taskType] as (raw: unknown) => unknown;
     const parsed = validateOutputSchema(llmOut.output, parser);
     if (!parsed.ok) {
       const rejected = { ...baseInvocation, status: 'rejected' as const, generatedOutputJson: llmOut.output, decidedAt: new Date().toISOString() };
