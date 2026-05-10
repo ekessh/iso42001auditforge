@@ -128,7 +128,7 @@ export interface LocalLlmAdapter {
 
 export class LocalLlmError extends Error {
   public readonly code: string;
-  public readonly cause?: unknown;
+  public override readonly cause?: unknown;
   public readonly retryable: boolean;
   constructor(code: string, message: string, retryable: boolean, cause?: unknown) {
     super(message);

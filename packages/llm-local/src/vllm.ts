@@ -199,12 +199,13 @@ export class VllmAdapter implements LocalLlmAdapter {
     }
     const choice = parsed.data.choices[0];
     if (!choice) throw new LocalLlmError('LLM_NO_CHOICE', 'vLLM returned no choices', false);
+    const genFinishReason = finishReasonOf(choice.finish_reason);
     const result: GenerateResponse = {
       model: parsed.data.model,
       text: choice.text,
       ...(parsed.data.usage?.prompt_tokens !== undefined ? { promptTokens: parsed.data.usage.prompt_tokens } : {}),
       ...(parsed.data.usage?.completion_tokens !== undefined ? { completionTokens: parsed.data.usage.completion_tokens } : {}),
-      ...(finishReasonOf(choice.finish_reason) !== undefined ? { finishReason: finishReasonOf(choice.finish_reason) } : {}),
+      ...(genFinishReason !== undefined ? { finishReason: genFinishReason } : {}),
     };
     return result;
   }
@@ -265,13 +266,14 @@ export class VllmAdapter implements LocalLlmAdapter {
     }
     const choice = parsed.data.choices[0];
     if (!choice) throw new LocalLlmError('LLM_NO_CHOICE', 'vLLM returned no choices', false);
+    const chatFinishReason = finishReasonOf(choice.finish_reason);
     const result: ChatResponse = {
       model: parsed.data.model,
       text: choice.message.content,
       message: { role: 'assistant', content: choice.message.content },
       ...(parsed.data.usage?.prompt_tokens !== undefined ? { promptTokens: parsed.data.usage.prompt_tokens } : {}),
       ...(parsed.data.usage?.completion_tokens !== undefined ? { completionTokens: parsed.data.usage.completion_tokens } : {}),
-      ...(finishReasonOf(choice.finish_reason) !== undefined ? { finishReason: finishReasonOf(choice.finish_reason) } : {}),
+      ...(chatFinishReason !== undefined ? { finishReason: chatFinishReason } : {}),
     };
     return result;
   }
@@ -361,10 +363,9 @@ export class VllmAdapter implements LocalLlmAdapter {
       const c = ok.data.choices[0];
       if (!c) continue;
       const isFinal = c.finish_reason !== null && c.finish_reason !== undefined;
+      const sseCompFinishReason = isFinal ? finishReasonOf(c.finish_reason) : undefined;
       const stats: StreamChunk['stats'] = isFinal
-        ? finishReasonOf(c.finish_reason) !== undefined
-          ? { finishReason: finishReasonOf(c.finish_reason) }
-          : {}
+        ? (sseCompFinishReason !== undefined ? { finishReason: sseCompFinishReason } : {})
         : undefined;
       yield {
         text: c.text ?? '',
@@ -404,10 +405,9 @@ export class VllmAdapter implements LocalLlmAdapter {
       const c = ok.data.choices[0];
       if (!c) continue;
       const isFinal = c.finish_reason !== null && c.finish_reason !== undefined;
+      const sseChatFinishReason = isFinal ? finishReasonOf(c.finish_reason) : undefined;
       const stats: StreamChunk['stats'] = isFinal
-        ? finishReasonOf(c.finish_reason) !== undefined
-          ? { finishReason: finishReasonOf(c.finish_reason) }
-          : {}
+        ? (sseChatFinishReason !== undefined ? { finishReason: sseChatFinishReason } : {})
         : undefined;
       yield {
         text: c.delta?.content ?? '',

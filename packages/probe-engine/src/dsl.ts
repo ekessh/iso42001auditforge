@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BUSL-1.1
-import { z } from 'zod';
+import type { z } from 'zod';
 
 import {
   ProbeDefinitionMetaSchema,
@@ -105,8 +105,9 @@ export interface ProbeRunResult<R = unknown> {
 /** Full bundle a probe author exports. */
 export interface ProbeDefinition<P, R = unknown> {
   readonly meta: ProbeDefinitionMeta;
-  /** Zod schema for `params`. */
-  readonly parametersSchema: z.ZodType<P>;
+  /** Zod schema for `params`. The third ZodType param is `unknown` to allow schemas
+   * with `.default()` modifiers whose input type differs from the output type. */
+  readonly parametersSchema: z.ZodType<P, z.ZodTypeDef, unknown>;
   readonly run: (ctx: ProbeRunContext, params: P) => Promise<ProbeRunResult<R>>;
 }
 

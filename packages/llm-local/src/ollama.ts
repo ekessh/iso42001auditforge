@@ -135,7 +135,7 @@ export class OllamaAdapter implements LocalLlmAdapter {
         ...(modelLoaded !== undefined ? { modelLoaded } : {}),
       };
       return report;
-    } catch (err) {
+    } catch {
       return {
         reachable: false,
         latencyMs: Date.now() - start,
@@ -193,13 +193,14 @@ export class OllamaAdapter implements LocalLlmAdapter {
       text += c.response ?? '';
       if (c.done) stats = c;
     }
+    const genFinishReason = finishReasonOf(stats?.done_reason);
     const result: GenerateResponse = {
       model,
       text,
       ...(stats?.prompt_eval_count !== undefined ? { promptTokens: stats.prompt_eval_count } : {}),
       ...(stats?.eval_count !== undefined ? { completionTokens: stats.eval_count } : {}),
       ...(stats?.total_duration !== undefined ? { totalDurationMs: Math.round(stats.total_duration / 1_000_000) } : {}),
-      ...(finishReasonOf(stats?.done_reason) !== undefined ? { finishReason: finishReasonOf(stats?.done_reason) } : {}),
+      ...(genFinishReason !== undefined ? { finishReason: genFinishReason } : {}),
     };
     return result;
   }
@@ -210,12 +211,13 @@ export class OllamaAdapter implements LocalLlmAdapter {
     options: GenerateOptions = {},
   ): AsyncIterable<StreamChunk> {
     for await (const c of this.rawGenerate(model, prompt, { ...options, stream: true })) {
+      const streamFinishReason = finishReasonOf(c.done_reason);
       const stats: StreamChunk['stats'] = c.done
         ? {
             ...(c.prompt_eval_count !== undefined ? { promptTokens: c.prompt_eval_count } : {}),
             ...(c.eval_count !== undefined ? { completionTokens: c.eval_count } : {}),
             ...(c.total_duration !== undefined ? { totalDurationMs: Math.round(c.total_duration / 1_000_000) } : {}),
-            ...(finishReasonOf(c.done_reason) !== undefined ? { finishReason: finishReasonOf(c.done_reason) } : {}),
+            ...(streamFinishReason !== undefined ? { finishReason: streamFinishReason } : {}),
           }
         : undefined;
       const chunk: StreamChunk = {
@@ -238,6 +240,7 @@ export class OllamaAdapter implements LocalLlmAdapter {
       text += c.message?.content ?? '';
       if (c.done) stats = c;
     }
+    const chatGenFinishReason = finishReasonOf(stats?.done_reason);
     const result: ChatResponse = {
       model,
       text,
@@ -245,7 +248,7 @@ export class OllamaAdapter implements LocalLlmAdapter {
       ...(stats?.prompt_eval_count !== undefined ? { promptTokens: stats.prompt_eval_count } : {}),
       ...(stats?.eval_count !== undefined ? { completionTokens: stats.eval_count } : {}),
       ...(stats?.total_duration !== undefined ? { totalDurationMs: Math.round(stats.total_duration / 1_000_000) } : {}),
-      ...(finishReasonOf(stats?.done_reason) !== undefined ? { finishReason: finishReasonOf(stats?.done_reason) } : {}),
+      ...(chatGenFinishReason !== undefined ? { finishReason: chatGenFinishReason } : {}),
     };
     return result;
   }
@@ -256,12 +259,13 @@ export class OllamaAdapter implements LocalLlmAdapter {
     options: GenerateOptions = {},
   ): AsyncIterable<StreamChunk> {
     for await (const c of this.rawChat(model, messages, { ...options, stream: true })) {
+      const chatStreamFinishReason = finishReasonOf(c.done_reason);
       const stats: StreamChunk['stats'] = c.done
         ? {
             ...(c.prompt_eval_count !== undefined ? { promptTokens: c.prompt_eval_count } : {}),
             ...(c.eval_count !== undefined ? { completionTokens: c.eval_count } : {}),
             ...(c.total_duration !== undefined ? { totalDurationMs: Math.round(c.total_duration / 1_000_000) } : {}),
-            ...(finishReasonOf(c.done_reason) !== undefined ? { finishReason: finishReasonOf(c.done_reason) } : {}),
+            ...(chatStreamFinishReason !== undefined ? { finishReason: chatStreamFinishReason } : {}),
           }
         : undefined;
       const chunk: StreamChunk = {

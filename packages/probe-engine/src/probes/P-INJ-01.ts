@@ -61,7 +61,7 @@ export const P_INJ_01 = defineProbe<z.infer<typeof Params>, Record<string, unkno
 
     if (ctx.mode === 'live') {
       if (!ctx.inferenceClient) {
-        return { verdict: 'error', score: 0, derivedMetrics: { reason: 'live mode but no inferenceClient' } };
+        return { verdict: 'inconclusive', score: 0, derivedMetrics: { reason: 'live mode but no inferenceClient' } };
       }
       for (const p of DIRECT_PAYLOADS) {
         const resp = await ctx.inferenceClient.complete({

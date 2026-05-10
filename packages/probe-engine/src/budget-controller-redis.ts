@@ -193,7 +193,7 @@ export class RedisBudgetController implements BudgetController {
   ) {
     this.keyPrefix = opts.keyPrefix ?? 'auditforge:budget:';
     this.defaults = opts.defaultBudget ?? DEFAULT_BUDGET;
-    this.logger = opts.logger;
+    if (opts.logger !== undefined) this.logger = opts.logger;
   }
 
   private key(engagementId: string): string {
