@@ -1,0 +1,10 @@
+{
+  "id": "attribution-rerank",
+  "version": "attribution-rerank.v1",
+  "body": "Re-rank candidate ISO 42001 clauses for the given claim. Emit ONLY clause IDs that appear in the provided catalogue. For each emitted clause include a confidence in [0,1] and a one-sentence rationale. Output JSON array.",
+  "metadata": {
+    "task": "attribution_rerank",
+    "tier": "medium",
+    "hardRule": "no_clause_id_outside_catalogue"
+  }
+}

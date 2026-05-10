@@ -35,6 +35,19 @@ export class LLMOrchestrator {
     }
   }
 
+  private templateAttribution(version: string): {
+    promptTemplateId?: string;
+    promptTemplateHash?: string;
+  } {
+    if (!this.cfg.templates.has(version)) return {};
+    const t = this.cfg.templates.get(version);
+    const out: { promptTemplateId?: string; promptTemplateHash?: string } = {
+      promptTemplateHash: t.hash,
+    };
+    if (t.id !== undefined) out.promptTemplateId = t.id;
+    return out;
+  }
+
   private async preflight(opts: OrchestratorRouteOpts): Promise<{
     provider: LLMProvider;
     tier: LlmTier;
@@ -96,6 +109,7 @@ export class LLMOrchestrator {
         ...(provider.metadata().modelVersion !== undefined ? { modelVersion: provider.metadata().modelVersion } : {}),
         ...(opts.temperature !== undefined ? { temperature: opts.temperature } : {}),
         promptTemplateVersion: opts.promptTemplateVersion,
+        ...this.templateAttribution(opts.promptTemplateVersion),
         inputTokens: 0,
         outputTokens: 0,
         latencyMs: latency,
@@ -124,6 +138,7 @@ export class LLMOrchestrator {
         ...(provider.metadata().modelVersion !== undefined ? { modelVersion: provider.metadata().modelVersion } : {}),
         ...(opts.temperature !== undefined ? { temperature: opts.temperature } : {}),
         promptTemplateVersion: opts.promptTemplateVersion,
+        ...this.templateAttribution(opts.promptTemplateVersion),
         inputTokens: result.raw.tokensUsed.input,
         outputTokens: result.raw.tokensUsed.output,
         latencyMs: result.raw.latencyMs,

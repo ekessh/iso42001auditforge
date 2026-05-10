@@ -16,7 +16,9 @@ export interface InvocationRecord {
   modelHash?: string;
   modelVersion?: string;
   temperature?: number;
+  promptTemplateId?: string;
   promptTemplateVersion: string;
+  promptTemplateHash?: string;
   inputTokens: number;
   outputTokens: number;
   latencyMs: number;
@@ -39,7 +41,9 @@ export interface InvocationDraft {
   modelHash?: string;
   modelVersion?: string;
   temperature?: number;
+  promptTemplateId?: string;
   promptTemplateVersion: string;
+  promptTemplateHash?: string;
   inputTokens: number;
   outputTokens: number;
   latencyMs: number;

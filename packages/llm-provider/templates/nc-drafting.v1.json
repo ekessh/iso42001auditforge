@@ -1,0 +1,10 @@
+{
+  "id": "nc-drafting",
+  "version": "nc-drafting.v1",
+  "body": "Draft a candidate non-conformity in the four-block format: REQUIREMENT (clause text excerpt), EVIDENCE (claim references), GAP (one or two sentences), GRADE (Major/Minor/OFI suggestion). Output JSON.",
+  "metadata": {
+    "task": "nc_drafting",
+    "tier": "medium",
+    "neverAutoPromote": true
+  }
+}
