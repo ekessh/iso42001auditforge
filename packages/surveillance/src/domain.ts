@@ -54,7 +54,11 @@ export const METRIC_TYPES = [
 
 export type MetricType = (typeof METRIC_TYPES)[number];
 
-/** Probe-result rollup from auditee continuous control monitoring. */
+// `discriminatedUnion` requires every branch to be a `ZodObject` (refine
+// wrapping returns `ZodEffects`, which the runtime rejects with
+// `Cannot read properties of undefined (reading 'type')`). We therefore
+// keep the raw object schema here and apply the `passes + failures <= runs`
+// invariant via `superRefine` on the union after construction.
 export const probeRollupSchema = z
   .object({
     type: z.literal('probe_rollup'),
@@ -65,10 +69,7 @@ export const probeRollupSchema = z
     failures: z.number().int().nonnegative(),
     passRate: probabilitySchema,
   })
-  .strict()
-  .refine((p) => p.passes + p.failures <= p.runs, {
-    message: 'passes + failures must not exceed runs',
-  });
+  .strict();
 
 /** Population/feature drift indicator (e.g., PSI, KL, Wasserstein). */
 export const driftIndicatorSchema = z

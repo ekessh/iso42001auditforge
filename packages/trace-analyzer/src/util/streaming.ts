@@ -21,9 +21,27 @@
 //     process.
 
 import { Readable } from 'node:stream';
-import { parser } from 'stream-json';
-import { streamArray } from 'stream-json/streamers/StreamArray.js';
-import { pick } from 'stream-json/filters/Pick.js';
+import { createRequire } from 'node:module';
+
+// `stream-json` is a CommonJS package without an ESM-compatible default
+// export shape. Using `createRequire` lets us pull the `parser` factory
+// in a way that works under Node's NodeNext ESM resolver — direct
+// `import { parser } from 'stream-json'` fails at runtime because the
+// package only exports a default function.
+const require = createRequire(import.meta.url);
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const streamJson = require('stream-json') as { parser: () => NodeJS.ReadWriteStream };
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const streamArrayMod = require('stream-json/streamers/StreamArray.js') as {
+  streamArray: () => NodeJS.ReadWriteStream;
+};
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const pickMod = require('stream-json/filters/Pick.js') as {
+  pick: (opts: { filter: string }) => NodeJS.ReadWriteStream;
+};
+const parser = streamJson.parser;
+const streamArray = streamArrayMod.streamArray;
+const pick = pickMod.pick;
 
 /** 64 MiB intermediate-buffer cap for streaming ingest. */
 export const MAX_INGEST_BUFFER_BYTES = 64 * 1024 * 1024;

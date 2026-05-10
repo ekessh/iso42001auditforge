@@ -1,5 +1,15 @@
 // SPDX-License-Identifier: BUSL-1.1
-/* Build-time OpenAPI emitter — bootstraps Nest in a non-listening mode and writes openapi/generated.json */
+//
+// Build-time OpenAPI emitter — bootstraps Nest in a non-listening mode
+// and writes openapi/generated.json. Runs under
+// `node --import @swc-node/register/esm-register` (NOT tsx) because
+// `@nestjs/swagger`'s parameter explorer relies on TypeScript's
+// `emitDecoratorMetadata`, which esbuild-based loaders (tsx) silently
+// drop. The swc-node loader honours both `experimentalDecorators` and
+// `emitDecoratorMetadata` from the project's tsconfig, so every
+// controller method receives the `design:paramtypes` reflection that
+// the swagger explorer indexes.
+
 import 'reflect-metadata';
 import { NestFactory } from '@nestjs/core';
 import { FastifyAdapter, type NestFastifyApplication } from '@nestjs/platform-fastify';

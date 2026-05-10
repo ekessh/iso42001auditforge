@@ -4,7 +4,7 @@ import { Client as MinioClient } from 'minio';
 import { randomUUID } from 'node:crypto';
 import { APP_CONFIG } from '../config/config.module.js';
 import type { AppConfig } from '../config/config.schema.js';
-import { MINIO } from './storage.module.js';
+import { MINIO } from './storage.tokens.js';
 
 export interface PresignedUpload {
   uploadId: string;

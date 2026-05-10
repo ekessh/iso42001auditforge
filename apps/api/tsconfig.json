@@ -13,6 +13,6 @@
     "lib": ["ES2022"],
     "types": ["node", "reflect-metadata"]
   },
-  "include": ["src/**/*", "scripts/**/*"],
-  "exclude": ["node_modules", "dist", "test"]
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist", "test", "scripts"]
 }

@@ -4,8 +4,9 @@ import { Client as MinioClient } from 'minio';
 import { APP_CONFIG } from '../config/config.module.js';
 import type { AppConfig } from '../config/config.schema.js';
 import { StorageService } from './storage.service.js';
+import { MINIO } from './storage.tokens.js';
 
-export const MINIO = Symbol.for('AuditForge.Minio');
+export { MINIO };
 
 @Global()
 @Module({
