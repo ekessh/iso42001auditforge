@@ -19,3 +19,12 @@ export function useEngagements(params: { cursor?: string; limit?: number } = {})
     queryFn: ({ signal }) => engagements.listEngagements(params, { signal }),
   });
 }
+
+export function useAuditTrail(engagementId: string) {
+  return useQuery({
+    queryKey: ['audit-trail', engagementId],
+    queryFn: ({ signal }) => engagements.getAuditTrail(engagementId, { signal }),
+    enabled: Boolean(engagementId),
+    retry: false,
+  });
+}
