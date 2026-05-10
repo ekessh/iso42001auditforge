@@ -1,8 +1,21 @@
+<!-- SPDX-License-Identifier: BUSL-1.1 -->
 # Contributing to AuditForge
 
-Thanks for your interest. AuditForge is licensed under **BUSL-1.1** (see [LICENSE](LICENSE)).
+This repository is **closed-source, single-owner maintained, and
+private**. AuditForge is licensed under **BUSL-1.1** (see
+[LICENSE](LICENSE)).
 
-## Before You Start
+External pull requests, forks, and issues from non-licensed parties are
+not accepted.
+
+For all support, licensing, security, and feature inquiries, contact:
+
+**Ekessh Thoralingam** — <ekesshtks@gmail.com>
+
+See [SUPPORT.md](SUPPORT.md) and [SECURITY.md](SECURITY.md) for the
+full contact protocol.
+
+## Before You Start (licensed contributors only)
 
 1. Read [docs/DESIGN.md](docs/DESIGN.md) — the design spec.
 2. Read [CLAUDE.md](CLAUDE.md) — build conventions.

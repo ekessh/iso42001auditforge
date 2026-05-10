@@ -186,22 +186,41 @@ See [NOTICE](NOTICE), [TRADEMARK.md](TRADEMARK.md), [CLA.md](CLA.md).
 
 ---
 
+## Support
+
+This repository is **private and single-owner maintained**. There is
+no public issue tracker.
+
+For all questions, bug reports, licensing inquiries, security
+disclosures, and feature requests, contact:
+
+**Ekessh Thoralingam** — <ekesshtks@gmail.com>
+
+See [SUPPORT.md](SUPPORT.md) for response targets and
+[SECURITY.md](SECURITY.md) for the responsible-disclosure protocol.
+
+---
+
 ## Contributing
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) and [CLA.md](CLA.md).
+External pull requests, forks, and issues from non-licensed parties
+are **not accepted**. See [CONTRIBUTING.md](CONTRIBUTING.md) and
+[CLA.md](CLA.md) for the licensed-contributor process.
 
-Every commit must:
+Every accepted commit must:
 
 - Follow [Conventional Commits](https://www.conventionalcommits.org/).
 - Include a DCO sign-off (`git commit -s`).
 - Pass all per-PR gates (lint, typecheck, tests, SAST, SPDX headers).
+- Be reviewed by the CODEOWNER (@ekessh).
 
 ---
 
 ## Security
 
-Report vulnerabilities privately per [SECURITY.md](SECURITY.md).
-Do not open public GitHub issues for security findings.
+Report vulnerabilities **privately** to <ekesshtks@gmail.com> per
+[SECURITY.md](SECURITY.md). Do not open public GitHub issues for
+security findings.
 
 ---
 

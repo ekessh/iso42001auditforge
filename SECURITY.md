@@ -1,11 +1,15 @@
+<!-- SPDX-License-Identifier: BUSL-1.1 -->
 # Security Policy
 
 ## Reporting a Vulnerability
 
-Please report security vulnerabilities **privately** — do not open public issues.
+Report all suspected vulnerabilities **privately** to:
 
-- Email: security@auditforge.example (PGP key in `SECURITY-PGP.txt`)
-- GitHub Security Advisory: use the "Report a vulnerability" button on the repo
+**Ekessh Thoralingam** — <ekesshtks@gmail.com>
+
+Do **not** open a public GitHub issue, do **not** post details on social
+media, and do **not** include vulnerability details in any pull request
+or commit message.
 
 We follow a 90-day coordinated-disclosure window by default. Critical issues
 affecting customer audit data may shorten this window.
