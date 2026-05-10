@@ -20,7 +20,11 @@ import type {
   ClaimRecord,
   EngagementSummary,
   FollowupQuestion,
+  LibraryQuestionRecord,
+  ReportRecord,
+  WorkingPaperRecord,
 } from '../types.js';
+import type { McpReceiptSigner } from '../signing.js';
 
 export interface ToolDefinition<TInput, TOutput> {
   readonly name: string;
@@ -60,6 +64,8 @@ export interface ToolDeps {
     readonly latencyMs: number;
     readonly costUsd: number;
   }) => Promise<string>;
+  readonly receiptSigner?: McpReceiptSigner | null;
+  readonly serverVersion: string;
 }
 
 import { fingerprintTool } from './fingerprint.js';
@@ -412,6 +418,271 @@ export const searchClaims: ToolHandler<SearchClaimsInputT, SearchClaimsOutputT> 
   },
 };
 
+// ---------- library.search ------------------------------------------------
+
+const LibrarySearchInput = z
+  .object({
+    query: z.string().min(1).max(500),
+    clauseFilter: z.array(z.string().min(1)).optional(),
+    limit: z.number().int().min(1).max(50).optional(),
+  })
+  .strict();
+export type LibrarySearchInputT = z.infer<typeof LibrarySearchInput>;
+
+const LibraryQuestionSchema = z.object({
+  id: z.string(),
+  text: z.string(),
+  clauseIds: z.array(z.string()),
+  score: z.number(),
+});
+const LibrarySearchOutput = z.array(LibraryQuestionSchema);
+export type LibrarySearchOutputT = z.infer<typeof LibrarySearchOutput>;
+
+export const librarySearchDef: ToolDefinition<LibrarySearchInputT, LibrarySearchOutputT> = {
+  name: 'library.search',
+  description:
+    'Search the question library by free-text query, optionally filtered by clauseIds. Returns library question id, text, mapped clauses, and a relevance score. Engagement-agnostic; the library is firm-global.',
+  fingerprint: '',
+  inputSchema: LibrarySearchInput,
+  outputSchema: LibrarySearchOutput,
+};
+(librarySearchDef as { fingerprint: string }).fingerprint = fingerprintTool(librarySearchDef);
+
+export const librarySearch: ToolHandler<LibrarySearchInputT, LibrarySearchOutputT> = {
+  definition: librarySearchDef,
+  engagementOf: () => null,
+  handle: async (p, input, deps) => {
+    const rows = await deps.data.searchLibrary(
+      p,
+      input.query,
+      input.clauseFilter ?? null,
+      input.limit ?? 10,
+    );
+    return rows.map(toLibraryOut);
+  },
+};
+
+// ---------- working-paper.read --------------------------------------------
+
+const WorkingPaperReadInput = z
+  .object({
+    engagementId: z.string().min(1),
+    workingPaperId: z.string().min(1),
+  })
+  .strict();
+export type WorkingPaperReadInputT = z.infer<typeof WorkingPaperReadInput>;
+
+const WorkingPaperReadOutput = z
+  .object({
+    id: z.string(),
+    engagementId: z.string(),
+    clauseId: z.string(),
+    title: z.string(),
+    status: z.enum(['draft', 'final']),
+    content: z.string(),
+    updatedAt: z.string(),
+  })
+  .nullable();
+export type WorkingPaperReadOutputT = z.infer<typeof WorkingPaperReadOutput>;
+
+export const workingPaperReadDef: ToolDefinition<WorkingPaperReadInputT, WorkingPaperReadOutputT> = {
+  name: 'working-paper.read',
+  description:
+    'Read a single working paper. Read-only. Write operations are intentionally NOT exposed via MCP — auditor confirmation lives in the web UI.',
+  fingerprint: '',
+  inputSchema: WorkingPaperReadInput,
+  outputSchema: WorkingPaperReadOutput,
+};
+(workingPaperReadDef as { fingerprint: string }).fingerprint = fingerprintTool(workingPaperReadDef);
+
+export const workingPaperRead: ToolHandler<WorkingPaperReadInputT, WorkingPaperReadOutputT> = {
+  definition: workingPaperReadDef,
+  engagementOf: (i) => i.engagementId,
+  handle: async (p, input, deps) => {
+    const wp = await deps.data.getWorkingPaper(p, input.engagementId, input.workingPaperId);
+    if (!wp) return null;
+    return toWorkingPaperOut(wp);
+  },
+};
+
+// ---------- report.list ---------------------------------------------------
+
+const ReportListInput = z.object({ engagementId: z.string().min(1) }).strict();
+export type ReportListInputT = z.infer<typeof ReportListInput>;
+
+const ReportSchema = z.object({
+  id: z.string(),
+  engagementId: z.string(),
+  kind: z.enum(['draft', 'final', 'readiness']),
+  status: z.enum(['draft', 'pending-signature', 'published']),
+  createdAt: z.string(),
+  publishedAt: z.string().nullable(),
+});
+const ReportListOutput = z.array(ReportSchema);
+export type ReportListOutputT = z.infer<typeof ReportListOutput>;
+
+export const reportListDef: ToolDefinition<ReportListInputT, ReportListOutputT> = {
+  name: 'report.list',
+  description:
+    'List reports (draft, final, readiness) for an engagement. Returns id, kind, status, createdAt, publishedAt. Read-only.',
+  fingerprint: '',
+  inputSchema: ReportListInput,
+  outputSchema: ReportListOutput,
+};
+(reportListDef as { fingerprint: string }).fingerprint = fingerprintTool(reportListDef);
+
+export const reportList: ToolHandler<ReportListInputT, ReportListOutputT> = {
+  definition: reportListDef,
+  engagementOf: (i) => i.engagementId,
+  handle: async (p, input, deps) => {
+    const rows = await deps.data.listReports(p, input.engagementId);
+    return rows.map(toReportOut);
+  },
+};
+
+// ---------- report.publish ------------------------------------------------
+
+const ReportPublishInput = z
+  .object({
+    engagementId: z.string().min(1),
+    reportId: z.string().min(1),
+    confirmationToken: z.string().min(8),
+  })
+  .strict();
+export type ReportPublishInputT = z.infer<typeof ReportPublishInput>;
+
+const ReportPublishOutput = z.object({
+  id: z.string(),
+  engagementId: z.string(),
+  status: z.literal('published'),
+  publishedAt: z.string(),
+  signature: z.object({
+    keyId: z.string(),
+    algorithm: z.string(),
+    signatureBase64: z.string(),
+  }),
+});
+export type ReportPublishOutputT = z.infer<typeof ReportPublishOutput>;
+
+export const reportPublishDef: ToolDefinition<ReportPublishInputT, ReportPublishOutputT> = {
+  name: 'report.publish',
+  description:
+    'Publish a finalised report. Requires a single-use confirmationToken minted via the web UI consent flow. Emits a signed Ed25519 receipt to the audit ledger. Without a valid token, the call is rejected with mcp.tool.confirmation_required.',
+  fingerprint: '',
+  inputSchema: ReportPublishInput,
+  outputSchema: ReportPublishOutput,
+};
+(reportPublishDef as { fingerprint: string }).fingerprint = fingerprintTool(reportPublishDef);
+
+export const reportPublish: ToolHandler<ReportPublishInputT, ReportPublishOutputT> = {
+  definition: reportPublishDef,
+  engagementOf: (i) => i.engagementId,
+  handle: async (p, input, deps) => {
+    if (!deps.receiptSigner) {
+      throw new ToolError(
+        'mcp.tool.unavailable',
+        'report.publish requires a configured receipt signer; not provisioned in this environment',
+      );
+    }
+    const r = await deps.data.publishReport(p, input.engagementId, input.reportId, input.confirmationToken);
+    if (!r) {
+      throw new ToolError(
+        'mcp.tool.confirmation_required',
+        `report ${input.reportId} not found or confirmation token invalid`,
+      );
+    }
+    const receipt = await deps.receiptSigner.sign({
+      tool: 'report.publish',
+      engagementId: input.engagementId,
+      auditorId: p.auditorId,
+      reportId: r.id,
+      publishedAt: r.publishedAt ?? '',
+    });
+    return {
+      id: r.id,
+      engagementId: r.engagementId,
+      status: 'published',
+      publishedAt: r.publishedAt ?? '',
+      signature: {
+        keyId: receipt.keyId,
+        algorithm: receipt.algorithm,
+        signatureBase64: receipt.signatureBase64,
+      },
+    };
+  },
+};
+
+// ---------- aiSystemInventory.profile -------------------------------------
+
+const AiInvProfileInput = z.object({}).strict();
+export type AiInvProfileInputT = z.infer<typeof AiInvProfileInput>;
+
+const AiInvProfileOutput = z.object({
+  modelName: z.literal('auditforge-mcp'),
+  version: z.string(),
+  purpose: z.string(),
+  capabilities: z.array(z.string()),
+  limitations: z.array(z.string()),
+  dataAccess: z.object({
+    scope: z.literal('per-engagement'),
+    pii: z.boolean(),
+    cloudEgress: z.boolean(),
+  }),
+  governance: z.object({
+    standard: z.literal('ISO/IEC 42001'),
+    auditTrail: z.literal('ed25519-signed-receipts'),
+    confirmationRequired: z.array(z.string()),
+  }),
+});
+export type AiInvProfileOutputT = z.infer<typeof AiInvProfileOutput>;
+
+export const aiInvProfileDef: ToolDefinition<AiInvProfileInputT, AiInvProfileOutputT> = {
+  name: 'aiSystemInventory.profile',
+  description:
+    'Return the AuditForge MCP server\'s own AI System Inventory profile. ISO 42001 Annex A.6.2 requires inventorying every AI system the organisation deploys — including its own internal AI tooling. AuditForge profiles itself.',
+  fingerprint: '',
+  inputSchema: AiInvProfileInput,
+  outputSchema: AiInvProfileOutput,
+};
+(aiInvProfileDef as { fingerprint: string }).fingerprint = fingerprintTool(aiInvProfileDef);
+
+export const aiInvProfile: ToolHandler<AiInvProfileInputT, AiInvProfileOutputT> = {
+  definition: aiInvProfileDef,
+  engagementOf: () => null,
+  handle: async (_p, _input, deps) => ({
+    modelName: 'auditforge-mcp',
+    version: deps.serverVersion,
+    purpose:
+      'MCP gateway exposing AuditForge engagement data (engagements, findings, candidate findings, coverage, claims, library, working papers, reports) to MCP-compatible clients used by ISO/IEC 42001 Lead Auditors.',
+    capabilities: [
+      'list/get engagements (RBAC-scoped)',
+      'list findings + candidate findings',
+      'coverage state per clause',
+      'claim search (engagement-scoped)',
+      'library question search',
+      'working paper read (read-only)',
+      'report list + report publish (publish requires confirmation token)',
+      'follow-up question drafting (LLM-backed; emits llm_invocations)',
+    ],
+    limitations: [
+      'no write operations beyond report.publish',
+      'cross-engagement queries disabled by RBAC',
+      'auditee role denied on every tool',
+      'no auto-promotion of candidate findings',
+    ],
+    dataAccess: {
+      scope: 'per-engagement',
+      pii: true,
+      cloudEgress: false,
+    },
+    governance: {
+      standard: 'ISO/IEC 42001',
+      auditTrail: 'ed25519-signed-receipts',
+      confirmationRequired: ['report.publish'],
+    },
+  }),
+};
+
 // -------------------------------------------------------------------------
 
 export class ToolError extends Error {
@@ -432,6 +703,11 @@ export const ALL_TOOLS: readonly ToolHandler<unknown, unknown>[] = [
   draftFollowup as unknown as ToolHandler<unknown, unknown>,
   summarizeEngagement as unknown as ToolHandler<unknown, unknown>,
   searchClaims as unknown as ToolHandler<unknown, unknown>,
+  librarySearch as unknown as ToolHandler<unknown, unknown>,
+  workingPaperRead as unknown as ToolHandler<unknown, unknown>,
+  reportList as unknown as ToolHandler<unknown, unknown>,
+  reportPublish as unknown as ToolHandler<unknown, unknown>,
+  aiInvProfile as unknown as ToolHandler<unknown, unknown>,
 ];
 
 export function toolByName(name: string): ToolHandler<unknown, unknown> | null {
@@ -466,4 +742,28 @@ function toClaimOut(r: ClaimRecord): SearchClaimsOutputT[number] {
 }
 function toSummaryOut(s: EngagementSummary): SummaryOutputT {
   return clone(s) as unknown as SummaryOutputT;
+}
+function toLibraryOut(r: LibraryQuestionRecord): LibrarySearchOutputT[number] {
+  return clone(r) as unknown as LibrarySearchOutputT[number];
+}
+function toWorkingPaperOut(r: WorkingPaperRecord): NonNullable<WorkingPaperReadOutputT> {
+  return {
+    id: r.id,
+    engagementId: r.engagementId,
+    clauseId: r.clauseId,
+    title: r.title,
+    status: r.status,
+    content: r.content ?? '',
+    updatedAt: r.updatedAt,
+  };
+}
+function toReportOut(r: ReportRecord): ReportListOutputT[number] {
+  return {
+    id: r.id,
+    engagementId: r.engagementId,
+    kind: r.kind,
+    status: r.status,
+    createdAt: r.createdAt,
+    publishedAt: r.publishedAt,
+  };
 }

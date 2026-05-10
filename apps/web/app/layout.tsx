@@ -11,6 +11,13 @@ export const metadata: Metadata = {
   description: 'Workbench for ISO/IEC 42001 Lead Auditors',
   applicationName: 'AuditForge',
   robots: { index: false, follow: false },
+  manifest: '/manifest.webmanifest',
+  themeColor: '#10b981',
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'default',
+    title: 'AuditForge',
+  },
 };
 
 export default async function RootLayout({ children }: { children: ReactNode }) {

@@ -61,6 +61,35 @@ export const TOOL_POLICIES: Readonly<Record<string, ToolPolicy>> = Object.freeze
     allowedRoles: ['lead_auditor', 'technical_expert'],
     requiresEngagementMembership: true,
   },
+  'library.search': {
+    allowedRoles: ['lead_auditor', 'team_auditor', 'audit_manager', 'firm_admin'],
+    requiresEngagementMembership: false,
+  },
+  'working-paper.read': {
+    allowedRoles: ['lead_auditor', 'team_auditor', 'peer_reviewer', 'audit_manager'],
+    requiresEngagementMembership: true,
+  },
+  'report.list': {
+    allowedRoles: ['lead_auditor', 'audit_manager', 'firm_admin'],
+    requiresEngagementMembership: true,
+  },
+  'report.publish': {
+    // Lead auditor only AND requires a confirmation token (enforced at handler).
+    allowedRoles: ['lead_auditor'],
+    requiresEngagementMembership: true,
+  },
+  'aiSystemInventory.profile': {
+    // Self-profile: every auditor role can read AuditForge's own model card.
+    allowedRoles: [
+      'lead_auditor',
+      'team_auditor',
+      'peer_reviewer',
+      'audit_manager',
+      'firm_admin',
+      'technical_expert',
+    ],
+    requiresEngagementMembership: false,
+  },
 });
 
 export interface AuthorizationResult {

@@ -101,6 +101,24 @@ export interface WorkingPaperRecord {
   readonly title: string;
   readonly status: 'draft' | 'final';
   readonly updatedAt: string;
+  readonly content?: string;
+}
+
+export interface LibraryQuestionRecord {
+  readonly id: string;
+  readonly text: string;
+  readonly clauseIds: readonly ClauseId[];
+  readonly score: number;
+}
+
+export interface ReportRecord {
+  readonly id: string;
+  readonly engagementId: EngagementId;
+  readonly kind: 'draft' | 'final' | 'readiness';
+  readonly status: 'draft' | 'pending-signature' | 'published';
+  readonly createdAt: string;
+  readonly publishedAt: string | null;
+  readonly contentHash?: string;
 }
 
 export interface FollowupQuestion {
@@ -144,8 +162,12 @@ export interface AuditDataPort {
   searchClaims(p: Principal, engagementId: EngagementId, query: string): Promise<readonly ClaimRecord[]>;
   getClaim(p: Principal, engagementId: EngagementId, claimId: ClaimId): Promise<ClaimRecord | null>;
   listWorkingPapers(p: Principal, engagementId: EngagementId): Promise<readonly WorkingPaperRecord[]>;
+  getWorkingPaper(p: Principal, engagementId: EngagementId, workingPaperId: string): Promise<WorkingPaperRecord | null>;
   computeSummary(p: Principal, engagementId: EngagementId): Promise<EngagementSummary | null>;
   draftFollowup(p: Principal, claim: ClaimRecord): Promise<FollowupQuestion>;
+  searchLibrary(p: Principal, query: string, clauseFilter: readonly ClauseId[] | null, limit: number): Promise<readonly LibraryQuestionRecord[]>;
+  listReports(p: Principal, engagementId: EngagementId): Promise<readonly ReportRecord[]>;
+  publishReport(p: Principal, engagementId: EngagementId, reportId: string, confirmationToken: string): Promise<ReportRecord | null>;
 }
 
 export interface ListEngagementsFilters {

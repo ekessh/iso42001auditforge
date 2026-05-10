@@ -35,6 +35,7 @@ import type {
 } from './types.js';
 import type { AuthGateway } from './auth.js';
 import { AuthError } from './auth.js';
+import type { McpReceiptSigner } from './signing.js';
 
 export interface McpServerOpts {
   readonly auth: AuthGateway;
@@ -42,6 +43,7 @@ export interface McpServerOpts {
   readonly ledger: AuditLedgerSink;
   readonly logger?: McpLogger;
   readonly now?: () => Date;
+  readonly receiptSigner?: McpReceiptSigner | null;
   /**
    * Server version. Tool fingerprints + this version are pinned together;
    * bumping descriptions requires a version bump (anti-tool-poisoning).
@@ -91,6 +93,7 @@ export class McpServer {
   private readonly logger: McpLogger;
   private readonly emitter: LedgerEmitter;
   private readonly now: () => Date;
+  private readonly receiptSigner: McpReceiptSigner | null;
   readonly version: string;
 
   constructor(opts: McpServerOpts) {
@@ -100,6 +103,7 @@ export class McpServer {
     this.now = opts.now ?? (() => new Date());
     this.emitter = new LedgerEmitter(opts.ledger, this.logger, this.now);
     this.version = opts.version ?? '0.1.0';
+    this.receiptSigner = opts.receiptSigner ?? null;
   }
 
   listTools(): readonly ToolListEntry[] {
@@ -204,6 +208,8 @@ export class McpServer {
     try {
       const result = await handler.handle(principal, parsed, {
         data: this.data,
+        serverVersion: this.version,
+        receiptSigner: this.receiptSigner,
         emitLlm: (entry) =>
           this.emitter.emitLlmInvocation({
             engagementId: entry.engagementId,

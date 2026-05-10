@@ -23,7 +23,14 @@
     "db:studio": "pnpm --filter @auditforge/db studio",
     "license-check": "node scripts/license-check.mjs",
     "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "desktop:dev": "pnpm --filter @auditforge/desktop dev",
+    "desktop:build": "pnpm --filter @auditforge/desktop build",
+    "mobile:dev": "pnpm --filter @auditforge/web dev",
+    "mobile:build": "pnpm --filter @auditforge/web build",
+    "mcp:build": "pnpm --filter @auditforge/mcp-server build",
+    "mcp:start": "pnpm --filter @auditforge/mcp-server start",
+    "icons:gen": "node scripts/gen-placeholder-icons.mjs"
   },
   "devDependencies": {
     "@types/node": "^22.7.0",

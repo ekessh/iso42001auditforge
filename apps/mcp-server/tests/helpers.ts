@@ -15,13 +15,28 @@ import type {
   EngagementSummary,
   FindingRecord,
   FollowupQuestion,
+  LibraryQuestionRecord,
   ListEngagementsFilters,
   Principal,
+  ReportRecord,
   WorkingPaperRecord,
 } from '../src/types.js';
 import { InMemoryLedger } from '../src/audit.js';
 import { StaticPrincipalAuthGateway } from '../src/auth.js';
 import { createMcpServer, type McpServer } from '../src/server.js';
+import type { McpReceiptSigner, ReceiptPayload, SignedReceipt } from '../src/signing.js';
+
+class StubReceiptSigner implements McpReceiptSigner {
+  async sign(payload: ReceiptPayload): Promise<SignedReceipt> {
+    const json = JSON.stringify(payload);
+    return {
+      keyId: 'test-key-1',
+      algorithm: 'Ed25519',
+      signatureBase64: Buffer.from(`stubsig:${json}`).toString('base64'),
+      canonicalPayloadBase64: Buffer.from(json).toString('base64'),
+    };
+  }
+}
 
 export interface Fixture {
   readonly server: McpServer;
@@ -160,6 +175,33 @@ export class InMemoryData implements AuditDataPort {
       title: 'Data quality WP',
       status: 'draft',
       updatedAt: '2026-04-02T09:00:00Z',
+      content: 'Working paper content for A.7.4 draft.',
+    },
+  ];
+
+  readonly libraryQuestions: LibraryQuestionRecord[] = [
+    {
+      id: 'Q-DQ-001',
+      text: 'How is data quality measured for the recommender model?',
+      clauseIds: ['A.7.4'],
+      score: 0.92,
+    },
+    {
+      id: 'Q-PROV-001',
+      text: 'What provenance is captured for each training-data batch?',
+      clauseIds: ['A.7.5'],
+      score: 0.88,
+    },
+  ];
+
+  readonly reports: ReportRecord[] = [
+    {
+      id: 'rep-acme-001',
+      engagementId: 'eng-acme-001',
+      kind: 'final',
+      status: 'pending-signature',
+      createdAt: '2026-04-30T09:00:00Z',
+      publishedAt: null,
     },
   ];
 
@@ -258,6 +300,54 @@ export class InMemoryData implements AuditDataPort {
       modelInvocationId: null,
     };
   }
+
+  async getWorkingPaper(p: Principal, engagementId: string, workingPaperId: string): Promise<WorkingPaperRecord | null> {
+    if (!p.engagements.includes(engagementId)) return null;
+    const wp = this.workingPapers.find((w) => w.engagementId === engagementId && w.id === workingPaperId);
+    return wp ?? null;
+  }
+
+  async searchLibrary(
+    _p: Principal,
+    query: string,
+    clauseFilter: readonly string[] | null,
+    limit: number,
+  ): Promise<readonly LibraryQuestionRecord[]> {
+    const q = query.toLowerCase();
+    const filtered = this.libraryQuestions.filter((qq) => {
+      if (q !== '*' && !qq.text.toLowerCase().includes(q)) return false;
+      if (clauseFilter && clauseFilter.length > 0) {
+        return qq.clauseIds.some((c) => clauseFilter.includes(c));
+      }
+      return true;
+    });
+    return filtered.slice(0, limit);
+  }
+
+  async listReports(p: Principal, engagementId: string): Promise<readonly ReportRecord[]> {
+    if (!p.engagements.includes(engagementId)) return [];
+    return this.reports.filter((r) => r.engagementId === engagementId);
+  }
+
+  async publishReport(
+    p: Principal,
+    engagementId: string,
+    reportId: string,
+    confirmationToken: string,
+  ): Promise<ReportRecord | null> {
+    if (!p.engagements.includes(engagementId)) return null;
+    if (confirmationToken !== 'confirm-token-valid') return null;
+    const r = this.reports.find((x) => x.engagementId === engagementId && x.id === reportId);
+    if (!r) return null;
+    const published: ReportRecord = {
+      ...r,
+      status: 'published',
+      publishedAt: '2026-05-03T12:00:00Z',
+    };
+    const idx = this.reports.indexOf(r);
+    this.reports[idx] = published;
+    return published;
+  }
 }
 
 /** Build the standard fixture with three principals: lead, peer reviewer, foreign-firm. */
@@ -353,6 +443,7 @@ export function buildFixture(): Fixture {
     data,
     ledger,
     now: () => new Date('2026-05-03T12:00:00Z'),
+    receiptSigner: new StubReceiptSigner(),
   });
 
   return { server, ledger, tokens, principals, data };

@@ -183,9 +183,9 @@ describe('tool dispatch', () => {
     expect((r.result as unknown[]).length).toBe(1);
   });
 
-  it('listTools surfaces 8 tools with stable fingerprints', () => {
+  it('listTools surfaces 13 tools with stable fingerprints', () => {
     const tools = f.server.listTools();
-    expect(tools).toHaveLength(8);
+    expect(tools).toHaveLength(13);
     for (const t of tools) {
       expect(t.fingerprint).toMatch(/^[0-9a-f]{64}$/);
       expect(t.description.length).toBeGreaterThan(20);
