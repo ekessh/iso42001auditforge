@@ -9,6 +9,11 @@
     "test:probes": "k6 run scenarios/probes-200.js",
     "test:reports": "k6 run scenarios/report-gen.js",
     "test:traces": "k6 run scenarios/trace-100k.js",
-    "test:soak": "k6 run scenarios/soak-24h.js"
+    "test:soak": "k6 run scenarios/soak-24h.js",
+    "test:wave3:baseline": "k6 run scenarios/wave3-api-baseline.js --summary-export=summary-api-baseline.json",
+    "test:wave3:llm": "k6 run scenarios/wave3-llm-tier-routing.js --summary-export=summary-llm-tier-routing.json",
+    "test:wave3:wp-sync": "k6 run scenarios/wave3-wp-sync.js --summary-export=summary-wp-sync.json",
+    "test:wave3:ledger": "k6 run scenarios/wave3-ledger-append.js --summary-export=summary-ledger-append.json",
+    "test:wave3:all": "pnpm test:wave3:baseline && pnpm test:wave3:llm && pnpm test:wave3:wp-sync && pnpm test:wave3:ledger"
   }
 }
