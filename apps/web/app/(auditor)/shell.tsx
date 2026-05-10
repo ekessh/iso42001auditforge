@@ -6,9 +6,13 @@ import { usePathname } from 'next/navigation';
 import {
   LayoutDashboard, Users, Calendar, AlertTriangle,
   Beaker, Activity, BookOpen, Settings, Command as CommandIcon,
-  ShieldCheck,
+  ShieldCheck, Gauge, ClipboardCheck,
 } from 'lucide-react';
 import { useAuth } from '@/lib/store/auth-store';
+import { CommandPalette } from '@/lib/cmdk/CommandPalette';
+import { usePalette } from '@/lib/cmdk/palette-store';
+import { GlobalModals } from '@/components/modals/GlobalModals';
+import { ThemeBootstrap } from '@/components/ThemeBootstrap';
 
 const NAV = [
   { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
@@ -18,12 +22,15 @@ const NAV = [
   { href: '/probes', label: 'Probes', icon: Beaker },
   { href: '/traces', label: 'Traces', icon: Activity },
   { href: '/library', label: 'Library', icon: BookOpen },
+  { href: '/readiness', label: 'Readiness', icon: Gauge },
+  { href: '/audit-dashboard', label: 'Audit Dashboard', icon: ClipboardCheck },
   { href: '/settings', label: 'Settings', icon: Settings },
 ];
 
 export function AuditorShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const auditor = useAuth((s) => s.auditor);
+  const openPalette = usePalette((s) => s.setOpen);
   return (
     <div className="min-h-screen flex bg-slate-50 dark:bg-slate-950">
       <aside className="w-60 border-r border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 flex flex-col" aria-label="Primary navigation">
@@ -53,7 +60,13 @@ export function AuditorShell({ children }: { children: ReactNode }) {
       </aside>
       <div className="flex-1 flex flex-col">
         <header className="h-14 border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 flex items-center px-4 justify-between">
-          <button className="inline-flex items-center gap-1.5 text-xs text-slate-500 hover:text-slate-900 dark:hover:text-slate-100" aria-label="Open command palette">
+          <button
+            type="button"
+            onClick={() => openPalette(true)}
+            className="inline-flex items-center gap-1.5 text-xs text-slate-500 hover:text-slate-900 dark:hover:text-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded px-1"
+            aria-label="Open command palette (Ctrl+K)"
+            aria-keyshortcuts="Control+K Meta+K"
+          >
             <CommandIcon className="w-3.5 h-3.5" />
             <span>Cmd</span>
             <span className="font-mono px-1 py-0.5 border border-slate-300 dark:border-slate-700 rounded">K</span>
@@ -66,6 +79,9 @@ export function AuditorShell({ children }: { children: ReactNode }) {
         </header>
         <main className="flex-1 overflow-auto">{children}</main>
       </div>
+      <CommandPalette />
+      <GlobalModals />
+      <ThemeBootstrap />
     </div>
   );
 }

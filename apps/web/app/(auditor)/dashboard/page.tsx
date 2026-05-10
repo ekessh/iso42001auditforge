@@ -6,11 +6,13 @@ import { EmptyState, Skeleton, Alert } from '@auditforge/ui-kit';
 import { useEngagements } from '@/lib/hooks/use-engagement';
 import { useFindings } from '@/lib/hooks/use-findings';
 import { useProbes } from '@/lib/hooks/use-probes';
+import { usePalette } from '@/lib/cmdk/palette-store';
 
 export default function DashboardPage() {
   const engagementsQuery = useEngagements({ limit: 50 });
   const findingsQuery = useFindings({ limit: 200 });
   const probesQuery = useProbes({ limit: 200 });
+  const trigger = usePalette((s) => s.trigger);
 
   const engagements = engagementsQuery.data?.items ?? [];
   const findings = findingsQuery.data?.items ?? [];
@@ -55,6 +57,15 @@ export default function DashboardPage() {
         )}
       </section>
 
+      <section aria-labelledby="quick-actions" className="mt-8">
+        <h2 id="quick-actions" className="text-sm font-semibold uppercase tracking-wide text-slate-500 mb-3">Quick actions</h2>
+        <div className="flex flex-wrap gap-2">
+          <Action icon={FileCheck} label="Start new engagement" onClick={() => trigger('new-engagement')} />
+          <Action icon={Beaker} label="Run probe" onClick={() => trigger('run-probe')} />
+          <Action icon={AlertTriangle} label="Raise NC" onClick={() => trigger('raise-nc')} />
+        </div>
+      </section>
+
       <section aria-labelledby="engagements" className="mt-8">
         <h2 id="engagements" className="text-sm font-semibold uppercase tracking-wide text-slate-500 mb-3">Engagements</h2>
         {isLoading ? (
@@ -66,7 +77,7 @@ export default function DashboardPage() {
           <EmptyState
             icon={<Calendar />}
             title="No engagements yet"
-            description="Engagements created by the firm administrator will appear here."
+            description="Use 'Start new engagement' above to plan one."
           />
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -85,22 +96,13 @@ export default function DashboardPage() {
                 </div>
                 <div className="mt-4 grid grid-cols-3 gap-2 text-xs">
                   <span><b>{e.mode}</b> mode</span>
-                  <span><b>{e.status}</b></span>
+                  <span><b>{e.status.replace(/_/g, ' ')}</b></span>
                   <span><b>{new Date(e.endsOn).toLocaleDateString()}</b> ends</span>
                 </div>
               </Link>
             ))}
           </div>
         )}
-      </section>
-
-      <section aria-labelledby="quick-actions" className="mt-8">
-        <h2 id="quick-actions" className="text-sm font-semibold uppercase tracking-wide text-slate-500 mb-3">Quick actions</h2>
-        <div className="flex flex-wrap gap-2">
-          <Action icon={FileCheck} label="Start new engagement" />
-          <Action icon={Beaker} label="Run probe" />
-          <Action icon={AlertTriangle} label="Raise NC" />
-        </div>
       </section>
     </div>
   );
@@ -119,9 +121,13 @@ function Kpi({ icon: Icon, label, value, accent }: { icon: React.ElementType; la
   );
 }
 
-function Action({ icon: Icon, label }: { icon: React.ElementType; label: string }) {
+function Action({ icon: Icon, label, onClick }: { icon: React.ElementType; label: string; onClick: () => void }) {
   return (
-    <button className="inline-flex items-center gap-2 px-3 py-1.5 rounded-md text-sm bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-slate-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+    <button
+      type="button"
+      onClick={onClick}
+      className="inline-flex items-center gap-2 px-3 py-1.5 rounded-md text-sm bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-slate-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+    >
       <Icon className="w-4 h-4" aria-hidden /> {label}
     </button>
   );

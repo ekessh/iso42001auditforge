@@ -1,10 +1,13 @@
 // SPDX-License-Identifier: BUSL-1.1
 'use client';
 
+import * as React from 'react';
 import { use } from 'react';
 import Link from 'next/link';
-import { Alert, Badge, Skeleton } from '@auditforge/ui-kit';
+import { ShieldCheck, ClipboardCheck } from 'lucide-react';
+import { Alert, Badge, Button, Skeleton, Textarea, Label, FieldHint } from '@auditforge/ui-kit';
 import { useFinding } from '@/lib/hooks/use-findings';
+import { usePromoteFinding, useRecordCapa } from '@/lib/hooks/use-mutations';
 import type { FindingSeverity } from '@auditforge/api-client';
 
 const SEVERITY_TONE: Record<FindingSeverity, 'danger' | 'warning' | 'info' | 'success'> = {
@@ -24,6 +27,10 @@ const SEVERITY_LABEL: Record<FindingSeverity, string> = {
 export default function FindingDetailPage({ params }: { params: Promise<{ findingId: string }> }) {
   const { findingId } = use(params);
   const { data, isLoading, error } = useFinding(findingId);
+  const promote = usePromoteFinding(findingId);
+  const capa = useRecordCapa(findingId);
+  const [capaText, setCapaText] = React.useState('');
+  const [capaError, setCapaError] = React.useState<string | null>(null);
 
   if (isLoading) {
     return (
@@ -47,6 +54,18 @@ export default function FindingDetailPage({ params }: { params: Promise<{ findin
       </div>
     );
   }
+
+  const handleCapa = async () => {
+    setCapaError(null);
+    if (capaText.trim().length < 5) {
+      setCapaError('Provide at least a brief CAPA summary.');
+      return;
+    }
+    await capa.mutateAsync({ capaSummary: capaText });
+    setCapaText('');
+  };
+
+  const isPromoted = data.severity !== 'ofi' && (data.status === 'capa_pending' || data.status === 'capa_in_progress' || data.status === 'closed' || data.status === 'verified');
 
   return (
     <div className="p-8 max-w-3xl mx-auto">
@@ -74,8 +93,8 @@ export default function FindingDetailPage({ params }: { params: Promise<{ findin
           </dd>
         </div>
         <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg p-3">
-          <dt className="text-xs uppercase tracking-wide text-slate-500">Created</dt>
-          <dd className="mt-1">{new Date(data.createdAt).toLocaleString()}</dd>
+          <dt className="text-xs uppercase tracking-wide text-slate-500">Evidence count</dt>
+          <dd className="mt-1 tabular-nums">{data.evidence.length}</dd>
         </div>
       </dl>
 
@@ -94,6 +113,53 @@ export default function FindingDetailPage({ params }: { params: Promise<{ findin
           </ul>
         </section>
       )}
+
+      <section className="mt-6 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg p-4">
+        <h2 className="text-xs font-semibold uppercase tracking-wide text-slate-500 mb-3">Actions</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <h3 className="text-sm font-medium">Promote to formal finding</h3>
+            <p className="text-xs text-slate-500 mt-1 mb-2">
+              Confirm the candidate has been peer-reviewed and is ready to appear in the report.
+            </p>
+            <Button
+              type="button"
+              variant="primary"
+              size="sm"
+              iconLeft={<ShieldCheck />}
+              loading={promote.isPending}
+              disabled={isPromoted || data.status === 'verified'}
+              onClick={() => promote.mutate()}
+            >
+              {isPromoted ? 'Already promoted' : 'Promote'}
+            </Button>
+          </div>
+          <div>
+            <h3 className="text-sm font-medium">Record CAPA</h3>
+            <Label htmlFor="capa-summary">CAPA summary</Label>
+            <Textarea
+              id="capa-summary"
+              rows={3}
+              value={capaText}
+              onChange={(e) => setCapaText(e.target.value)}
+              placeholder="Describe the corrective + preventive action and verification method."
+            />
+            {capaError ? <FieldHint tone="error">{capaError}</FieldHint> : null}
+            <Button
+              type="button"
+              variant="success"
+              size="sm"
+              className="mt-2"
+              iconLeft={<ClipboardCheck />}
+              loading={capa.isPending}
+              onClick={handleCapa}
+              disabled={data.status === 'closed' || data.status === 'verified'}
+            >
+              Record CAPA
+            </Button>
+          </div>
+        </div>
+      </section>
     </div>
   );
 }

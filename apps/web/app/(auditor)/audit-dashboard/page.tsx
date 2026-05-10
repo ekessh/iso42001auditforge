@@ -17,8 +17,10 @@ import * as React from 'react';
 import { AreaCoverageBars } from '@/components/dashboards/AreaCoverageBars';
 import { ManDayBurndown } from '@/components/dashboards/ManDayBurndown';
 import { RiskIndicator } from '@/components/dashboards/RiskIndicator';
+import { ClauseSortTable } from '@/components/dashboards/ClauseSortTable';
 import { useAuditDashboard } from '@/lib/hooks/use-coverage';
 import { useEngagements } from '@/lib/hooks/use-engagement';
+import { useWorkspace } from '@/lib/hooks/use-workspace';
 
 export default function AuditDashboardPage() {
   const engagementsQ = useEngagements({ limit: 50 });
@@ -27,6 +29,7 @@ export default function AuditDashboardPage() {
   const engagementId = firstActive?.id ?? '';
 
   const { data, isLoading, error } = useAuditDashboard(engagementId);
+  const workspaceQ = useWorkspace(engagementId, firstActive?.mode ?? 'audit');
 
   if (engagementsQ.isLoading) {
     return <DashboardSkeleton />;
@@ -109,6 +112,20 @@ export default function AuditDashboardPage() {
         <AreaCoverageBars bars={data.areaBars} />
         <ManDayBurndown points={data.manDays} spent={data.manDaysSpent} planned={data.manDaysPlanned} />
       </div>
+
+      {workspaceQ.data ? (
+        <section aria-labelledby="clause-table" className="rounded-lg border border-border bg-card p-4 shadow-xs">
+          <h2 id="clause-table" className="text-2xs font-semibold uppercase tracking-wider text-muted-foreground">
+            Clause coverage — sortable
+          </h2>
+          <p className="mt-1 text-2xs text-muted-foreground">
+            All clauses in scope with their status, score, and weight. Methodology is logged in the audit ledger.
+          </p>
+          <div className="mt-3">
+            <ClauseSortTable area={workspaceQ.data.coverageArea} />
+          </div>
+        </section>
+      ) : null}
 
       <section
         aria-labelledby="attention-areas"

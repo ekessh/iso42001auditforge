@@ -19,6 +19,7 @@ import { OpenItemsPanel } from '@/components/dashboards/OpenItemsPanel';
 import { ReadinessHero } from '@/components/dashboards/ReadinessHero';
 import { ReadinessTrendChart } from '@/components/dashboards/ReadinessTrendChart';
 import { CoverageHeatmap } from '@/components/workspace/CoverageHeatmap';
+import { ClauseSortTable } from '@/components/dashboards/ClauseSortTable';
 import { useReadiness } from '@/lib/hooks/use-coverage';
 import { useEngagements } from '@/lib/hooks/use-engagement';
 import { useWorkspace } from '@/lib/hooks/use-workspace';
@@ -69,6 +70,12 @@ export default function ReadinessDashboardPage() {
 
   return (
     <div className="mx-auto max-w-7xl space-y-6 p-6">
+      <div role="alert" aria-live="polite" className="rounded-lg border-2 border-destructive/60 bg-destructive/5 p-3 text-sm">
+        <strong className="font-semibold text-destructive">NOT A CERTIFICATION AUDIT.</strong>{' '}
+        <span className="text-destructive/90">Readiness Mode produces a gap assessment only. No conformity assertion is made.
+          Do not present these results as a certification statement.</span>
+      </div>
+
       <header className="flex flex-wrap items-baseline justify-between gap-2">
         <div>
           <h1 className="text-2xl font-semibold tracking-tight">Readiness Dashboard</h1>
@@ -112,6 +119,9 @@ export default function ReadinessDashboardPage() {
           </p>
           <div className="mt-3">
             <CoverageHeatmap area={workspace.coverageArea} />
+          </div>
+          <div className="mt-4">
+            <ClauseSortTable area={workspace.coverageArea} />
           </div>
         </section>
       ) : null}

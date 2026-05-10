@@ -1,7 +1,8 @@
 // SPDX-License-Identifier: BUSL-1.1
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { BookOpen, Search } from 'lucide-react';
 import { Alert, Badge, EmptyState, Skeleton } from '@auditforge/ui-kit';
 import { useLibrary } from '@/lib/hooks/use-library';
@@ -33,8 +34,14 @@ const KIND_OPTIONS: Array<{ value: LibraryEntryKind | ''; label: string }> = [
 ];
 
 export default function LibraryPage() {
+  const sp = useSearchParams();
   const [kind, setKind] = useState<LibraryEntryKind | ''>('');
-  const [q, setQ] = useState('');
+  const [q, setQ] = useState(sp?.get('q') ?? '');
+
+  useEffect(() => {
+    const next = sp?.get('q');
+    if (typeof next === 'string') setQ(next);
+  }, [sp]);
 
   const { data, isLoading, error } = useLibrary({
     limit: 100,
@@ -59,21 +66,25 @@ export default function LibraryPage() {
             placeholder="Search by ref or title…"
             value={q}
             onChange={(e) => setQ(e.target.value)}
-            className="rounded-md border border-slate-300 bg-white pl-8 pr-3 py-1.5 text-sm dark:border-slate-700 dark:bg-slate-900"
+            className="rounded-md border border-slate-300 bg-white pl-8 pr-3 py-1.5 text-sm dark:border-slate-700 dark:bg-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
           />
         </label>
-        <label>
-          <span className="sr-only">Filter by source</span>
-          <select
-            value={kind}
-            onChange={(e) => setKind(e.target.value as LibraryEntryKind | '')}
-            className="rounded-md border border-slate-300 bg-white px-2 py-1.5 text-sm dark:border-slate-700 dark:bg-slate-900"
-          >
-            {KIND_OPTIONS.map((o) => (
-              <option key={o.value || 'all'} value={o.value}>{o.label}</option>
-            ))}
-          </select>
-        </label>
+      </div>
+      <div className="mt-3 flex flex-wrap items-center gap-2" role="group" aria-label="Filter by source">
+        {KIND_OPTIONS.map((o) => {
+          const active = kind === o.value;
+          return (
+            <button
+              key={o.value || 'all'}
+              type="button"
+              onClick={() => setKind(o.value as LibraryEntryKind | '')}
+              aria-pressed={active}
+              className={`px-2.5 py-1 rounded-full text-xs border transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${active ? 'bg-slate-900 text-white border-slate-900 dark:bg-white dark:text-slate-900 dark:border-white' : 'bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-700 hover:border-slate-500'}`}
+            >
+              {o.label}
+            </button>
+          );
+        })}
       </div>
 
       {error && (

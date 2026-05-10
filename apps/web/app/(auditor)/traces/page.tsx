@@ -1,21 +1,29 @@
 // SPDX-License-Identifier: BUSL-1.1
 'use client';
 
+import * as React from 'react';
 import Link from 'next/link';
-import { Activity } from 'lucide-react';
-import { Alert, EmptyState, Skeleton } from '@auditforge/ui-kit';
+import { Activity, Upload } from 'lucide-react';
+import { Alert, Button, EmptyState, Skeleton } from '@auditforge/ui-kit';
 import { useTraces } from '@/lib/hooks/use-traces';
+import { UploadTraceModal } from '@/components/modals/UploadTraceModal';
 
 export default function TracesPage() {
-  const { data, isLoading, error } = useTraces({ limit: 100 });
+  const { data, isLoading, error } = useTraces({ limit: 200 });
   const items = data?.items ?? [];
+  const [uploadOpen, setUploadOpen] = React.useState(false);
 
   return (
     <div className="p-8 max-w-7xl mx-auto">
-      <h1 className="text-2xl font-semibold">Traces</h1>
-      <p className="text-sm text-slate-500 mt-1">
-        Ingest agent traces (LangGraph, CrewAI, AutoGen, OTel, Langfuse, Phoenix) and analyze tool ACL drift, HITL gates, recursion limits.
-      </p>
+      <div className="flex items-center justify-between gap-3">
+        <div>
+          <h1 className="text-2xl font-semibold">Traces</h1>
+          <p className="text-sm text-slate-500 mt-1">
+            Ingest agent traces (LangGraph, CrewAI, AutoGen, OTel, Langfuse, Phoenix) and analyze tool ACL drift, HITL gates, recursion limits.
+          </p>
+        </div>
+        <Button size="sm" iconLeft={<Upload />} onClick={() => setUploadOpen(true)}>Upload trace</Button>
+      </div>
 
       {error && (
         <Alert tone="danger" className="mt-4">
@@ -35,6 +43,7 @@ export default function TracesPage() {
           icon={<Activity />}
           title="No traces ingested"
           description="Upload a trace from your agent platform to begin analysis."
+          action={<Button size="sm" iconLeft={<Upload />} onClick={() => setUploadOpen(true)}>Upload trace</Button>}
         />
       ) : (
         <table className="mt-6 w-full text-sm" aria-label="Traces">
@@ -55,6 +64,7 @@ export default function TracesPage() {
                   >
                     {t.name}
                   </Link>
+                  <div className="text-xs text-slate-500 font-mono">{t.id}</div>
                 </td>
                 <td className="py-2 pr-3 tabular-nums text-slate-500">{new Date(t.createdAt).toLocaleString()}</td>
                 <td className="py-2 pr-3 tabular-nums text-slate-500">{new Date(t.updatedAt).toLocaleString()}</td>
@@ -63,6 +73,8 @@ export default function TracesPage() {
           </tbody>
         </table>
       )}
+
+      <UploadTraceModal open={uploadOpen} onOpenChange={setUploadOpen} />
     </div>
   );
 }

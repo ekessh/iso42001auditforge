@@ -1,14 +1,18 @@
 // SPDX-License-Identifier: BUSL-1.1
 'use client';
 
+import * as React from 'react';
 import { use } from 'react';
 import Link from 'next/link';
-import { Alert, Badge, Skeleton } from '@auditforge/ui-kit';
+import { Play } from 'lucide-react';
+import { Alert, Badge, Button, Skeleton } from '@auditforge/ui-kit';
 import { useProbe } from '@/lib/hooks/use-probes';
+import { RunProbeModal } from '@/components/modals/RunProbeModal';
 
 export default function ProbeDetailPage({ params }: { params: Promise<{ probeId: string }> }) {
   const { probeId } = use(params);
   const { data, isLoading, error } = useProbe(probeId);
+  const [runOpen, setRunOpen] = React.useState(false);
 
   if (isLoading) {
     return (
@@ -38,11 +42,16 @@ export default function ProbeDetailPage({ params }: { params: Promise<{ probeId:
       <Link href="/probes" className="text-xs text-slate-500 hover:text-slate-900 dark:hover:text-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
         &larr; Probes
       </Link>
-      <div className="flex flex-wrap items-center gap-2 mt-1">
-        <h1 className="text-2xl font-semibold">{data.name}</h1>
-        <Badge tone="info">{data.mode}</Badge>
+      <div className="mt-1 flex flex-wrap items-start justify-between gap-3">
+        <div>
+          <div className="flex flex-wrap items-center gap-2">
+            <h1 className="text-2xl font-semibold">{data.name}</h1>
+            <Badge tone="info">{data.mode}</Badge>
+          </div>
+          <p className="text-sm text-slate-500 mt-1 font-mono">{data.category}</p>
+        </div>
+        <Button size="sm" iconLeft={<Play />} onClick={() => setRunOpen(true)}>Run probe</Button>
       </div>
-      <p className="text-sm text-slate-500 mt-1 font-mono">{data.category}</p>
 
       <dl className="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-3 text-sm">
         <Stat label="Budget USD" value={data.budgetUsd.toFixed(2)} />
@@ -54,6 +63,8 @@ export default function ProbeDetailPage({ params }: { params: Promise<{ probeId:
         <h2 className="text-xs font-semibold uppercase tracking-wide text-slate-500 mb-2">Spec</h2>
         <pre className="overflow-x-auto text-xs leading-relaxed">{JSON.stringify(data.spec, null, 2)}</pre>
       </section>
+
+      <RunProbeModal open={runOpen} onOpenChange={setRunOpen} />
     </div>
   );
 }
