@@ -4,3 +4,4 @@ export * from './checklist.js';
 export * from './request.js';
 export * from './independence.js';
 export * from './events.js';
+export * from './comments.js';

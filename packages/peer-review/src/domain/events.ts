@@ -74,5 +74,20 @@ export const PeerReviewLedgerEventSchema = z.discriminatedUnion('kind', [
     actorId: UuidSchema,
     at: IsoDateSchema,
   }),
+  z.object({
+    kind: z.literal('peer_review.comment_added'),
+    requestId: UuidSchema,
+    commentId: UuidSchema,
+    flag: z.enum(['standard', 'security', 'data-protection']),
+    actorId: UuidSchema,
+    at: IsoDateSchema,
+  }),
+  z.object({
+    kind: z.literal('peer_review.comment_resolved'),
+    requestId: UuidSchema,
+    commentId: UuidSchema,
+    actorId: UuidSchema,
+    at: IsoDateSchema,
+  }),
 ]);
 export type PeerReviewLedgerEvent = z.infer<typeof PeerReviewLedgerEventSchema>;
