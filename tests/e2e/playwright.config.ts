@@ -62,7 +62,7 @@ export default defineConfig({
       name: "chromium",
       use: { ...devices["Desktop Chrome"] },
       dependencies: ["setup"],
-      grep: /@critical|@journey/,
+      grep: /@critical|@journey|@wave3|@smoke/,
     },
     {
       name: "firefox",

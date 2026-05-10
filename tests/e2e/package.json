@@ -8,12 +8,15 @@
     "test": "playwright test",
     "test:watch": "playwright test --ui",
     "test:critical": "playwright test --project=chromium --grep @critical",
+    "test:wave3": "playwright test --project=chromium --grep @wave3",
+    "test:smoke": "playwright test --project=chromium --grep @smoke",
     "test:debug": "playwright test --debug",
     "test:report": "playwright show-report",
     "test:codegen": "playwright codegen http://localhost:3000"
   },
   "devDependencies": {
     "@playwright/test": "^1.48.0",
+    "@axe-core/playwright": "^4.10.0",
     "@types/node": "^22.7.0",
     "typescript": "^5.6.2",
     "dotenv": "^16.4.5"

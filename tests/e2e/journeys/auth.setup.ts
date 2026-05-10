@@ -8,6 +8,10 @@ import { test as setup, expect } from "@playwright/test";
  */
 
 setup("verify dev stack health", async ({ request }) => {
+  if (process.env["E2E_SKIP_GLOBAL_SETUP"] === "1") {
+    setup.info().annotations.push({ type: "skip", description: "E2E_SKIP_GLOBAL_SETUP=1" });
+    return;
+  }
   const apiUrl = process.env["E2E_API_URL"] ?? "http://localhost:3001";
   const res = await request.get(`${apiUrl}/health`);
   expect(res.status(), "Dev stack API must be healthy").toBe(200);

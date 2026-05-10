@@ -10,6 +10,14 @@ import { seedTestData } from "./seed-api";
 export default async function globalSetup(config: FullConfig): Promise<void> {
   const baseURL = config.projects[0]?.use?.baseURL ?? "http://localhost:3000";
 
+  // Wave-3 wired smoke runs that don't need a full backend (passkey-stub
+  // path) opt out via E2E_SKIP_GLOBAL_SETUP=1; tests then individually
+  // skip via helpers/require-api.ts when their flow needs a real API.
+  if (process.env["E2E_SKIP_GLOBAL_SETUP"] === "1") {
+    console.log("[e2e] global setup skipped (E2E_SKIP_GLOBAL_SETUP=1)");
+    return;
+  }
+
   // Wait for the dev stack to be healthy
   await waitForStack(baseURL);
 
