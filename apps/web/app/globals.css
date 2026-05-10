@@ -1,6 +1,6 @@
 /* SPDX-License-Identifier: BUSL-1.1 */
 @import 'tailwindcss';
-@import '@auditforge/ui-kit/styles/globals.css';
+@import '@auditforge/ui-kit/styles.css';
 
 :root {
   color-scheme: light dark;
@@ -12,7 +12,7 @@ html {
 }
 
 body {
-  @apply bg-background text-foreground antialiased;
+  -webkit-font-smoothing: antialiased;
   font-family: 'Inter', system-ui, sans-serif;
 }
 

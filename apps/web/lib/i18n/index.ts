@@ -14,10 +14,10 @@
  * same `messages` map. Until then, this facade gives every call site the
  * correct seam.
  */
-import { messages, type MessageKey, type ModeKey } from './messages.js';
+import { messages, type MessageKey, type ModeKey } from './messages';
 
-export type { MessageKey, ModeKey } from './messages.js';
-export { messages } from './messages.js';
+export type { MessageKey, ModeKey } from './messages';
+export { messages } from './messages';
 
 /**
  * `t` interpolates `{name}` placeholders. Values are stringified with
@@ -52,7 +52,6 @@ export const t: Translator = (key, params) => {
   const template = messages[key];
   if (template === undefined) {
     if (typeof process !== 'undefined' && process.env && process.env.NODE_ENV !== 'production') {
-      // eslint-disable-next-line no-console
       console.warn(`[i18n] missing message key: ${String(key)}`);
     }
     return String(key);
