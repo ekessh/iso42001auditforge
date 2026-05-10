@@ -21,6 +21,7 @@ export * from './ledger.js';
 export * from './billing.js';
 export * from './surveillance.js';
 export * from './claims.js';
+export * from './live_interviews.js';
 export * from './soa.js';
 export * from './webauthn-credentials.js';
 export * from './catalogue_embeddings.js';

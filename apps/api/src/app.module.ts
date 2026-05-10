@@ -35,12 +35,14 @@ import { CoAuditorModule } from './modules/co-auditor/co-auditor.module.js';
 import { CoverageModule } from './modules/coverage/coverage.module.js';
 import { CrossFrameworkModule } from './modules/cross-framework/cross-framework.module.js';
 import { EngagementsModule } from './modules/engagements/engagements.module.js';
+import { EvidenceExtractionModule } from './modules/evidence-extraction/evidence-extraction.module.js';
 import { EvidenceVaultModule } from './modules/evidence-vault/evidence-vault.module.js';
 import { FindingsModule } from './modules/findings/findings.module.js';
 import { HealthModule } from './modules/health/health.module.js';
 import { ObservabilityModule } from './observability/observability.module.js';
 import { IdentityModule } from './modules/identity/identity.module.js';
 import { InterviewsModule } from './modules/interviews/interviews.module.js';
+import { InterviewsLiveModule } from './modules/interviews-live/interviews-live.module.js';
 import { LibraryModule } from './modules/library/library.module.js';
 import { ReadinessModule } from './modules/readiness/readiness.module.js';
 import { PeerReviewModule } from './modules/peer-review/peer-review.module.js';
@@ -93,12 +95,14 @@ import type { AppConfig } from './config/config.schema.js';
     CoverageModule,
     CrossFrameworkModule,
     EngagementsModule,
+    EvidenceExtractionModule,
     EvidenceVaultModule,
     FindingsModule,
     HealthModule,
     IdentityModule,
     ObservabilityModule,
     InterviewsModule,
+    InterviewsLiveModule,
     LibraryModule,
     PeerReviewModule,
     ProbesModule,

@@ -1609,6 +1609,28 @@
         ]
       }
     },
+    "/v1/evidence-extract": {
+      "post": {
+        "operationId": "EvidenceExtractionController_extract",
+        "summary": "Run schema-constrained VLM extraction over an uploaded image (model card, datasheet, fairness report, incident log).",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExtractedFieldDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "evidence-extraction"
+        ]
+      }
+    },
     "/v1/evidence/uploads/presign": {
       "post": {
         "operationId": "EvidenceController_presign",
@@ -2092,7 +2114,8 @@
         ]
       },
       "post": {
-        "operationId": "InterviewsController_create",
+        "operationId": "InterviewsLiveController_start",
+        "summary": "Start a live interview session.",
         "parameters": [],
         "responses": {
           "201": {
@@ -2100,14 +2123,14 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/InterviewsDto"
+                  "$ref": "#/components/schemas/InterviewSessionDto"
                 }
               }
             }
           }
         },
         "tags": [
-          "interviews"
+          "interviews-live"
         ]
       }
     },
@@ -2256,6 +2279,96 @@
         },
         "tags": [
           "interviews"
+        ]
+      }
+    },
+    "/v1/interviews/{id}/end": {
+      "patch": {
+        "operationId": "InterviewsLiveController_end",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InterviewSessionDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "interviews-live"
+        ]
+      }
+    },
+    "/v1/interviews/{id}/transcript": {
+      "get": {
+        "operationId": "InterviewsLiveController_transcript",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InterviewTranscriptDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "interviews-live"
+        ]
+      }
+    },
+    "/v1/interviews/{id}/coverage-delta": {
+      "get": {
+        "operationId": "InterviewsLiveController_coverage",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CoverageDeltaDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "interviews-live"
         ]
       }
     },
@@ -4081,8 +4194,7 @@
         },
         "required": [
           "items",
-          "nextCursor",
-          "prevCursor"
+          "nextCursor"
         ]
       },
       "AiSystemsDto": {
@@ -4138,8 +4250,7 @@
         },
         "required": [
           "items",
-          "nextCursor",
-          "prevCursor"
+          "nextCursor"
         ]
       },
       "ArchiveDto": {
@@ -4195,8 +4306,7 @@
         },
         "required": [
           "items",
-          "nextCursor",
-          "prevCursor"
+          "nextCursor"
         ]
       },
       "AreaCoverageBarDto": {
@@ -4532,8 +4642,7 @@
         },
         "required": [
           "items",
-          "nextCursor",
-          "prevCursor"
+          "nextCursor"
         ]
       },
       "CoverageCellDto": {
@@ -4660,8 +4769,7 @@
         },
         "required": [
           "items",
-          "nextCursor",
-          "prevCursor"
+          "nextCursor"
         ]
       },
       "ChainVerificationDto": {
@@ -4735,8 +4843,7 @@
         },
         "required": [
           "items",
-          "nextCursor",
-          "prevCursor"
+          "nextCursor"
         ]
       },
       "BillingDto": {
@@ -4792,8 +4899,7 @@
         },
         "required": [
           "items",
-          "nextCursor",
-          "prevCursor"
+          "nextCursor"
         ]
       },
       "CapaDto": {
@@ -4849,8 +4955,7 @@
         },
         "required": [
           "items",
-          "nextCursor",
-          "prevCursor"
+          "nextCursor"
         ]
       },
       "ClientsDto": {
@@ -4906,8 +5011,7 @@
         },
         "required": [
           "items",
-          "nextCursor",
-          "prevCursor"
+          "nextCursor"
         ]
       },
       "CoAuditorDto": {
@@ -4963,8 +5067,7 @@
         },
         "required": [
           "items",
-          "nextCursor",
-          "prevCursor"
+          "nextCursor"
         ]
       },
       "CrossFrameworkDto": {
@@ -5020,8 +5123,7 @@
         },
         "required": [
           "items",
-          "nextCursor",
-          "prevCursor"
+          "nextCursor"
         ]
       },
       "EngagementDto": {
@@ -5135,8 +5237,49 @@
         },
         "required": [
           "items",
-          "nextCursor",
-          "prevCursor"
+          "nextCursor"
+        ]
+      },
+      "ExtractedFieldDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "schemaId": {
+            "type": "string"
+          },
+          "confidence": {
+            "type": "number"
+          },
+          "modelName": {
+            "type": "string"
+          },
+          "modelHash": {
+            "type": "string"
+          },
+          "imageHash": {
+            "type": "string"
+          },
+          "extractedAt": {
+            "type": "string"
+          },
+          "engagementId": {
+            "type": "string"
+          },
+          "value": {
+            "type": "object",
+            "additionalProperties": true
+          }
+        },
+        "required": [
+          "id",
+          "schemaId",
+          "confidence",
+          "modelName",
+          "imageHash",
+          "extractedAt",
+          "value"
         ]
       },
       "PresignedUploadResponseDto": {
@@ -5256,8 +5399,7 @@
         },
         "required": [
           "items",
-          "nextCursor",
-          "prevCursor"
+          "nextCursor"
         ]
       },
       "DownloadUrlDto": {
@@ -5371,8 +5513,7 @@
         },
         "required": [
           "items",
-          "nextCursor",
-          "prevCursor"
+          "nextCursor"
         ]
       },
       "InterviewLibraryEntryDto": {
@@ -5500,6 +5641,133 @@
           "coverage"
         ]
       },
+      "InterviewSessionDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "engagementId": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "airGapMode": {
+            "type": "boolean"
+          },
+          "transcriptionProviderName": {
+            "type": "string"
+          },
+          "diarizationProviderName": {
+            "type": "string"
+          },
+          "startedAt": {
+            "type": "string"
+          },
+          "endedAt": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "engagementId",
+          "title",
+          "status",
+          "airGapMode",
+          "transcriptionProviderName",
+          "diarizationProviderName"
+        ]
+      },
+      "InterviewTranscriptSegmentDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "startMs": {
+            "type": "number"
+          },
+          "endMs": {
+            "type": "number"
+          },
+          "text": {
+            "type": "string"
+          },
+          "speakerId": {
+            "type": "string"
+          },
+          "confidence": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "id",
+          "startMs",
+          "endMs",
+          "text",
+          "speakerId",
+          "confidence"
+        ]
+      },
+      "InterviewTranscriptDto": {
+        "type": "object",
+        "properties": {
+          "sessionId": {
+            "type": "string"
+          },
+          "segments": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/InterviewTranscriptSegmentDto"
+            }
+          }
+        },
+        "required": [
+          "sessionId",
+          "segments"
+        ]
+      },
+      "CoverageDeltaItemDto": {
+        "type": "object",
+        "properties": {
+          "clauseId": {
+            "type": "string"
+          },
+          "confidence": {
+            "type": "number"
+          },
+          "segmentId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "clauseId",
+          "confidence",
+          "segmentId"
+        ]
+      },
+      "CoverageDeltaDto": {
+        "type": "object",
+        "properties": {
+          "sessionId": {
+            "type": "string"
+          },
+          "newlyEvidencedClauses": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CoverageDeltaItemDto"
+            }
+          }
+        },
+        "required": [
+          "sessionId",
+          "newlyEvidencedClauses"
+        ]
+      },
       "LibraryEntryDto": {
         "type": "object",
         "properties": {
@@ -5564,8 +5832,7 @@
         },
         "required": [
           "items",
-          "nextCursor",
-          "prevCursor"
+          "nextCursor"
         ]
       },
       "PeerReviewDto": {
@@ -5621,8 +5888,7 @@
         },
         "required": [
           "items",
-          "nextCursor",
-          "prevCursor"
+          "nextCursor"
         ]
       },
       "PeerReviewCommentDto": {
@@ -5774,8 +6040,7 @@
         },
         "required": [
           "items",
-          "nextCursor",
-          "prevCursor"
+          "nextCursor"
         ]
       },
       "ProbeExecutionDto": {
@@ -5853,8 +6118,7 @@
         },
         "required": [
           "items",
-          "nextCursor",
-          "prevCursor"
+          "nextCursor"
         ]
       },
       "ChecklistItemDto": {
@@ -6249,8 +6513,7 @@
         },
         "required": [
           "items",
-          "nextCursor",
-          "prevCursor"
+          "nextCursor"
         ]
       },
       "RisksDto": {
@@ -6306,8 +6569,7 @@
         },
         "required": [
           "items",
-          "nextCursor",
-          "prevCursor"
+          "nextCursor"
         ]
       },
       "SamplesDto": {
@@ -6363,8 +6625,7 @@
         },
         "required": [
           "items",
-          "nextCursor",
-          "prevCursor"
+          "nextCursor"
         ]
       },
       "DrawnSampleUnitDto": {
@@ -6562,8 +6823,7 @@
         },
         "required": [
           "items",
-          "nextCursor",
-          "prevCursor"
+          "nextCursor"
         ]
       },
       "SurveillanceDto": {
@@ -6619,8 +6879,7 @@
         },
         "required": [
           "items",
-          "nextCursor",
-          "prevCursor"
+          "nextCursor"
         ]
       },
       "TenancyDto": {
@@ -6676,8 +6935,7 @@
         },
         "required": [
           "items",
-          "nextCursor",
-          "prevCursor"
+          "nextCursor"
         ]
       },
       "TracesDto": {
@@ -6733,8 +6991,7 @@
         },
         "required": [
           "items",
-          "nextCursor",
-          "prevCursor"
+          "nextCursor"
         ]
       },
       "WorkingPaperDto": {
@@ -6822,8 +7079,7 @@
         },
         "required": [
           "items",
-          "nextCursor",
-          "prevCursor"
+          "nextCursor"
         ]
       }
     }
