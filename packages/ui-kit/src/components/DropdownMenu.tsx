@@ -91,7 +91,7 @@ export const DropdownMenuCheckboxItem = React.forwardRef<
 >(({ className, children, checked, ...rest }, ref) => (
   <RxDropdown.CheckboxItem
     ref={ref}
-    checked={checked}
+    {...(checked !== undefined ? { checked } : {})}
     className={cn(
       'relative flex cursor-default select-none items-center rounded-sm py-1.5 pl-7 pr-2 text-sm outline-none',
       'focus:bg-muted data-[highlighted]:bg-muted',

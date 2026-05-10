@@ -70,7 +70,7 @@ export function DataTable<TData>({
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
-    getRowId,
+    ...(getRowId !== undefined ? { getRowId } : {}),
   });
 
   const resolvedRowHeight = rowHeight ?? (density === 'compact' ? 36 : 44);

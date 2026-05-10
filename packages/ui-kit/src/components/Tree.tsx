@@ -14,7 +14,7 @@ export interface TreeNode {
   meta?: React.ReactNode;
 }
 
-export interface TreeProps extends React.HTMLAttributes<HTMLUListElement> {
+export interface TreeProps extends Omit<React.HTMLAttributes<HTMLUListElement>, 'onSelect'> {
   nodes: TreeNode[];
   defaultExpandedIds?: string[];
   selectedId?: string;

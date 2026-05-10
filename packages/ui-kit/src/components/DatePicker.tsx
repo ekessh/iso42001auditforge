@@ -40,7 +40,7 @@ export const DatePicker = ({
       </Button>
     </PopoverTrigger>
     <PopoverContent className="w-auto p-0" align="start">
-      <Calendar mode="single" selected={value} onSelect={onChange} />
+      <Calendar mode="single" selected={value} onSelect={onChange as never} />
     </PopoverContent>
   </Popover>
 );
@@ -79,7 +79,7 @@ export const DateRangePicker = ({
       </Button>
     </PopoverTrigger>
     <PopoverContent className="w-auto p-0" align="start">
-      <Calendar mode="range" selected={value} onSelect={onChange} numberOfMonths={2} />
+      <Calendar mode="range" selected={value} onSelect={onChange as never} numberOfMonths={2} />
     </PopoverContent>
   </Popover>
 );

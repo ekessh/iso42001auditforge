@@ -228,8 +228,8 @@ export const AuditorShell = ({
             <AuditorAvatar
               name={identity.name}
               role={identity.role}
-              src={identity.src}
               size="sm"
+              {...(identity.src !== undefined ? { src: identity.src } : {})}
             />
             <span className="hidden text-xs font-medium md:inline">{identity.name}</span>
           </span>

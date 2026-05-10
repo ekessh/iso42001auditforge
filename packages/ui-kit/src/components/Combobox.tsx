@@ -69,7 +69,7 @@ export const Combobox = React.forwardRef<HTMLButtonElement, ComboboxProps>(
                 <CommandPrimitive.Item
                   key={opt.value}
                   value={`${opt.label} ${opt.value}`}
-                  disabled={opt.disabled}
+                  {...(opt.disabled !== undefined ? { disabled: opt.disabled } : {})}
                   onSelect={() => {
                     onChange?.(opt.value);
                     setOpen(false);

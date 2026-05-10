@@ -52,7 +52,7 @@ export interface AuditorAvatarProps {
 export const AuditorAvatar = ({ name, role, src, initials, size = 'md', className }: AuditorAvatarProps) => (
   <Tooltip label={`${name} — ${roleLabel[role]}`}>
     <span className={cn('relative inline-flex', className)}>
-      <Avatar size={size} src={src} alt={name} initials={initials} />
+      <Avatar size={size} alt={name} {...(src !== undefined ? { src } : {})} {...(initials !== undefined ? { initials } : {})} />
       <span
         aria-hidden
         className={cn(

@@ -43,7 +43,7 @@ export const LedgerEventRow = ({
   >
     <div className="flex items-center gap-2 pt-0.5">
       <span className="font-mono text-2xs tabular text-muted-foreground">#{seq.toString().padStart(5, '0')}</span>
-      {actor ? <AuditorAvatar name={actor.name} role={actor.role} src={actor.src} size="sm" /> : null}
+      {actor ? <AuditorAvatar name={actor.name} role={actor.role} size="sm" {...(actor.src !== undefined ? { src: actor.src } : {})} /> : null}
     </div>
     <div className="min-w-0">
       <div className="flex flex-wrap items-baseline gap-x-2">
