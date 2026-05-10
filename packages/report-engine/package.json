@@ -21,7 +21,8 @@
     "./signing/verify": "./src/signing/verify.ts",
     "./versioning": "./src/versioning/index.ts",
     "./branding": "./src/branding/index.ts",
-    "./substitution": "./src/substitution/index.ts"
+    "./substitution": "./src/substitution/index.ts",
+    "./export": "./src/export/index.ts"
   },
   "scripts": {
     "build": "tsc -p tsconfig.json",
@@ -31,7 +32,10 @@
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "dependencies": {
+    "@auditforge/audit-engine": "workspace:*",
     "@auditforge/shared": "workspace:*",
+    "@auditforge/signing": "workspace:*",
+    "@auditforge/tsa": "workspace:*",
     "zod": "^3.23.8"
   },
   "devDependencies": {

@@ -5,7 +5,7 @@
 // and embeds. We provide a software signer for unit tests and developer
 // environments only; it is explicitly marked `software-test`.
 
-import { createSign, generateKeyPairSync, createPublicKey } from 'node:crypto';
+import { createSign, createVerify, generateKeyPairSync, createPublicKey } from 'node:crypto';
 import { SignatureResponseSchema, type SignatureRequest, type SignatureResponse } from './types.js';
 
 export interface TestKeyPair {
@@ -63,11 +63,7 @@ export function testVerify(
   if (parts.length < 3) return false;
   const pubKeyPem = parts.slice(2).join('|');
   const pubKey = createPublicKey(pubKeyPem);
-  const verify = (
-    // dynamic import-style require; vitest runs in node so this is safe
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    require('node:crypto') as typeof import('node:crypto')
-  ).createVerify('SHA256');
+  const verify = createVerify('SHA256');
   verify.update(Buffer.from(digestHex, 'hex'));
   verify.end();
   return verify.verify(pubKey, Buffer.from(signatureHex, 'hex'));
