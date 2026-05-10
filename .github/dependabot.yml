@@ -1,0 +1,40 @@
+# SPDX-License-Identifier: BUSL-1.1
+version: 2
+
+updates:
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 8
+    versioning-strategy: increase-if-necessary
+    labels: ["deps", "security"]
+    commit-message:
+      prefix: "chore(deps)"
+      include: "scope"
+    groups:
+      typescript:
+        patterns: ["typescript", "@typescript-eslint/*"]
+      vitest:
+        patterns: ["vitest", "@vitest/*"]
+      playwright:
+        patterns: ["@playwright/*", "@axe-core/*"]
+      drizzle:
+        patterns: ["drizzle-orm", "drizzle-kit", "drizzle-zod"]
+
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule: { interval: "weekly", day: "monday" }
+    labels: ["deps", "ci"]
+
+  - package-ecosystem: "docker"
+    directory: "/infra"
+    schedule: { interval: "weekly", day: "monday" }
+    labels: ["deps", "infra"]
+
+  - package-ecosystem: "cargo"
+    directory: "/apps/desktop/src-tauri"
+    schedule: { interval: "weekly", day: "monday" }
+    labels: ["deps", "desktop"]
+    open-pull-requests-limit: 4

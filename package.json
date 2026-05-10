@@ -18,6 +18,11 @@
     "test:integration": "pnpm -r test:integration",
     "test:e2e": "pnpm --filter @auditforge/e2e test",
     "test:load": "pnpm --filter @auditforge/load test",
+    "e2e:dev": "pnpm --filter @auditforge/e2e test:watch",
+    "e2e:run": "pnpm --filter @auditforge/e2e test",
+    "e2e:wave3": "pnpm --filter @auditforge/e2e exec playwright test --grep @wave3",
+    "load:run": "pnpm --filter @auditforge/load test:wave3:all",
+    "security:scan": "semgrep --config semgrep/ --severity ERROR --severity WARNING . || true",
     "db:migrate": "pnpm --filter @auditforge/db migrate",
     "db:seed": "pnpm --filter @auditforge/db seed",
     "db:studio": "pnpm --filter @auditforge/db studio",
@@ -40,6 +45,9 @@
     "@typescript-eslint/parser": "^8.6.0",
     "@typescript-eslint/eslint-plugin": "^8.6.0",
     "vitest": "^2.1.1",
-    "tsx": "^4.19.1"
+    "tsx": "^4.19.1",
+    "@playwright/test": "^1.48.0",
+    "@axe-core/playwright": "^4.10.0",
+    "dotenv": "^16.4.5"
   }
 }

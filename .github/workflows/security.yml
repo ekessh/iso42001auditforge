@@ -25,12 +25,12 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   sast:
-    name: SAST (Semgrep)
+    name: SAST (Semgrep auto + custom)
     runs-on: ubuntu-latest
     container: returntocorp/semgrep:latest
     steps:
       - uses: actions/checkout@v4
-      - run: semgrep ci --config=auto --sarif --output semgrep.sarif
+      - run: semgrep ci --config=auto --config=semgrep/ --sarif --output semgrep.sarif
         continue-on-error: true
       - uses: github/codeql-action/upload-sarif@v3
         if: always()
@@ -47,8 +47,8 @@ jobs:
       - run: osv-scanner --recursive --skip-git ./
         continue-on-error: true
 
-  trivy:
-    name: Container Scan (Trivy)
+  trivy-fs:
+    name: Filesystem Scan (Trivy)
     runs-on: ubuntu-latest
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     steps:
@@ -63,3 +63,19 @@ jobs:
       - uses: github/codeql-action/upload-sarif@v3
         if: always()
         with: { sarif_file: trivy.sarif }
+
+  trivy-dockerfiles:
+    name: Dockerfile Scan (Trivy config)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: config
+          scan-ref: .
+          format: sarif
+          output: trivy-config.sarif
+          severity: CRITICAL,HIGH,MEDIUM
+      - uses: github/codeql-action/upload-sarif@v3
+        if: always()
+        with: { sarif_file: trivy-config.sarif }

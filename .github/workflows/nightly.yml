@@ -1,0 +1,128 @@
+# SPDX-License-Identifier: BUSL-1.1
+name: Nightly
+
+on:
+  schedule:
+    - cron: '0 4 * * *'  # 04:00 UTC daily
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  security-events: write
+
+jobs:
+  k6-load:
+    name: k6 Load Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    services:
+      postgres:
+        image: pgvector/pgvector:pg16
+        env:
+          POSTGRES_USER: auditforge
+          POSTGRES_PASSWORD: auditforge_test
+          POSTGRES_DB: auditforge_test
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd "pg_isready -U auditforge"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+      redis:
+        image: redis:7-alpine
+        ports: ['6379:6379']
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with: { version: '9' }
+      - uses: actions/setup-node@v4
+        with: { node-version: '20', cache: 'pnpm' }
+      - run: pnpm install --frozen-lockfile
+
+      - name: Install k6
+        run: |
+          sudo gpg -k
+          sudo gpg --no-default-keyring --keyring /usr/share/keyrings/k6-archive-keyring.gpg --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys C5AD17C747E3415A3642D57D77C6C491D6AC1D69
+          echo "deb [signed-by=/usr/share/keyrings/k6-archive-keyring.gpg] https://dl.k6.io/deb stable main" | sudo tee /etc/apt/sources.list.d/k6.list
+          sudo apt-get update
+          sudo apt-get install -y k6
+
+      - name: Boot API (background)
+        run: |
+          pnpm db:migrate || true
+          pnpm --filter @auditforge/api dev > api.log 2>&1 &
+          echo $! > api.pid
+          for i in $(seq 1 60); do
+            if curl -fs http://localhost:3001/health >/dev/null 2>&1; then echo "api ready"; break; fi
+            sleep 2
+          done
+        env:
+          DATABASE_URL: postgres://auditforge:auditforge_test@localhost:5432/auditforge_test
+          REDIS_URL: redis://localhost:6379
+
+      - name: Run wave-3 load scenarios
+        run: |
+          set +e
+          pnpm --filter @auditforge/load test:wave3:baseline
+          pnpm --filter @auditforge/load test:wave3:llm
+          pnpm --filter @auditforge/load test:wave3:wp-sync
+          pnpm --filter @auditforge/load test:wave3:ledger
+          set -e
+        env:
+          API_URL: http://localhost:3001
+          WS_URL: ws://localhost:3001/v1/ws
+        continue-on-error: true
+
+      - name: Stop API
+        if: always()
+        run: |
+          if [ -f api.pid ]; then kill $(cat api.pid) || true; fi
+
+      - name: Upload k6 summaries
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: k6-summaries
+          path: |
+            tests/load/summary-*.json
+          if-no-files-found: ignore
+          retention-days: 30
+
+  zap-dast:
+    name: OWASP ZAP DAST (staging)
+    runs-on: ubuntu-latest
+    if: ${{ vars.STAGING_URL != '' }}
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - name: ZAP Baseline Scan
+        uses: zaproxy/action-baseline@v0.12.0
+        with:
+          target: ${{ vars.STAGING_URL }}
+          fail_action: false
+          allow_issue_writing: false
+          cmd_options: '-a -j -m 5 -T 30'
+      - name: Upload ZAP report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: zap-report
+          path: |
+            report_html.html
+            report_json.json
+            report_md.md
+          retention-days: 30
+
+  airgap-isolation-probe:
+    name: Air-gap isolation probe
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with: { version: '9' }
+      - uses: actions/setup-node@v4
+        with: { node-version: '20', cache: 'pnpm' }
+      - run: pnpm install --frozen-lockfile
+      - name: Run airgap isolation tests
+        run: pnpm --filter @auditforge/test-helpers test:airgap || true
+        continue-on-error: true
