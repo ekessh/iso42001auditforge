@@ -11,7 +11,7 @@ import {
   ExtractedFieldDto,
   type ExtractEvidenceDto,
 } from './dto.js';
-import { EvidenceExtractionService } from './evidence-extraction.service.js';
+import type { EvidenceExtractionService } from './evidence-extraction.service.js';
 
 @ApiTags('evidence-extraction')
 @Controller({ path: 'evidence-extract', version: '1' })

@@ -17,7 +17,7 @@ import type {
   TransitionEngagementDto,
   UpdateEngagementDto,
 } from './dto.js';
-import { EngagementsRepository } from './engagements.repository.js';
+import type { EngagementsRepository } from './engagements.repository.js';
 import { EngagementAdapter } from '../../adapters/engagement.adapter.js';
 
 const ALLOWED_TRANSITIONS: Record<string, readonly string[]> = {

@@ -2,7 +2,7 @@
 import { Injectable } from '@nestjs/common';
 import { BaseRepository } from '../../db/base.repository.js';
 import type { RisksDto, CreateRisksDto, UpdateRisksDto } from './dto.js';
-import { RisksAdapter } from '../../adapters/risks.adapter.js';
+import type { RisksAdapter } from '../../adapters/risks.adapter.js';
 
 @Injectable()
 export class RisksRepository extends BaseRepository {

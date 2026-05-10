@@ -5,7 +5,7 @@ import type { FastifyRequest } from 'fastify';
 import { Rbac } from '../../common/rbac.guard.js';
 import { requireAuth } from '../../common/rls.middleware.js';
 import { AuditDashboardDto } from './dto.js';
-import { AuditDashboardService } from './audit-dashboard.service.js';
+import type { AuditDashboardService } from './audit-dashboard.service.js';
 
 @ApiTags('audit-dashboard')
 @Controller({ path: 'engagements/:engagementId/dashboard/audit', version: '1' })

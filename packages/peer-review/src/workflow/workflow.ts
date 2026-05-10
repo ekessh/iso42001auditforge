@@ -17,7 +17,7 @@ import type {
   PeerReviewSignOff,
 } from '../domain/request.js';
 import type { PeerReviewChecklist } from '../domain/checklist.js';
-import type { ItemResponse, PeerReviewVerdict } from '../domain/enums.js';
+import type { ItemResponse } from '../domain/enums.js';
 import { InvariantsChecker } from '../invariants/independence.js';
 import { canPerform, isTerminal, nextStatus } from './state-machine.js';
 import { QualityScoring } from '../scoring/quality-scoring.js';

@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BUSL-1.1
 import { describe, it, expect, vi, beforeEach } from 'vitest';
+import type { PostgresJsDatabase } from 'drizzle-orm/postgres-js';
 import {
   DrizzleWebAuthnCredentialRepository,
   MonotonicityViolationError,
@@ -75,7 +76,7 @@ function makeDb(rowsByCall: Array<unknown[] | { rowCount?: number }>) {
           return () => Promise.resolve(resolve());
         }
         if (prop === 'from' || prop === 'where' || prop === 'innerJoin') {
-          return (..._args: unknown[]) => proxy; // eslint-disable-line @typescript-eslint/no-use-before-define
+          return (..._args: unknown[]) => proxy;  
         }
         return undefined;
       },
@@ -106,7 +107,7 @@ function makeDb(rowsByCall: Array<unknown[] | { rowCount?: number }>) {
     },
   };
 
-  return new Proxy({}, dbHandler) as unknown as import('drizzle-orm/postgres-js').PostgresJsDatabase;
+  return new Proxy({}, dbHandler) as unknown as PostgresJsDatabase;
 }
 
 // ── Tests ─────────────────────────────────────────────────────────────────────

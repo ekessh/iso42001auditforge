@@ -21,7 +21,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { randomUUID } from 'node:crypto';
 import type postgres from 'postgres';
-import { TenancyAdapter } from '../../adapters/tenancy.adapter.js';
+import type { TenancyAdapter } from '../../adapters/tenancy.adapter.js';
 import { BaseRepository } from '../../db/base.repository.js';
 import { NotFoundError } from '../../common/errors.js';
 import { PG_CLIENT } from '../../db/db.module.js';

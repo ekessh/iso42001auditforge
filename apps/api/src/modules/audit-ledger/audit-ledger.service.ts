@@ -5,7 +5,7 @@
 // itself wraps `@auditforge/audit-engine`'s `AuditLedger`.
 
 import { Injectable } from '@nestjs/common';
-import { AuditEngineAdapter } from '../../adapters/audit-engine.adapter.js';
+import type { AuditEngineAdapter } from '../../adapters/audit-engine.adapter.js';
 import type { LedgerEventDto } from './dto.js';
 
 @Injectable()

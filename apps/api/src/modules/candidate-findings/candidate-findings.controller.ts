@@ -20,7 +20,7 @@ import {
   type DismissCandidateFindingDto,
   type PromoteCandidateFindingDto,
 } from './dto.js';
-import { CandidateFindingsService } from './candidate-findings.service.js';
+import type { CandidateFindingsService } from './candidate-findings.service.js';
 
 @ApiTags('candidate-findings')
 @Controller({ path: 'engagements/:engagementId/candidate-findings', version: '1' })

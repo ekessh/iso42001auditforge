@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BUSL-1.1
-import { CallHandler, ExecutionContext, Injectable, NestInterceptor } from '@nestjs/common';
+import type { CallHandler, ExecutionContext, NestInterceptor } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import type { FastifyRequest } from 'fastify';
 import { Observable, of } from 'rxjs';
 

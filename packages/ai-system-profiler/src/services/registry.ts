@@ -3,7 +3,7 @@ import { createHash, randomUUID } from 'node:crypto';
 import {
   ConflictError,
   NotFoundError,
-  TenantContext,
+  type TenantContext,
   TenantContextSchema,
   TenantViolation,
   ValidationError,
@@ -12,7 +12,7 @@ import {
   type Result,
 } from '../compat/shared.js';
 import {
-  LedgerEmitter,
+  type LedgerEmitter,
   NoopLedgerEmitter,
   type LedgerEvent,
 } from '../compat/audit-engine.js';

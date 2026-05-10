@@ -13,7 +13,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import type postgres from 'postgres';
 import { withTenantContext, type TransactionExecutor } from '@auditforge/tenancy-core';
-import { TenancyAdapter } from '../adapters/tenancy.adapter.js';
+import type { TenancyAdapter } from '../adapters/tenancy.adapter.js';
 import { RequestContextStore } from '../common/request-context.js';
 import { PG_CLIENT } from './db.module.js';
 

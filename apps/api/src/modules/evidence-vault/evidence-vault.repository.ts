@@ -15,7 +15,7 @@ import { Inject, Injectable, Optional } from '@nestjs/common';
 import { randomUUID } from 'node:crypto';
 import type postgres from 'postgres';
 import type { EvidenceObject } from '@auditforge/evidence-vault';
-import { TenancyAdapter } from '../../adapters/tenancy.adapter.js';
+import type { TenancyAdapter } from '../../adapters/tenancy.adapter.js';
 import { EvidenceVaultAdapter } from '../../adapters/evidence-vault.adapter.js';
 import { BaseRepository } from '../../db/base.repository.js';
 import { NotFoundError } from '../../common/errors.js';

@@ -6,7 +6,7 @@ import type {
   InterviewPlan,
   InterviewPlanItem,
 } from '../domain/plan.js';
-import { InterviewLibraryLoader } from '../loader/loader.js';
+import type { InterviewLibraryLoader } from '../loader/loader.js';
 
 function clauseFocusScore(
   e: InterviewLibraryEntry,

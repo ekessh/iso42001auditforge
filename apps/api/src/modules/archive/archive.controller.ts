@@ -10,7 +10,7 @@ import { ZodValidationPipe } from '../../common/zod-validation.pipe.js';
 import { CursorPageQuerySchema } from '../../common/pagination.js';
 import { requireAuth } from '../../common/rls.middleware.js';
 import { CreateArchiveSchema, UpdateArchiveSchema, type CreateArchiveDto, type UpdateArchiveDto, ArchiveDto, ArchivePageDto } from './dto.js';
-import { ArchiveService } from './archive.service.js';
+import type { ArchiveService } from './archive.service.js';
 
 @ApiTags('archive')
 @Controller({ path: 'archive', version: '1' })

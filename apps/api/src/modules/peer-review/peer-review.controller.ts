@@ -24,8 +24,8 @@ import {
   PeerReviewCommentDto,
   PeerReviewCommentListDto,
 } from './dto.js';
-import { PeerReviewService } from './peer-review.service.js';
-import { PeerReviewCommentsApiService } from './comments.service.js';
+import type { PeerReviewService } from './peer-review.service.js';
+import type { PeerReviewCommentsApiService } from './comments.service.js';
 
 @ApiTags('peer-review')
 @Controller({ path: 'peer-review', version: '1' })

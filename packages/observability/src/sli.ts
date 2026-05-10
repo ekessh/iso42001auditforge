@@ -7,7 +7,7 @@
  * recording-rule emitter generate Prometheus rules deterministically, and (c) means a regression
  * in dashboard wiring breaks the build.
  */
-import type { Histogram, Counter, Gauge } from 'prom-client';
+import { type Histogram, type Counter, type Gauge, Counter as PromClientCounter, Gauge as PromClientGauge } from 'prom-client';
 
 import { getMetrics, type Metrics } from './metrics.js';
 
@@ -153,15 +153,14 @@ let extras: { surveillanceIngest: Counter<string>; wpSnapshotAge: Gauge<string> 
 
 export function registerSloAuxiliaryMetrics(metrics: Metrics = getMetrics()): SloMetricBindings {
   if (extras === null) {
-    const { Counter: PromCounter, Gauge: PromGauge } = require('prom-client') as typeof import('prom-client');
     extras = {
-      surveillanceIngest: new PromCounter({
+      surveillanceIngest: new PromClientCounter({
         name: 'auditforge_surveillance_ingest_total',
         help: 'Surveillance telemetry ingest results.',
         labelNames: ['result', 'reason'],
         registers: [metrics.registry],
       }),
-      wpSnapshotAge: new PromGauge({
+      wpSnapshotAge: new PromClientGauge({
         name: 'auditforge_wp_snapshot_age_seconds',
         help: 'Age of the most recent working-paper Yjs snapshot in seconds, per room.',
         labelNames: ['room'],

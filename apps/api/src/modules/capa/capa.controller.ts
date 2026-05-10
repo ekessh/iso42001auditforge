@@ -10,7 +10,7 @@ import { ZodValidationPipe } from '../../common/zod-validation.pipe.js';
 import { CursorPageQuerySchema } from '../../common/pagination.js';
 import { requireAuth } from '../../common/rls.middleware.js';
 import { CreateCapaSchema, UpdateCapaSchema, type CreateCapaDto, type UpdateCapaDto, CapaDto, CapaPageDto } from './dto.js';
-import { CapaService } from './capa.service.js';
+import type { CapaService } from './capa.service.js';
 
 @ApiTags('capa')
 @Controller({ path: 'capa', version: '1' })

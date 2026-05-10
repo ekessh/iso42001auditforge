@@ -17,7 +17,7 @@ import {
   type FinalizeUploadDto,
   type PresignUploadDto,
 } from './dto.js';
-import { EvidenceService } from './evidence-vault.service.js';
+import type { EvidenceService } from './evidence-vault.service.js';
 
 @ApiTags('evidence-vault')
 @Controller({ path: 'evidence', version: '1' })

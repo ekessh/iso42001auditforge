@@ -18,7 +18,7 @@ import {
   type SignReportDto,
   type UpdateReportDto,
 } from './dto.js';
-import { ReportsService } from './reports.service.js';
+import type { ReportsService } from './reports.service.js';
 
 @ApiTags('reports')
 @Controller({ path: 'reports', version: '1' })

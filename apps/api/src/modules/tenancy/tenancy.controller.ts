@@ -10,7 +10,7 @@ import { ZodValidationPipe } from '../../common/zod-validation.pipe.js';
 import { CursorPageQuerySchema } from '../../common/pagination.js';
 import { requireAuth } from '../../common/rls.middleware.js';
 import { CreateTenancySchema, UpdateTenancySchema, type CreateTenancyDto, type UpdateTenancyDto, TenancyDto, TenancyPageDto } from './dto.js';
-import { TenancyService } from './tenancy.service.js';
+import type { TenancyService } from './tenancy.service.js';
 
 @ApiTags('tenancy')
 @Controller({ path: 'tenancy', version: '1' })

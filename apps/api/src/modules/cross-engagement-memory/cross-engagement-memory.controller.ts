@@ -10,7 +10,7 @@ import {
   PatternPageDto,
   PatternQuerySchema,
 } from './dto.js';
-import { CrossEngagementMemoryService } from './cross-engagement-memory.service.js';
+import type { CrossEngagementMemoryService } from './cross-engagement-memory.service.js';
 
 @ApiTags('cross-engagement-memory')
 @Controller({ path: 'cross-engagement-memory', version: '1' })

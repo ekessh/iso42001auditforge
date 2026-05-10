@@ -7,7 +7,8 @@
  * exception event, structured log) are independent and run side-effect-only — separating them
  * keeps each filter trivial to test.
  */
-import { ArgumentsHost, Catch, ExceptionFilter, Logger } from '@nestjs/common';
+import type { ArgumentsHost, ExceptionFilter} from '@nestjs/common';
+import { Catch, Logger } from '@nestjs/common';
 import { trace } from '@opentelemetry/api';
 import type { FastifyRequest } from 'fastify';
 

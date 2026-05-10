@@ -9,10 +9,7 @@ import { buildPMcp05 } from './p-mcp-05.js';
 import { buildPMcp06 } from './p-mcp-06.js';
 import { buildPMcp07 } from './p-mcp-07.js';
 import { buildPMcp08 } from './p-mcp-08.js';
-import {
-  MCP_CONFORMANCE_CATALOGUE,
-  type McpConformanceAdapterOptions,
-} from './shared.js';
+import type { McpConformanceAdapterOptions } from './shared.js';
 
 export {
   MCP_CONFORMANCE_CATALOGUE,

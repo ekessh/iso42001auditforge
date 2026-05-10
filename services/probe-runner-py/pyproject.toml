@@ -1,0 +1,81 @@
+# SPDX-License-Identifier: BUSL-1.1
+[project]
+name = "auditforge-probe-runner-py"
+version = "0.1.0"
+description = "AuditForge ISO 42001 — Python sidecar that runs garak / PyRIT / HarmBench / MCP probes against AI systems under test."
+readme = "README.md"
+requires-python = ">=3.12"
+license = { text = "BUSL-1.1" }
+authors = [{ name = "AuditForge", email = "ekesshtks@gmail.com" }]
+
+dependencies = [
+    "fastapi>=0.115.0",
+    "uvicorn[standard]>=0.32.0",
+    "pydantic>=2.9.0",
+    "pydantic-settings>=2.5.0",
+    "httpx>=0.27.2",
+    "anyio>=4.6.0",
+    "sse-starlette>=2.1.3",
+]
+
+[project.optional-dependencies]
+# Heavy upstream libraries are optional. If installed, the catalogue surfaces
+# their probes; if not, the sidecar still serves the native MCP probes and
+# returns a helpful "library missing" descriptor for the others. CI installs
+# only `dev` so probe wrappers stay testable via mocked subprocesses.
+garak = ["garak==0.10.3.post1"]
+pyrit = ["pyrit==0.6.0"]
+# HarmBench has no PyPI release as of writing — pin to a git commit. Consumers
+# enable this with `uv sync --extra harmbench`.
+harmbench = [
+    "harmbench @ git+https://github.com/centerforaisafety/HarmBench.git@main",
+]
+dev = [
+    "pytest>=8.3.3",
+    "pytest-asyncio>=0.24.0",
+    "pytest-cov>=5.0.0",
+    "ruff>=0.6.9",
+    "respx>=0.21.1",
+    "asgi-lifespan>=2.1.0",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["services"]
+
+[tool.uv]
+dev-dependencies = [
+    "pytest>=8.3.3",
+    "pytest-asyncio>=0.24.0",
+    "pytest-cov>=5.0.0",
+    "ruff>=0.6.9",
+    "respx>=0.21.1",
+    "asgi-lifespan>=2.1.0",
+]
+
+[tool.ruff]
+target-version = "py312"
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "N", "UP", "B", "S", "RUF", "ASYNC"]
+ignore = [
+    "S101",  # asserts in tests are fine
+    "S104",  # 0.0.0.0 bind in containerised dev sidecar is intended
+    "B008",  # FastAPI Depends() default is the canonical pattern
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["S", "N802"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
+addopts = "-ra -q --cov=services.probe_runner_py --cov-report=term-missing --cov-fail-under=80"
+
+[tool.coverage.run]
+source = ["services/probe_runner_py"]
+omit = ["tests/*", "**/__init__.py"]

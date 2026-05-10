@@ -19,7 +19,7 @@ import {
   type WebAuthnRegisterFinishDto,
   type WebAuthnRegisterStartDto,
 } from './dto.js';
-import { IdentityService } from './identity.service.js';
+import type { IdentityService } from './identity.service.js';
 
 @ApiTags('identity')
 @Controller({ path: 'identity', version: '1' })

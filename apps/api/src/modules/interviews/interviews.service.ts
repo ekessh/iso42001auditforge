@@ -13,7 +13,7 @@ import type {
   InterviewsDto,
   UpdateInterviewsDto,
 } from './dto.js';
-import { InterviewsRepository } from './interviews.repository.js';
+import type { InterviewsRepository } from './interviews.repository.js';
 import { InterviewsAdapter } from '../../adapters/interviews.adapter.js';
 
 @Injectable()

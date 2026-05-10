@@ -11,7 +11,7 @@
 import { Injectable } from '@nestjs/common';
 import { ConflictError } from '../../common/errors.js';
 import type { CreateFindingDto, FindingDto, UpdateFindingDto } from './dto.js';
-import { FindingsRepository } from './findings.repository.js';
+import type { FindingsRepository } from './findings.repository.js';
 
 const TRANSITIONS: Record<string, readonly string[]> = {
   open: ['capa_pending', 'closed'],

@@ -5,7 +5,7 @@ import { createHash } from 'node:crypto';
 import { ConflictError } from '../../common/errors.js';
 import { queueToken } from '../../queue/queue.module.js';
 import type { CreateReportDto, ReportDto, SignReportDto, UpdateReportDto } from './dto.js';
-import { ReportsRepository } from './reports.repository.js';
+import type { ReportsRepository } from './reports.repository.js';
 
 @Injectable()
 export class ReportsService {

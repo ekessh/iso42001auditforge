@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: BUSL-1.1
 import { Injectable } from '@nestjs/common';
-import { LibraryRepository } from './library.repository.js';
+import type { LibraryRepository } from './library.repository.js';
 import type { LibraryPageDto, LibraryQueryDto } from './dto.js';
 
 @Injectable()

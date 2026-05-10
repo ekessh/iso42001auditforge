@@ -2,7 +2,7 @@
 import { Injectable } from '@nestjs/common';
 import { BaseRepository } from '../../db/base.repository.js';
 import type { SoaDto, CreateSoaDto, UpdateSoaDto } from './dto.js';
-import { SoaAdapter } from '../../adapters/soa.adapter.js';
+import type { SoaAdapter } from '../../adapters/soa.adapter.js';
 
 @Injectable()
 export class SoaRepository extends BaseRepository {

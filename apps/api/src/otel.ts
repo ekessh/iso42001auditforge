@@ -19,7 +19,7 @@ export function startOtel(cfg: AppConfig, serviceVersion?: string): void {
     (cfg.NODE_ENV === 'production' || cfg.NODE_ENV === 'staging') &&
     (cfg.OTEL_EXPORTER_OTLP_ENDPOINT === undefined || cfg.OTEL_EXPORTER_OTLP_ENDPOINT.length === 0)
   ) {
-    // eslint-disable-next-line no-console
+     
     console.warn(
       '[otel] OTEL_EXPORTER_OTLP_ENDPOINT is unset in %s — distributed tracing is disabled.',
       cfg.NODE_ENV,

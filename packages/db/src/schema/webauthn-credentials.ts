@@ -1,5 +1,4 @@
 // SPDX-License-Identifier: BUSL-1.1
-import { sql } from 'drizzle-orm';
 import {
   bigint,
   boolean,

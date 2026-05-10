@@ -10,7 +10,7 @@ import { ZodValidationPipe } from '../../common/zod-validation.pipe.js';
 import { CursorPageQuerySchema } from '../../common/pagination.js';
 import { requireAuth } from '../../common/rls.middleware.js';
 import { CreateCrossFrameworkSchema, UpdateCrossFrameworkSchema, type CreateCrossFrameworkDto, type UpdateCrossFrameworkDto, CrossFrameworkDto, CrossFrameworkPageDto } from './dto.js';
-import { CrossFrameworkService } from './cross-framework.service.js';
+import type { CrossFrameworkService } from './cross-framework.service.js';
 
 @ApiTags('cross-framework')
 @Controller({ path: 'cross-framework', version: '1' })

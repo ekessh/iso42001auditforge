@@ -2,7 +2,7 @@
 import { Injectable } from '@nestjs/common';
 import { BaseRepository } from '../../db/base.repository.js';
 import type { InterviewsDto, CreateInterviewsDto, UpdateInterviewsDto } from './dto.js';
-import { InterviewsAdapter } from '../../adapters/interviews.adapter.js';
+import type { InterviewsAdapter } from '../../adapters/interviews.adapter.js';
 
 @Injectable()
 export class InterviewsRepository extends BaseRepository {

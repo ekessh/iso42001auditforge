@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: BUSL-1.1
 import { Inject, Injectable, Optional } from '@nestjs/common';
 import type { CreateAuditPlansDto, UpdateAuditPlansDto, AuditPlansDto } from './dto.js';
-import { AuditPlansRepository } from './audit-plans.repository.js';
+import type { AuditPlansRepository } from './audit-plans.repository.js';
 import { AuditPlansAdapter } from '../../adapters/audit-plans.adapter.js';
 
 @Injectable()

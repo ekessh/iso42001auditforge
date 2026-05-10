@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: BUSL-1.1
 import { Inject, Injectable, Optional } from '@nestjs/common';
 import type { CreateBillingDto, UpdateBillingDto, BillingDto } from './dto.js';
-import { BillingRepository } from './billing.repository.js';
+import type { BillingRepository } from './billing.repository.js';
 import { BillingAdapter } from '../../adapters/billing.adapter.js';
 
 @Injectable()

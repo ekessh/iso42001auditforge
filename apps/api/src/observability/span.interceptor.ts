@@ -7,11 +7,12 @@
  * create a child span with these attributes so dashboards can pivot by audit firm without parsing
  * URLs.
  */
-import {
+import type {
   CallHandler,
   ExecutionContext,
-  Injectable,
-  NestInterceptor,
+  NestInterceptor} from '@nestjs/common';
+import {
+  Injectable
 } from '@nestjs/common';
 import {
   SpanKind,
@@ -20,7 +21,8 @@ import {
   type Tracer,
 } from '@opentelemetry/api';
 import type { FastifyReply, FastifyRequest } from 'fastify';
-import { Observable, defer, tap } from 'rxjs';
+import type { Observable} from 'rxjs';
+import { defer, tap } from 'rxjs';
 
 import { RequestContextStore } from '../common/request-context.js';
 

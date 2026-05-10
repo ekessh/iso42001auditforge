@@ -20,14 +20,11 @@
 // synthesize it from a short id when absent so the API's create endpoint
 // stays callable without changing the DTO.
 
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { randomUUID } from 'node:crypto';
-import type postgres from 'postgres';
-import { TenancyAdapter } from '../../adapters/tenancy.adapter.js';
 import { BaseRepository } from '../../db/base.repository.js';
 import { NotFoundError } from '../../common/errors.js';
-import { PG_CLIENT } from '../../db/db.module.js';
-import { EngagementAdapter } from '../../adapters/engagement.adapter.js';
+import type { EngagementAdapter } from '../../adapters/engagement.adapter.js';
 import type {
   CreateEngagementDto,
   EngagementDto,

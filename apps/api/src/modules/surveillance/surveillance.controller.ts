@@ -10,7 +10,7 @@ import { ZodValidationPipe } from '../../common/zod-validation.pipe.js';
 import { CursorPageQuerySchema } from '../../common/pagination.js';
 import { requireAuth } from '../../common/rls.middleware.js';
 import { CreateSurveillanceSchema, UpdateSurveillanceSchema, type CreateSurveillanceDto, type UpdateSurveillanceDto, SurveillanceDto, SurveillancePageDto } from './dto.js';
-import { SurveillanceService } from './surveillance.service.js';
+import type { SurveillanceService } from './surveillance.service.js';
 
 @ApiTags('surveillance')
 @Controller({ path: 'surveillance', version: '1' })

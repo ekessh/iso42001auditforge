@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: BUSL-1.1
 import { Inject, Injectable, Optional } from '@nestjs/common';
 import type { CreateAiSystemsDto, UpdateAiSystemsDto, AiSystemsDto } from './dto.js';
-import { AiSystemsRepository } from './ai-systems.repository.js';
+import type { AiSystemsRepository } from './ai-systems.repository.js';
 import { AiSystemsAdapter } from '../../adapters/ai-systems.adapter.js';
 
 @Injectable()

@@ -10,7 +10,7 @@ import { ZodValidationPipe } from '../../common/zod-validation.pipe.js';
 import { CursorPageQuerySchema } from '../../common/pagination.js';
 import { requireAuth } from '../../common/rls.middleware.js';
 import { CreateCoAuditorSchema, UpdateCoAuditorSchema, type CreateCoAuditorDto, type UpdateCoAuditorDto, CoAuditorDto, CoAuditorPageDto } from './dto.js';
-import { CoAuditorService } from './co-auditor.service.js';
+import type { CoAuditorService } from './co-auditor.service.js';
 
 @ApiTags('co-auditor')
 @Controller({ path: 'co-auditor', version: '1' })

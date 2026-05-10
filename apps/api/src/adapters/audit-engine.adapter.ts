@@ -13,9 +13,10 @@
 
 import { Injectable, Logger } from '@nestjs/common';
 import { z } from 'zod';
+import type {
+  EventSchemaRegistry} from '@auditforge/audit-engine';
 import {
   AuditLedger,
-  EventSchemaRegistry,
   InMemoryEventRepository,
   createDefaultRegistry,
   type EventQuery,

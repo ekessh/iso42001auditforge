@@ -10,7 +10,7 @@ import { ZodValidationPipe } from '../../common/zod-validation.pipe.js';
 import { CursorPageQuerySchema } from '../../common/pagination.js';
 import { requireAuth } from '../../common/rls.middleware.js';
 import { CreateAuditPlansSchema, UpdateAuditPlansSchema, type CreateAuditPlansDto, type UpdateAuditPlansDto, AuditPlansDto, AuditPlansPageDto } from './dto.js';
-import { AuditPlansService } from './audit-plans.service.js';
+import type { AuditPlansService } from './audit-plans.service.js';
 
 @ApiTags('audit-plans')
 @Controller({ path: 'audit-plans', version: '1' })

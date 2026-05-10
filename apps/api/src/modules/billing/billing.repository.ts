@@ -2,7 +2,7 @@
 import { Injectable } from '@nestjs/common';
 import { BaseRepository } from '../../db/base.repository.js';
 import type { BillingDto, CreateBillingDto, UpdateBillingDto } from './dto.js';
-import { BillingAdapter } from '../../adapters/billing.adapter.js';
+import type { BillingAdapter } from '../../adapters/billing.adapter.js';
 
 @Injectable()
 export class BillingRepository extends BaseRepository {

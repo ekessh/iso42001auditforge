@@ -24,7 +24,6 @@ import type {
   CreateFindingInput,
   DispositionHistoryEntry,
   Finding,
-  FindingStatus,
   SurveillanceCarryForwardLink,
 } from '../types/finding.js';
 import type { FindingRole } from '../types/roles.js';

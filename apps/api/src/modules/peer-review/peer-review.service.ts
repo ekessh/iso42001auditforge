@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: BUSL-1.1
 import { Inject, Injectable, Optional } from '@nestjs/common';
 import type { CreatePeerReviewDto, UpdatePeerReviewDto, PeerReviewDto } from './dto.js';
-import { PeerReviewRepository } from './peer-review.repository.js';
+import type { PeerReviewRepository } from './peer-review.repository.js';
 import { PeerReviewAdapter } from '../../adapters/peer-review.adapter.js';
 
 @Injectable()

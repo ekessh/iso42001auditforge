@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: BUSL-1.1
 import { Inject, Injectable } from '@nestjs/common';
-import { Client as MinioClient } from 'minio';
+import type { Client as MinioClient } from 'minio';
 import { randomUUID } from 'node:crypto';
 import { APP_CONFIG } from '../config/config.module.js';
 import type { AppConfig } from '../config/config.schema.js';

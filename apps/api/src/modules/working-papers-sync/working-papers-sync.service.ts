@@ -8,8 +8,8 @@ import {
   WS_NOT_FOUND,
   type AuthDecision,
 } from '@auditforge/working-papers';
-import { AuditEngineAdapter } from '../../adapters/audit-engine.adapter.js';
-import { WorkingPapersSyncRepository } from './working-papers-sync.repository.js';
+import type { AuditEngineAdapter } from '../../adapters/audit-engine.adapter.js';
+import type { WorkingPapersSyncRepository } from './working-papers-sync.repository.js';
 
 interface ActiveRoom {
   state: SyncRoomState;

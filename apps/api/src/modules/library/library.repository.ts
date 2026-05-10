@@ -16,7 +16,7 @@
 
 import { Inject, Injectable } from '@nestjs/common';
 import type postgres from 'postgres';
-import { TenancyAdapter } from '../../adapters/tenancy.adapter.js';
+import type { TenancyAdapter } from '../../adapters/tenancy.adapter.js';
 import { BaseRepository } from '../../db/base.repository.js';
 import { PG_CLIENT } from '../../db/db.module.js';
 import type { LibraryEntryDto, LibraryEntryKind, LibraryQueryDto } from './dto.js';

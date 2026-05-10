@@ -8,8 +8,9 @@
 // banner.
 
 import { Injectable } from '@nestjs/common';
-import { CoverageRepository, computeOverallReadiness } from '../coverage/coverage.repository.js';
-import { CandidateFindingsRepository } from '../candidate-findings/candidate-findings.repository.js';
+import type { CoverageRepository} from '../coverage/coverage.repository.js';
+import { computeOverallReadiness } from '../coverage/coverage.repository.js';
+import type { CandidateFindingsRepository } from '../candidate-findings/candidate-findings.repository.js';
 import {
   READINESS_DISCLAIMER,
   type AnnexFamilyDto,

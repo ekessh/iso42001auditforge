@@ -10,7 +10,7 @@ import { ZodValidationPipe } from '../../common/zod-validation.pipe.js';
 import { CursorPageQuerySchema } from '../../common/pagination.js';
 import { requireAuth } from '../../common/rls.middleware.js';
 import { CreateSoaSchema, UpdateSoaSchema, type CreateSoaDto, type UpdateSoaDto, SoaDto, SoaPageDto } from './dto.js';
-import { SoaService } from './soa.service.js';
+import type { SoaService } from './soa.service.js';
 
 @ApiTags('soa')
 @Controller({ path: 'soa', version: '1' })

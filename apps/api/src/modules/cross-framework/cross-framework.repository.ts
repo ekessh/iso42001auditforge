@@ -2,7 +2,7 @@
 import { Injectable } from '@nestjs/common';
 import { BaseRepository } from '../../db/base.repository.js';
 import type { CrossFrameworkDto, CreateCrossFrameworkDto, UpdateCrossFrameworkDto } from './dto.js';
-import { CrossFrameworkAdapter } from '../../adapters/cross-framework.adapter.js';
+import type { CrossFrameworkAdapter } from '../../adapters/cross-framework.adapter.js';
 
 @Injectable()
 export class CrossFrameworkRepository extends BaseRepository {

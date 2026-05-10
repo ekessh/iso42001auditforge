@@ -10,7 +10,7 @@ import { ZodValidationPipe } from '../../common/zod-validation.pipe.js';
 import { CursorPageQuerySchema } from '../../common/pagination.js';
 import { requireAuth } from '../../common/rls.middleware.js';
 import { CreateBillingSchema, UpdateBillingSchema, type CreateBillingDto, type UpdateBillingDto, BillingDto, BillingPageDto } from './dto.js';
-import { BillingService } from './billing.service.js';
+import type { BillingService } from './billing.service.js';
 
 @ApiTags('billing')
 @Controller({ path: 'billing', version: '1' })

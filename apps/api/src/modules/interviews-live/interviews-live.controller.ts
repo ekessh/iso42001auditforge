@@ -27,7 +27,7 @@ import {
   StartInterviewSchema,
   type StartInterviewDto,
 } from './dto.js';
-import { InterviewsLiveService } from './interviews-live.service.js';
+import type { InterviewsLiveService } from './interviews-live.service.js';
 
 @ApiTags('interviews-live')
 @Controller({ path: 'interviews', version: '1' })

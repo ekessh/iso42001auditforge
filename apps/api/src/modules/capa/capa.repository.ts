@@ -9,7 +9,7 @@
 import { Injectable } from '@nestjs/common';
 import { BaseRepository } from '../../db/base.repository.js';
 import type { CapaDto, CreateCapaDto, UpdateCapaDto } from './dto.js';
-import { CapaAdapter } from '../../adapters/capa.adapter.js';
+import type { CapaAdapter } from '../../adapters/capa.adapter.js';
 
 @Injectable()
 export class CapaRepository extends BaseRepository {

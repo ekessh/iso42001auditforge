@@ -12,8 +12,8 @@ import {
 } from '@auditforge/vlm-extraction';
 import { APP_CONFIG } from '../../config/config.module.js';
 import type { AppConfig } from '../../config/config.schema.js';
-import { AuditEngineAdapter } from '../../adapters/audit-engine.adapter.js';
-import { StorageService } from '../../storage/storage.service.js';
+import type { AuditEngineAdapter } from '../../adapters/audit-engine.adapter.js';
+import type { StorageService } from '../../storage/storage.service.js';
 import type { ExtractEvidenceDto, ExtractedFieldDto } from './dto.js';
 
 @Injectable()

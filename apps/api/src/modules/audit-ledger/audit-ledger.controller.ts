@@ -5,7 +5,7 @@ import type { FastifyRequest } from 'fastify';
 import { Rbac } from '../../common/rbac.guard.js';
 import { requireAuth } from '../../common/rls.middleware.js';
 import { ChainVerificationDto, LedgerPageDto, LedgerQuerySchema } from './dto.js';
-import { AuditLedgerService } from './audit-ledger.service.js';
+import type { AuditLedgerService } from './audit-ledger.service.js';
 
 @ApiTags('audit-ledger')
 @Controller({ path: 'audit-ledger', version: '1' })

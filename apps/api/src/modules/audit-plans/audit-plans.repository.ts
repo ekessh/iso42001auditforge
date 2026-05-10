@@ -2,7 +2,7 @@
 import { Injectable } from '@nestjs/common';
 import { BaseRepository } from '../../db/base.repository.js';
 import type { AuditPlansDto, CreateAuditPlansDto, UpdateAuditPlansDto } from './dto.js';
-import { AuditPlansAdapter } from '../../adapters/audit-plans.adapter.js';
+import type { AuditPlansAdapter } from '../../adapters/audit-plans.adapter.js';
 
 @Injectable()
 export class AuditPlansRepository extends BaseRepository {

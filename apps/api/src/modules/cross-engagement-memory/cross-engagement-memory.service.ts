@@ -4,9 +4,10 @@ import {
   CrossEngagementAggregator,
   CrossEngagementMemoryQuery,
   type AggregatorAuditSink,
+  type CrossEngagementPattern,
 } from '@auditforge/cross-engagement-memory';
-import { AuditEngineAdapter } from '../../adapters/audit-engine.adapter.js';
-import { CrossEngagementMemoryRepository } from './cross-engagement-memory.repository.js';
+import type { AuditEngineAdapter } from '../../adapters/audit-engine.adapter.js';
+import type { CrossEngagementMemoryRepository } from './cross-engagement-memory.repository.js';
 import type {
   AggregateRequestDto,
   AggregateResultDto,
@@ -89,7 +90,7 @@ export class CrossEngagementMemoryService {
   }
 }
 
-function toDto(p: import('@auditforge/cross-engagement-memory').CrossEngagementPattern): PatternDto {
+function toDto(p: CrossEngagementPattern): PatternDto {
   return {
     id: p.id,
     firmId: p.firmId,

@@ -21,17 +21,19 @@
 //     `appendTransactional(tx, ...)` (enlists in caller tx). The latter
 //     is optional; absence falls back to the non-tx path with a warning.
 
-import {
+import type {
   CallHandler,
   ExecutionContext,
+  NestInterceptor} from '@nestjs/common';
+import {
   Injectable,
   Logger,
-  NestInterceptor,
   SetMetadata,
 } from '@nestjs/common';
 import type { FastifyRequest } from 'fastify';
-import { Observable, from, mergeMap, of, tap } from 'rxjs';
-import { AuditEngineAdapter } from '../adapters/audit-engine.adapter.js';
+import type { Observable} from 'rxjs';
+import { from, mergeMap, of, tap } from 'rxjs';
+import type { AuditEngineAdapter } from '../adapters/audit-engine.adapter.js';
 import { RequestContextStore } from './request-context.js';
 
 export const AUDIT_META = 'auditMeta';

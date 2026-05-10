@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BUSL-1.1
-import { Injectable, NestMiddleware } from '@nestjs/common';
+import type { NestMiddleware } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import type { FastifyReply, FastifyRequest } from 'fastify';
 import type { Role } from '../adapters/auth-core.adapter.js';
 

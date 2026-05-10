@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: BUSL-1.1
-import { ArgumentMetadata, Injectable, PipeTransform } from '@nestjs/common';
-import { ZodSchema } from 'zod';
+import type { ArgumentMetadata, PipeTransform } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
+import type { ZodSchema } from 'zod';
 import { ValidationError } from './errors.js';
 
 @Injectable()

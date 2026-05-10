@@ -21,10 +21,9 @@ import { queueToken } from '../../queue/queue.module.js';
 import type {
   CreateProbeDefinitionDto,
   ExecuteProbeDto,
-  ProbeDefinitionDto,
   ProbeExecutionDto,
 } from './dto.js';
-import { ProbesRepository } from './probes.repository.js';
+import type { ProbesRepository } from './probes.repository.js';
 
 @Injectable()
 export class ProbesService {

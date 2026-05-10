@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: BUSL-1.1
 import { Inject, Injectable, Optional } from '@nestjs/common';
 import type { CreateCrossFrameworkDto, UpdateCrossFrameworkDto, CrossFrameworkDto } from './dto.js';
-import { CrossFrameworkRepository } from './cross-framework.repository.js';
+import type { CrossFrameworkRepository } from './cross-framework.repository.js';
 import { CrossFrameworkAdapter } from '../../adapters/cross-framework.adapter.js';
 
 @Injectable()

@@ -16,7 +16,6 @@ import type { FindingRole } from '../types/roles.js';
 import {
   ALL_FINDING_STATUSES,
   TRANSITIONS,
-  canTransition,
   type CanTransitionResult,
   type Transition,
   type TransitionAction,

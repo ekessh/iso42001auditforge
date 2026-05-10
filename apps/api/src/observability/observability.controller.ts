@@ -28,7 +28,8 @@ import {
 
 import { Public } from '../common/auth.guard.js';
 import { ZodValidationPipe } from '../common/zod-validation.pipe.js';
-import { DepsHealthService, type HealthSnapshot } from './deps-health.service.js';
+import type { DepsHealthService} from './deps-health.service.js';
+import { type HealthSnapshot } from './deps-health.service.js';
 
 @ApiTags('observability')
 @Controller()

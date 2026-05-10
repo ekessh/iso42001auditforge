@@ -10,7 +10,7 @@ import { ZodValidationPipe } from '../../common/zod-validation.pipe.js';
 import { CursorPageQuerySchema } from '../../common/pagination.js';
 import { requireAuth } from '../../common/rls.middleware.js';
 import { CreateRisksSchema, UpdateRisksSchema, type CreateRisksDto, type UpdateRisksDto, RisksDto, RisksPageDto } from './dto.js';
-import { RisksService } from './risks.service.js';
+import type { RisksService } from './risks.service.js';
 
 @ApiTags('risks')
 @Controller({ path: 'risks', version: '1' })

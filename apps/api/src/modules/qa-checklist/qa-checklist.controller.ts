@@ -18,7 +18,7 @@ import {
   type EvaluateChecklistDto,
   type OverrideChecklistItemDto,
 } from './dto.js';
-import { QaChecklistService } from './qa-checklist.service.js';
+import type { QaChecklistService } from './qa-checklist.service.js';
 
 /**
  * QA-checklist endpoints. Auditees never see this — RBAC scopes to

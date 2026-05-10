@@ -240,7 +240,7 @@ describe('FindingRegistry — CRUD + ledger', () => {
       { action: 'resolve', role: 'lead_auditor', by: rig.auditorId },
       tenant,
     );
-    cur = rig.registry.transition(
+    void rig.registry.transition(
       cur.id,
       { action: 'close', role: 'lead_auditor', by: rig.auditorId },
       tenant,

@@ -1,11 +1,12 @@
 // SPDX-License-Identifier: BUSL-1.1
-import {
+import type {
   CanActivate,
-  ExecutionContext,
+  ExecutionContext} from '@nestjs/common';
+import {
   Injectable,
   SetMetadata,
 } from '@nestjs/common';
-import { Reflector } from '@nestjs/core';
+import type { Reflector } from '@nestjs/core';
 import type { FastifyRequest } from 'fastify';
 import { type Action, type Role, can } from '../adapters/auth-core.adapter.js';
 import { ForbiddenError, UnauthorizedError } from './errors.js';

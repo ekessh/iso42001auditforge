@@ -27,7 +27,7 @@ import type {
   SizeCalculatorResultDto,
   UpdateSamplesDto,
 } from './dto.js';
-import { SamplesRepository } from './samples.repository.js';
+import type { SamplesRepository } from './samples.repository.js';
 import { SamplingAdapter } from '../../adapters/sampling.adapter.js';
 import { AuditEngineAdapter } from '../../adapters/audit-engine.adapter.js';
 

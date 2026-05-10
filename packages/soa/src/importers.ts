@@ -2,7 +2,7 @@
 import { z } from 'zod';
 import {
   SoaApplicabilitySchema,
-  SoaImplementationStatusSchema,
+  type SoaImplementationStatusSchema,
   type SoaRecord,
   type ValidationIssue,
   type ValidationReport,

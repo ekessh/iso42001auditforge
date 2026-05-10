@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BUSL-1.1
-import { Inject, Injectable, NestMiddleware } from '@nestjs/common';
+import type { NestMiddleware } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import type { FastifyReply, FastifyRequest } from 'fastify';
 import { randomUUID } from 'node:crypto';
 import { TenancyAdapter } from '../adapters/tenancy.adapter.js';

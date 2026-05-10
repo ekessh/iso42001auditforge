@@ -113,7 +113,7 @@ export class CoverageTracker {
    */
   asCoverageMap(engagementId: EngagementId): ReadonlyMap<string, CoverageState> {
     const map = new Map<string, CoverageState>();
-    for (const [k, v] of this.states.entries()) {
+    for (const [_k, v] of this.states.entries()) {
       if (v.engagementId === engagementId) map.set(v.clauseId as unknown as string, v);
     }
     return map;

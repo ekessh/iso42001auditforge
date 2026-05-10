@@ -10,7 +10,7 @@ import { ZodValidationPipe } from '../../common/zod-validation.pipe.js';
 import { CursorPageQuerySchema } from '../../common/pagination.js';
 import { requireAuth } from '../../common/rls.middleware.js';
 import { CreateAgentWorkflowsSchema, UpdateAgentWorkflowsSchema, type CreateAgentWorkflowsDto, type UpdateAgentWorkflowsDto, AgentWorkflowsDto, AgentWorkflowsPageDto } from './dto.js';
-import { AgentWorkflowsService } from './agent-workflows.service.js';
+import type { AgentWorkflowsService } from './agent-workflows.service.js';
 
 @ApiTags('agent-workflows')
 @Controller({ path: 'agent-workflows', version: '1' })

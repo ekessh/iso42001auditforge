@@ -22,7 +22,7 @@ import type postgres from 'postgres';
 import { APP_CONFIG } from '../../config/config.module.js';
 import type { AppConfig } from '../../config/config.schema.js';
 import { PG_CLIENT } from '../../db/db.module.js';
-import { AuditEngineAdapter } from '../../adapters/audit-engine.adapter.js';
+import type { AuditEngineAdapter } from '../../adapters/audit-engine.adapter.js';
 import { loadSearchConfig, type SearchConfig } from './search.config.js';
 import type { SearchRequest } from './dto.js';
 

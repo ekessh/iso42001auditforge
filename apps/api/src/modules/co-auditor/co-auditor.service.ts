@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: BUSL-1.1
 import { Inject, Injectable, Optional } from '@nestjs/common';
 import type { CreateCoAuditorDto, UpdateCoAuditorDto, CoAuditorDto } from './dto.js';
-import { CoAuditorRepository } from './co-auditor.repository.js';
+import type { CoAuditorRepository } from './co-auditor.repository.js';
 import { CoAuditorAdapter } from '../../adapters/co-auditor.adapter.js';
 
 @Injectable()

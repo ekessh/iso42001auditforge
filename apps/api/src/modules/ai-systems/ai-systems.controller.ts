@@ -10,7 +10,7 @@ import { ZodValidationPipe } from '../../common/zod-validation.pipe.js';
 import { CursorPageQuerySchema } from '../../common/pagination.js';
 import { requireAuth } from '../../common/rls.middleware.js';
 import { CreateAiSystemsSchema, UpdateAiSystemsSchema, type CreateAiSystemsDto, type UpdateAiSystemsDto, AiSystemsDto, AiSystemsPageDto } from './dto.js';
-import { AiSystemsService } from './ai-systems.service.js';
+import type { AiSystemsService } from './ai-systems.service.js';
 
 @ApiTags('ai-systems')
 @Controller({ path: 'ai-systems', version: '1' })

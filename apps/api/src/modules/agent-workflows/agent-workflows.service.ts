@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: BUSL-1.1
 import { Inject, Injectable, Optional } from '@nestjs/common';
 import type { CreateAgentWorkflowsDto, UpdateAgentWorkflowsDto, AgentWorkflowsDto } from './dto.js';
-import { AgentWorkflowsRepository } from './agent-workflows.repository.js';
+import type { AgentWorkflowsRepository } from './agent-workflows.repository.js';
 import { TraceAnalyzerAdapter } from '../../adapters/trace-analyzer.adapter.js';
 
 @Injectable()

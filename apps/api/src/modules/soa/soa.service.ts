@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: BUSL-1.1
 import { Inject, Injectable, Optional } from '@nestjs/common';
 import type { CreateSoaDto, UpdateSoaDto, SoaDto } from './dto.js';
-import { SoaRepository } from './soa.repository.js';
+import type { SoaRepository } from './soa.repository.js';
 import { SoaAdapter } from '../../adapters/soa.adapter.js';
 
 @Injectable()

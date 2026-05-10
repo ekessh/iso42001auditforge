@@ -20,7 +20,7 @@ import {
   type TranscriptionProvider,
   type TranscriptSegment,
 } from '@auditforge/transcription';
-import { AuditEngineAdapter } from '../../adapters/audit-engine.adapter.js';
+import type { AuditEngineAdapter } from '../../adapters/audit-engine.adapter.js';
 import type {
   CoverageDeltaDto,
   CoverageDeltaItemDto,

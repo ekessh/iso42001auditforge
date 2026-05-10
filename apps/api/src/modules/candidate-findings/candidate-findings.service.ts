@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: BUSL-1.1
 import { Injectable } from '@nestjs/common';
-import { CandidateFindingsRepository } from './candidate-findings.repository.js';
-import { FindingsRepository } from '../findings/findings.repository.js';
+import type { CandidateFindingsRepository } from './candidate-findings.repository.js';
+import type { FindingsRepository } from '../findings/findings.repository.js';
 import type {
   CandidateFindingDto,
   PromoteCandidateFindingDto,

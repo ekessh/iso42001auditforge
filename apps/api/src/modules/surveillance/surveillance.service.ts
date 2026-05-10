@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: BUSL-1.1
 import { Inject, Injectable, Optional } from '@nestjs/common';
 import type { CreateSurveillanceDto, UpdateSurveillanceDto, SurveillanceDto } from './dto.js';
-import { SurveillanceRepository } from './surveillance.repository.js';
+import type { SurveillanceRepository } from './surveillance.repository.js';
 import { SurveillanceAdapter } from '../../adapters/surveillance.adapter.js';
 
 @Injectable()

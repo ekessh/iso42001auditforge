@@ -5,9 +5,10 @@ import {
   type OnApplicationBootstrap,
   type OnModuleDestroy,
 } from '@nestjs/common';
-import { HttpAdapterHost } from '@nestjs/core';
+import type { HttpAdapterHost } from '@nestjs/core';
 import { randomUUID } from 'node:crypto';
-import type { IncomingMessage } from 'node:http';
+import type { IncomingMessage, Server as HttpServer } from 'node:http';
+import type { Socket as NetSocket } from 'node:net';
 import { WebSocketServer, type WebSocket } from 'ws';
 import {
   StubDiarizationProvider,
@@ -19,7 +20,7 @@ import {
   type TranscriptSegment,
 } from '@auditforge/transcription';
 import { type Action, type Role, can } from '../../adapters/auth-core.adapter.js';
-import { InterviewsLiveService } from './interviews-live.service.js';
+import type { InterviewsLiveService } from './interviews-live.service.js';
 
 const PATH_PREFIX = '/sync/interview/';
 const RBAC_RESOURCE = 'interview';
@@ -59,7 +60,7 @@ export class InterviewsLiveGateway
       return;
     }
     const server = httpAdapter.getHttpServer() as
-      | import('node:http').Server
+      | HttpServer
       | null;
     if (!server) {
       this.logger.warn('No HTTP server — interviews-live gateway disabled');
@@ -68,7 +69,7 @@ export class InterviewsLiveGateway
     this.wss = new WebSocketServer({ noServer: true });
     server.on('upgrade', (req, socket, head) => {
       if (!req.url || !req.url.startsWith(PATH_PREFIX)) return;
-      const sock = socket as unknown as import('node:net').Socket;
+      const sock = socket as unknown as NetSocket;
       const sessionId = req.url
         .slice(PATH_PREFIX.length)
         .split('?')[0]
@@ -96,7 +97,7 @@ export class InterviewsLiveGateway
   }
 
   private reject(
-    socket: import('node:net').Socket,
+    socket: NetSocket,
     code: number,
     reason: string,
   ): void {
@@ -110,7 +111,7 @@ export class InterviewsLiveGateway
 
   private async authenticateAndUpgrade(
     req: IncomingMessage,
-    socket: import('node:net').Socket,
+    socket: NetSocket,
     head: Buffer,
     sessionId: string,
   ): Promise<void> {

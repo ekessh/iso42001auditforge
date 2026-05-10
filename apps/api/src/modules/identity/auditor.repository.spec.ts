@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BUSL-1.1
 import { describe, it, expect, vi, beforeEach } from 'vitest';
+import type { PostgresJsDatabase } from 'drizzle-orm/postgres-js';
 import { DrizzleAuditorRepository } from './auditor.repository.js';
 import type { LedgerSink } from '../../common/auth.guard.js';
 
@@ -120,7 +121,7 @@ function makeDb(rowsByCall: Array<unknown[]>) {
           prop === 'where' ||
           prop === 'innerJoin'
         ) {
-          return (..._args: unknown[]) => proxy;  // eslint-disable-line @typescript-eslint/no-use-before-define
+          return (..._args: unknown[]) => proxy;   
         }
         return undefined;
       },
@@ -146,7 +147,7 @@ function makeDb(rowsByCall: Array<unknown[]>) {
     },
   };
 
-  return new Proxy({}, dbHandler) as unknown as import('drizzle-orm/postgres-js').PostgresJsDatabase;
+  return new Proxy({}, dbHandler) as unknown as PostgresJsDatabase;
 }
 
 // ── Tests ─────────────────────────────────────────────────────────────────────

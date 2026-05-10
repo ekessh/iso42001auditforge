@@ -7,7 +7,7 @@ import { requireAuth } from '../../common/rls.middleware.js';
 import { ZodValidationPipe } from '../../common/zod-validation.pipe.js';
 import { ForbiddenError } from '../../common/errors.js';
 import { SearchRequestSchema, SearchResponseDto, type SearchRequest } from './dto.js';
-import { SearchService } from './search.service.js';
+import type { SearchService } from './search.service.js';
 
 @ApiTags('search')
 @Controller({ path: 'search', version: '1' })

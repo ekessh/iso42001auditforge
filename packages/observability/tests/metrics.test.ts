@@ -36,7 +36,7 @@ describe('metrics registry', () => {
       'auditforge_backup_age_seconds',
     ];
     expect(expectedNames).toHaveLength(19);
-    for (const name of expectedNames) {
+    for (const _name of expectedNames) {
       // Each metric registers HELP and TYPE lines even with zero samples, EXCEPT counters,
       // which only emit on first inc(). Touch them.
     }

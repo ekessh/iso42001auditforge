@@ -17,7 +17,7 @@ import {
   type TransitionEngagementDto,
   type UpdateEngagementDto,
 } from './dto.js';
-import { EngagementsService } from './engagements.service.js';
+import type { EngagementsService } from './engagements.service.js';
 
 @ApiTags('engagements')
 @Controller({ path: 'engagements', version: '1' })

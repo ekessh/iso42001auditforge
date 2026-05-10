@@ -5,7 +5,6 @@ import type {
   Claim,
   ClaimRelation,
   ClaimRelationKind,
-  ClaimValidity,
   ClaimAttribution,
   ClaimAttributionStatus,
 } from '../domain/claim.js';

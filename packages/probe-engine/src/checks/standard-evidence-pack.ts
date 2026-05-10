@@ -7,13 +7,13 @@ import {
   type AnyProbeDefinition,
   type ProbeRunResult,
 } from '../dsl.js';
-import {
+import type {
   ExternalAuditEvidenceRunner,
-  type ExternalBudget,
-  type ExternalCheckOutcome,
-  type ExternalRunStatus,
-  type ExternalSandbox,
-  type ExternalTarget,
+  ExternalBudget,
+  ExternalCheckOutcome,
+  ExternalRunStatus,
+  ExternalSandbox,
+  ExternalTarget,
 } from '../external-runner.js';
 
 export interface StandardEvidencePackEntry {

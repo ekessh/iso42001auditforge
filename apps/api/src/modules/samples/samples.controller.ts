@@ -25,7 +25,7 @@ import {
   DrawSampleResultDto,
   SizeCalculatorResultDto,
 } from './dto.js';
-import { SamplesService } from './samples.service.js';
+import type { SamplesService } from './samples.service.js';
 
 @ApiTags('samples')
 @Controller({ path: 'samples', version: '1' })

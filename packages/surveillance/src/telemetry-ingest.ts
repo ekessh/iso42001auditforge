@@ -18,7 +18,7 @@ import {
   verifyRequest,
   InMemoryNonceStore,
 } from './signing.js';
-import { TokenBucketRateLimiter } from './rate-limit.js';
+import type { TokenBucketRateLimiter } from './rate-limit.js';
 
 /**
  * Hardened telemetry ingest pipeline:

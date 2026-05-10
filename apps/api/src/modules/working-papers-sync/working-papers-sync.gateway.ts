@@ -5,9 +5,10 @@ import {
   type OnApplicationBootstrap,
   type OnModuleDestroy,
 } from '@nestjs/common';
-import { HttpAdapterHost } from '@nestjs/core';
+import type { HttpAdapterHost } from '@nestjs/core';
 import { randomUUID } from 'node:crypto';
-import type { IncomingMessage } from 'node:http';
+import type { IncomingMessage, Server as HttpServer } from 'node:http';
+import type { Socket as NetSocket } from 'node:net';
 import { WebSocketServer, type WebSocket } from 'ws';
 import { Awareness, applyAwarenessUpdate, encodeAwarenessUpdate } from 'y-protocols/awareness';
 import * as Y from 'yjs';
@@ -18,7 +19,7 @@ import {
   WS_NOT_FOUND,
 } from '@auditforge/working-papers';
 import { type Action, type Role, can } from '../../adapters/auth-core.adapter.js';
-import { WorkingPapersSyncService } from './working-papers-sync.service.js';
+import type { WorkingPapersSyncService } from './working-papers-sync.service.js';
 
 interface SocketContext {
   sessionId: string;
@@ -57,7 +58,7 @@ export class WorkingPapersSyncGateway
       this.logger.warn('No HttpAdapter — sync gateway disabled (test bootstrap)');
       return;
     }
-    const server = httpAdapter.getHttpServer() as import('node:http').Server | null;
+    const server = httpAdapter.getHttpServer() as HttpServer | null;
     if (!server) {
       this.logger.warn('No underlying HTTP server — sync gateway disabled');
       return;
@@ -66,7 +67,7 @@ export class WorkingPapersSyncGateway
     server.on('upgrade', (req, socket, head) => {
       if (!req.url || !req.url.startsWith(PATH_PREFIX)) return;
       const wpId = req.url.slice(PATH_PREFIX.length).split('?')[0]?.split('/')[0];
-      const sock = socket as unknown as import('node:net').Socket;
+      const sock = socket as unknown as NetSocket;
       if (!wpId) {
         this.rejectUpgrade(sock, WS_BAD_REQUEST, 'wpId required');
         return;
@@ -92,7 +93,7 @@ export class WorkingPapersSyncGateway
   }
 
   private rejectUpgrade(
-    socket: import('node:net').Socket,
+    socket: NetSocket,
     code: number,
     reason: string,
   ): void {
@@ -106,7 +107,7 @@ export class WorkingPapersSyncGateway
 
   private async authenticateAndUpgrade(
     req: IncomingMessage,
-    socket: import('node:net').Socket,
+    socket: NetSocket,
     head: Buffer,
     workingPaperId: string,
   ): Promise<void> {

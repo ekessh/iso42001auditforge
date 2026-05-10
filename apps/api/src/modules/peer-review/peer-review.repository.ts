@@ -2,7 +2,7 @@
 import { Injectable } from '@nestjs/common';
 import { BaseRepository } from '../../db/base.repository.js';
 import type { PeerReviewDto, CreatePeerReviewDto, UpdatePeerReviewDto } from './dto.js';
-import { PeerReviewAdapter } from '../../adapters/peer-review.adapter.js';
+import type { PeerReviewAdapter } from '../../adapters/peer-review.adapter.js';
 
 @Injectable()
 export class PeerReviewRepository extends BaseRepository {

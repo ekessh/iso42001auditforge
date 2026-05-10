@@ -7,7 +7,7 @@ import {
   type PeerReviewLedgerEvent,
   type PeerReviewRequest,
 } from '@auditforge/peer-review';
-import { AuditEngineAdapter } from '../../adapters/audit-engine.adapter.js';
+import type { AuditEngineAdapter } from '../../adapters/audit-engine.adapter.js';
 import type { AddCommentDto, ResolveCommentDto } from './dto.js';
 import { NotFoundError } from '../../common/errors.js';
 

@@ -6,7 +6,7 @@ import {
   type QaChecklistLedgerEvent,
   type ReportPublicationContext,
 } from '@auditforge/qa-checklist';
-import { AuditEngineAdapter } from '../../adapters/audit-engine.adapter.js';
+import type { AuditEngineAdapter } from '../../adapters/audit-engine.adapter.js';
 
 @Injectable()
 export class QaChecklistService {

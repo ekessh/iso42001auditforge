@@ -2,7 +2,7 @@
 import { Injectable } from '@nestjs/common';
 import { BaseRepository } from '../../db/base.repository.js';
 import type { AiSystemsDto, CreateAiSystemsDto, UpdateAiSystemsDto } from './dto.js';
-import { AiSystemsAdapter } from '../../adapters/ai-systems.adapter.js';
+import type { AiSystemsAdapter } from '../../adapters/ai-systems.adapter.js';
 
 @Injectable()
 export class AiSystemsRepository extends BaseRepository {

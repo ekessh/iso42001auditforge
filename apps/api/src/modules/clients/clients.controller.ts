@@ -10,7 +10,7 @@ import { ZodValidationPipe } from '../../common/zod-validation.pipe.js';
 import { CursorPageQuerySchema } from '../../common/pagination.js';
 import { requireAuth } from '../../common/rls.middleware.js';
 import { CreateClientsSchema, UpdateClientsSchema, type CreateClientsDto, type UpdateClientsDto, ClientsDto, ClientsPageDto } from './dto.js';
-import { ClientsService } from './clients.service.js';
+import type { ClientsService } from './clients.service.js';
 
 @ApiTags('clients')
 @Controller({ path: 'clients', version: '1' })

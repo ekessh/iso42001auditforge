@@ -17,7 +17,7 @@ import type {
   UpdateWorkingPaperDto,
   WorkingPaperDto,
 } from './dto.js';
-import { WorkingPapersRepository } from './working-papers.repository.js';
+import type { WorkingPapersRepository } from './working-papers.repository.js';
 
 @Injectable()
 export class WorkingPapersService {

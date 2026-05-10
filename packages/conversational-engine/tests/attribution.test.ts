@@ -10,7 +10,6 @@ import { asClauseId } from '../src/types/ids.js';
 import {
   buildClaim,
   emptyCoverage,
-  ENGAGEMENT,
   FakeClaimExtractor,
   FakeEpisodeStore,
   FakeGraphReader,

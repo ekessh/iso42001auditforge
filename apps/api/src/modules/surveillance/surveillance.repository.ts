@@ -2,7 +2,7 @@
 import { Injectable } from '@nestjs/common';
 import { BaseRepository } from '../../db/base.repository.js';
 import type { SurveillanceDto, CreateSurveillanceDto, UpdateSurveillanceDto } from './dto.js';
-import { SurveillanceAdapter } from '../../adapters/surveillance.adapter.js';
+import type { SurveillanceAdapter } from '../../adapters/surveillance.adapter.js';
 
 @Injectable()
 export class SurveillanceRepository extends BaseRepository {

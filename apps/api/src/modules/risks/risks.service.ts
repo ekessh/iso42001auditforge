@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: BUSL-1.1
 import { Inject, Injectable, Optional } from '@nestjs/common';
 import type { CreateRisksDto, UpdateRisksDto, RisksDto } from './dto.js';
-import { RisksRepository } from './risks.repository.js';
+import type { RisksRepository } from './risks.repository.js';
 import { RisksAdapter } from '../../adapters/risks.adapter.js';
 
 @Injectable()

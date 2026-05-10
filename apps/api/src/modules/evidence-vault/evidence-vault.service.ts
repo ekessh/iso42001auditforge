@@ -12,7 +12,7 @@ import { APP_CONFIG } from '../../config/config.module.js';
 import type { AppConfig } from '../../config/config.schema.js';
 import { EvidenceVaultAdapter } from '../../adapters/evidence-vault.adapter.js';
 import { queueToken } from '../../queue/queue.module.js';
-import { StorageService } from '../../storage/storage.service.js';
+import type { StorageService } from '../../storage/storage.service.js';
 import type {
   DownloadUrlDto,
   EvidenceDto,
@@ -20,7 +20,7 @@ import type {
   PresignUploadDto,
   PresignedUploadResponseDto,
 } from './dto.js';
-import { EvidenceRepository } from './evidence-vault.repository.js';
+import type { EvidenceRepository } from './evidence-vault.repository.js';
 
 @Injectable()
 export class EvidenceService {

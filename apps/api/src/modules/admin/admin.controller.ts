@@ -4,7 +4,7 @@ import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import type { FastifyRequest } from 'fastify';
 import { z } from 'zod';
 import { ZodValidationPipe } from '../../common/zod-validation.pipe.js';
-import { AuditEngineAdapter } from '../../adapters/audit-engine.adapter.js';
+import type { AuditEngineAdapter } from '../../adapters/audit-engine.adapter.js';
 import { Rbac } from '../../common/rbac.guard.js';
 import { requireAuth } from '../../common/rls.middleware.js';
 import { AuditTrail } from '../../common/audit-trail.interceptor.js';

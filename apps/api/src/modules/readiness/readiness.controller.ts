@@ -5,7 +5,7 @@ import type { FastifyRequest } from 'fastify';
 import { Rbac } from '../../common/rbac.guard.js';
 import { requireAuth } from '../../common/rls.middleware.js';
 import { ReadinessDto } from './dto.js';
-import { ReadinessService } from './readiness.service.js';
+import type { ReadinessService } from './readiness.service.js';
 
 @ApiTags('readiness')
 @Controller({ path: 'engagements/:engagementId/dashboard/readiness', version: '1' })

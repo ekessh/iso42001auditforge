@@ -3,7 +3,7 @@ import { randomUUID } from 'node:crypto';
 
 import { ValidationError } from '@auditforge/shared';
 
-import type { AnyProbeDefinition, ProbeRunContext, ProbeRunResult } from './dsl.js';
+import type { AnyProbeDefinition, InferenceClient, ProbeRunContext, ProbeRunResult } from './dsl.js';
 import { isProbeRunResult } from './dsl.js';
 import type { BudgetController } from './budget-controller.js';
 import { sha256Json } from './hash.js';
@@ -48,7 +48,7 @@ export interface RunRequest<P> {
   readonly params: P;
   readonly seed?: number;
   readonly approvedEgress?: readonly EgressTarget[];
-  readonly inferenceClient?: import('./dsl.js').InferenceClient | null;
+  readonly inferenceClient?: InferenceClient | null;
 }
 
 export class ProbeRunner {

@@ -11,7 +11,7 @@ import { ZodValidationPipe } from '../../common/zod-validation.pipe.js';
 import { CursorPageQuerySchema } from '../../common/pagination.js';
 import { requireAuth } from '../../common/rls.middleware.js';
 import { CreateTracesSchema, UpdateTracesSchema, type CreateTracesDto, type UpdateTracesDto, TracesDto, TracesPageDto } from './dto.js';
-import { TracesService } from './traces.service.js';
+import type { TracesService } from './traces.service.js';
 
 const IngestTraceSchema = z.object({
   name: z.string().min(1).max(200),

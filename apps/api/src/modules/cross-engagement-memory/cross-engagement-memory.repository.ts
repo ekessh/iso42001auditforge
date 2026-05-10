@@ -13,7 +13,7 @@ import {
   type PatternRepository,
   InMemoryPatternRepository,
 } from '@auditforge/cross-engagement-memory';
-import { TenancyAdapter } from '../../adapters/tenancy.adapter.js';
+import type { TenancyAdapter } from '../../adapters/tenancy.adapter.js';
 import { BaseRepository } from '../../db/base.repository.js';
 import { PG_CLIENT } from '../../db/db.module.js';
 

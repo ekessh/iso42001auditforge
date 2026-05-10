@@ -2,7 +2,6 @@
 import { ValidationError } from '@auditforge/shared';
 import type { PeerReviewChecklist, QualityChecklistItem } from '../domain/checklist.js';
 import type { PeerReviewRequest } from '../domain/request.js';
-import type { ItemResponse } from '../domain/enums.js';
 
 export interface QualityAggregate {
   /** Items not marked NA. */

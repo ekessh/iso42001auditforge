@@ -2,7 +2,7 @@
 import { Injectable } from '@nestjs/common';
 import { BaseRepository } from '../../db/base.repository.js';
 import type { AgentWorkflowsDto, CreateAgentWorkflowsDto, UpdateAgentWorkflowsDto } from './dto.js';
-import { TraceAnalyzerAdapter } from '../../adapters/trace-analyzer.adapter.js';
+import type { TraceAnalyzerAdapter } from '../../adapters/trace-analyzer.adapter.js';
 
 @Injectable()
 export class AgentWorkflowsRepository extends BaseRepository {

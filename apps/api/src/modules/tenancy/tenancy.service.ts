@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: BUSL-1.1
 import { Injectable } from '@nestjs/common';
 import type { CreateTenancyDto, UpdateTenancyDto, TenancyDto } from './dto.js';
-import { TenancyRepository } from './tenancy.repository.js';
+import type { TenancyRepository } from './tenancy.repository.js';
 
 @Injectable()
 export class TenancyService {

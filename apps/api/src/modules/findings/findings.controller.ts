@@ -17,7 +17,7 @@ import {
   type CreateFindingDto,
   type UpdateFindingDto,
 } from './dto.js';
-import { FindingsService } from './findings.service.js';
+import type { FindingsService } from './findings.service.js';
 
 const TransitionSchema = z.object({ to: FindingStatus });
 

@@ -15,7 +15,7 @@ import {
   type CreateWorkingPaperDto,
   type UpdateWorkingPaperDto,
 } from './dto.js';
-import { WorkingPapersService } from './working-papers.service.js';
+import type { WorkingPapersService } from './working-papers.service.js';
 
 @ApiTags('working-papers')
 @Controller({ path: 'working-papers', version: '1' })

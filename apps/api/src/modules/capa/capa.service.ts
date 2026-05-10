@@ -8,7 +8,7 @@
 
 import { Inject, Injectable, Optional } from '@nestjs/common';
 import type { CreateCapaDto, UpdateCapaDto, CapaDto } from './dto.js';
-import { CapaRepository } from './capa.repository.js';
+import type { CapaRepository } from './capa.repository.js';
 import { CapaAdapter } from '../../adapters/capa.adapter.js';
 
 @Injectable()

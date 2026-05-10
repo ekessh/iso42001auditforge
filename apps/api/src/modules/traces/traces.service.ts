@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: BUSL-1.1
 import { Inject, Injectable, Optional } from '@nestjs/common';
 import type { CreateTracesDto, UpdateTracesDto, TracesDto } from './dto.js';
-import { TracesRepository } from './traces.repository.js';
+import type { TracesRepository } from './traces.repository.js';
 import { TraceAnalyzerAdapter } from '../../adapters/trace-analyzer.adapter.js';
 
 @Injectable()

@@ -8,9 +8,10 @@
 // with zeros so the frontend renders the dashboard skeleton end-to-end.
 
 import { Injectable } from '@nestjs/common';
-import { CandidateFindingsRepository } from '../candidate-findings/candidate-findings.repository.js';
-import { FindingsRepository } from '../findings/findings.repository.js';
-import { CoverageRepository, computeOverallReadiness } from '../coverage/coverage.repository.js';
+import type { CandidateFindingsRepository } from '../candidate-findings/candidate-findings.repository.js';
+import type { FindingsRepository } from '../findings/findings.repository.js';
+import type { CoverageRepository} from '../coverage/coverage.repository.js';
+import { computeOverallReadiness } from '../coverage/coverage.repository.js';
 import type { AuditDashboardDto } from './dto.js';
 
 @Injectable()

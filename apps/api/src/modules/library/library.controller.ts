@@ -3,7 +3,7 @@ import { Controller, Get, Query } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Rbac } from '../../common/rbac.guard.js';
 import { LibraryPageDto, LibraryQuerySchema } from './dto.js';
-import { LibraryService } from './library.service.js';
+import type { LibraryService } from './library.service.js';
 
 @ApiTags('library')
 @Controller({ path: 'library', version: '1' })

@@ -6,7 +6,7 @@
 
 import { Inject, Injectable, Optional } from '@nestjs/common';
 import type { CreateArchiveDto, UpdateArchiveDto, ArchiveDto } from './dto.js';
-import { ArchiveRepository } from './archive.repository.js';
+import type { ArchiveRepository } from './archive.repository.js';
 import { ArchiveAdapter } from '../../adapters/archive.adapter.js';
 
 @Injectable()

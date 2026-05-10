@@ -21,7 +21,7 @@ import {
   InterviewLibraryListDto,
   InterviewPlanDto,
 } from './dto.js';
-import { InterviewsService } from './interviews.service.js';
+import type { InterviewsService } from './interviews.service.js';
 
 @ApiTags('interviews')
 @Controller({ path: 'interviews', version: '1' })

@@ -17,7 +17,7 @@ import {
   type CreateProbeDefinitionDto,
   type ExecuteProbeDto,
 } from './dto.js';
-import { ProbesService } from './probes.service.js';
+import type { ProbesService } from './probes.service.js';
 
 @ApiTags('probes')
 @Controller({ path: 'probes', version: '1' })
