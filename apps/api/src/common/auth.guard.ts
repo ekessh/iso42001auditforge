@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BUSL-1.1
-import { CanActivate, ExecutionContext, Injectable, Optional, SetMetadata } from '@nestjs/common';
+import type { CanActivate, ExecutionContext} from '@nestjs/common';
+import { Injectable, Optional, SetMetadata } from '@nestjs/common';
 import { importSPKI, jwtVerify } from 'jose';
 import type { FastifyRequest } from 'fastify';
 import type { Role } from '../adapters/auth-core.adapter.js';
@@ -70,15 +71,9 @@ export class AuthGuard implements CanActivate {
   }
 
   private async verifyBearerToken(req: FastifyRequest, token: string): Promise<void> {
-    const publicKeyPem = process.env.JWT_PUBLIC_KEY;
-    if (!publicKeyPem) {
-      void this.ledgerSink?.emitAuthFailure('jwt_public_key_not_configured', {});
-      throw new UnauthorizedError('JWT verification not configured');
-    }
-
-    // Detect and reject alg=none before the crypto operation.
-    // jose's jwtVerify also rejects it, but an explicit pre-check makes the
-    // intent clear and avoids relying solely on library behaviour.
+    // Structural and algorithm checks run before the public-key lookup so that
+    // malformed or forbidden tokens are rejected with the correct event reason
+    // regardless of whether JWT_PUBLIC_KEY is configured.
     let header: Record<string, unknown>;
     try {
       const parts = token.split('.');
@@ -112,6 +107,12 @@ export class AuthGuard implements CanActivate {
       throw new UnauthorizedError('Token signature missing');
     }
 
+    const publicKeyPem = process.env.JWT_PUBLIC_KEY;
+    if (!publicKeyPem) {
+      void this.ledgerSink?.emitAuthFailure('jwt_public_key_not_configured', {});
+      throw new UnauthorizedError('JWT verification not configured');
+    }
+
     let payload: Record<string, unknown>;
     try {
       const key = await importSPKI(publicKeyPem, alg as string);
@@ -119,7 +120,7 @@ export class AuthGuard implements CanActivate {
         algorithms: [...ALLOWED_ALGORITHMS],
       });
       payload = result.payload as Record<string, unknown>;
-    } catch (e) {
+    } catch {
       void this.ledgerSink?.emitAuthFailure('jwt_verification_failed', {
         ...(typeof req.ip === 'string' ? { ip: req.ip } : {}),
       });
