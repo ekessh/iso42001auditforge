@@ -33,6 +33,7 @@ import { CapaModule } from './modules/capa/capa.module.js';
 import { ClientsModule } from './modules/clients/clients.module.js';
 import { CoAuditorModule } from './modules/co-auditor/co-auditor.module.js';
 import { CoverageModule } from './modules/coverage/coverage.module.js';
+import { CrossEngagementMemoryModule } from './modules/cross-engagement-memory/cross-engagement-memory.module.js';
 import { CrossFrameworkModule } from './modules/cross-framework/cross-framework.module.js';
 import { EngagementsModule } from './modules/engagements/engagements.module.js';
 import { EvidenceExtractionModule } from './modules/evidence-extraction/evidence-extraction.module.js';
@@ -93,6 +94,7 @@ import type { AppConfig } from './config/config.schema.js';
     ClientsModule,
     CoAuditorModule,
     CoverageModule,
+    CrossEngagementMemoryModule,
     CrossFrameworkModule,
     EngagementsModule,
     EvidenceExtractionModule,

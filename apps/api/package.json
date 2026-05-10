@@ -30,6 +30,7 @@
     "@auditforge/capa": "workspace:*",
     "@auditforge/catalogues": "workspace:*",
     "@auditforge/co-auditor": "workspace:*",
+    "@auditforge/cross-engagement-memory": "workspace:*",
     "@auditforge/cross-framework": "workspace:*",
     "@auditforge/db": "workspace:*",
     "@auditforge/diarization": "workspace:*",

@@ -71,6 +71,9 @@ importers:
       '@auditforge/co-auditor':
         specifier: workspace:*
         version: link:../../packages/co-auditor
+      '@auditforge/cross-engagement-memory':
+        specifier: workspace:*
+        version: link:../../packages/cross-engagement-memory
       '@auditforge/cross-framework':
         specifier: workspace:*
         version: link:../../packages/cross-framework

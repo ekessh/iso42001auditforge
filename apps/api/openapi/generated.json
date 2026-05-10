@@ -1359,6 +1359,59 @@
         ]
       }
     },
+    "/v1/cross-engagement-memory": {
+      "get": {
+        "operationId": "CrossEngagementMemoryController_list",
+        "summary": "Query anonymized per-firm cross-engagement patterns. Read-only; lead-auditor consumption surface.",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PatternPageDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "cross-engagement-memory"
+        ]
+      }
+    },
+    "/v1/cross-engagement-memory/aggregate/{engagementId}": {
+      "post": {
+        "operationId": "CrossEngagementMemoryController_aggregate",
+        "summary": "Trigger pattern aggregation for a closed engagement. Anonymizer enforced; emits cross-engagement-memory.aggregated.",
+        "parameters": [
+          {
+            "name": "engagementId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AggregateResultDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "cross-engagement-memory"
+        ]
+      }
+    },
     "/v1/cross-framework": {
       "get": {
         "operationId": "CrossFrameworkController_list",
@@ -5068,6 +5121,86 @@
         "required": [
           "items",
           "nextCursor"
+        ]
+      },
+      "PatternDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "firmId": {
+            "type": "string"
+          },
+          "patternKind": {
+            "type": "string",
+            "enum": [
+              "clause_evidence_failure_rate",
+              "probe_failure_rate"
+            ]
+          },
+          "dimensions": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "sampleSize": {
+            "type": "number"
+          },
+          "observation": {
+            "type": "string"
+          },
+          "confidence": {
+            "type": "number"
+          },
+          "lastUpdated": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "firmId",
+          "patternKind",
+          "dimensions",
+          "sampleSize",
+          "observation",
+          "confidence",
+          "lastUpdated"
+        ]
+      },
+      "PatternPageDto": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PatternDto"
+            }
+          }
+        },
+        "required": [
+          "items"
+        ]
+      },
+      "AggregateResultDto": {
+        "type": "object",
+        "properties": {
+          "patternsTouched": {
+            "type": "number"
+          },
+          "patternsSkipped": {
+            "type": "number"
+          },
+          "skippedReasons": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "patternsTouched",
+          "patternsSkipped",
+          "skippedReasons"
         ]
       },
       "CrossFrameworkDto": {
