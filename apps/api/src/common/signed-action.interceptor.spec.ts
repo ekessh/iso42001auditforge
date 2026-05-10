@@ -23,7 +23,7 @@ function makeCtx(opts: {
     headers: (opts.headers ?? {}) as never,
     auth: opts.auth as never,
     ip: '127.0.0.1',
-    signedActionChallenge: opts.challenge,
+    ...(opts.challenge !== undefined ? { signedActionChallenge: opts.challenge } : {}),
   };
   const handler = {};
   vi.spyOn(Reflect, 'getMetadata').mockImplementation((key: unknown) => {
@@ -140,7 +140,7 @@ describe('SignedActionInterceptor', () => {
     const ctx = makeCtx({
       requiresSigned: true,
       headers: { 'x-webauthn-attestation': validAttestation() },
-      challenge: undefined, // no challenge
+      // challenge intentionally absent — tests that no challenge on req triggers 401
     });
     const next = makeNext();
     expect(() => interceptor.intercept(ctx, next)).toThrow(UnauthorizedException);

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BUSL-1.1
-import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import type { FastifyReply, FastifyRequest } from 'fastify';
 
 // ── helpers ──────────────────────────────────────────────────────────────────
@@ -30,12 +30,12 @@ describe('DevAuthMiddleware', () => {
     } else {
       process.env.AUDITFORGE_DISABLE_DEV_AUTH = originalDisable;
     }
-    // Clear module cache so each test re-instantiates with fresh env.
-    jest?.resetModules?.();
+    // Module cache is not resettable in vitest without vi.resetModules().
+    vi.resetModules();
   });
 
   describe('constructor guards', () => {
-    it('throws at construction when NODE_ENV=production', () => {
+    it('throws at construction when NODE_ENV=production', async () => {
       process.env.NODE_ENV = 'production';
       delete process.env.AUDITFORGE_DISABLE_DEV_AUTH;
 
@@ -43,7 +43,7 @@ describe('DevAuthMiddleware', () => {
       expect(() => new DevAuthMiddleware()).toThrow(/FATAL.*production/i);
     });
 
-    it('throws at construction when NODE_ENV is unset', () => {
+    it('throws at construction when NODE_ENV is unset', async () => {
       delete process.env.NODE_ENV;
       delete process.env.AUDITFORGE_DISABLE_DEV_AUTH;
 
@@ -51,7 +51,7 @@ describe('DevAuthMiddleware', () => {
       expect(() => new DevAuthMiddleware()).toThrow(/NODE_ENV is unset/i);
     });
 
-    it('does not throw when NODE_ENV=development', () => {
+    it('does not throw when NODE_ENV=development', async () => {
       process.env.NODE_ENV = 'development';
       delete process.env.AUDITFORGE_DISABLE_DEV_AUTH;
 
@@ -59,7 +59,7 @@ describe('DevAuthMiddleware', () => {
       expect(() => new DevAuthMiddleware()).not.toThrow();
     });
 
-    it('does not throw when AUDITFORGE_DISABLE_DEV_AUTH=1 even if NODE_ENV unset', () => {
+    it('does not throw when AUDITFORGE_DISABLE_DEV_AUTH=1 even if NODE_ENV unset', async () => {
       delete process.env.NODE_ENV;
       process.env.AUDITFORGE_DISABLE_DEV_AUTH = '1';
 

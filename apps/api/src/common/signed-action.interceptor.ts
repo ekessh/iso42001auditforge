@@ -12,7 +12,7 @@ import {
 import type { FastifyRequest } from 'fastify';
 import { Observable } from 'rxjs';
 import { WebAuthnService } from '@auditforge/auth-core';
-import type { AuthenticationResponseJSON } from '@simplewebauthn/server';
+import type { AuthenticationResponseJSON } from '@simplewebauthn/types';
 import type { LedgerSink } from './auth.guard.js';
 import type { WebAuthnCredentialRepository } from './webauthn-credential.repository.js';
 import {
@@ -93,7 +93,7 @@ export class SignedActionInterceptor implements NestInterceptor {
     credentialRepo?: WebAuthnCredentialRepository,
   ): SignedActionInterceptor {
     const instance = new SignedActionInterceptor(ledger, credentialRepo);
-    (instance as { webAuthnSvc: WebAuthnService }).webAuthnSvc = svc;
+    (instance as unknown as { webAuthnSvc: WebAuthnService }).webAuthnSvc = svc;
     return instance;
   }
 
@@ -140,7 +140,7 @@ export class SignedActionInterceptor implements NestInterceptor {
         authenticatorData: parsed.response.authenticatorData,
         clientDataJSON: parsed.response.clientDataJSON,
         signature: parsed.response.signature,
-        userHandle: parsed.response.userHandle,
+        ...(parsed.response.userHandle !== undefined ? { userHandle: parsed.response.userHandle } : {}),
       },
       type: 'public-key',
       clientExtensionResults: parsed.clientExtensionResults ?? {},
@@ -190,11 +190,12 @@ export class SignedActionInterceptor implements NestInterceptor {
     }
 
     // Build a StoredCredential compatible with @auditforge/auth-core.
-    const storedCredential = {
+    const transports = credRecord.transports as import('@auditforge/auth-core').StoredCredential['transports'];
+    const storedCredential: import('@auditforge/auth-core').StoredCredential = {
       credentialId: credRecord.credentialId,
       publicKey: credRecord.publicKey,
       counter: credRecord.counter,
-      transports: credRecord.transports as import('@auditforge/auth-core').StoredCredential['transports'],
+      ...(transports !== undefined ? { transports } : {}),
     };
 
     let verified: Awaited<ReturnType<WebAuthnService['finishAuthentication']>>;
@@ -254,10 +255,10 @@ export class SignedActionInterceptor implements NestInterceptor {
 
   private emitFailure(reason: string, req: FastifyRequest, extras?: Record<string, unknown>): void {
     void this.ledgerSink?.emitAuthFailure(reason, {
-      auditorId: req.auth?.auditorId,
-      firmId: req.auth?.firmId,
-      roles: req.auth?.roles,
-      ip: typeof req.ip === 'string' ? req.ip : undefined,
+      ...(req.auth?.auditorId !== undefined ? { auditorId: req.auth.auditorId } : {}),
+      ...(req.auth?.firmId !== undefined ? { firmId: req.auth.firmId } : {}),
+      ...(req.auth?.roles !== undefined ? { roles: req.auth.roles } : {}),
+      ...(typeof req.ip === 'string' ? { ip: req.ip } : {}),
       ...extras,
     });
   }

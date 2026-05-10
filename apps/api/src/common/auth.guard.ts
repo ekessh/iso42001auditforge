@@ -64,7 +64,7 @@ export class AuthGuard implements CanActivate {
 
     // No auth present.
     void this.ledgerSink?.emitAuthFailure('no_credentials', {
-      ip: typeof req.ip === 'string' ? req.ip : undefined,
+      ...(typeof req.ip === 'string' ? { ip: req.ip } : {}),
     });
     throw new UnauthorizedError();
   }
@@ -121,7 +121,7 @@ export class AuthGuard implements CanActivate {
       payload = result.payload as Record<string, unknown>;
     } catch (e) {
       void this.ledgerSink?.emitAuthFailure('jwt_verification_failed', {
-        ip: typeof req.ip === 'string' ? req.ip : undefined,
+        ...(typeof req.ip === 'string' ? { ip: req.ip } : {}),
       });
       throw new UnauthorizedError('Invalid or expired token');
     }

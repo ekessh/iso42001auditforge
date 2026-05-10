@@ -52,44 +52,61 @@ function makeCredRow(overrides: Partial<{
 function makeDb(rowsByCall: Array<unknown[] | { rowCount?: number }>) {
   let callIdx = 0;
 
-  const terminal = () => {
+  const consumeRows = () => {
     const result = rowsByCall[callIdx++] ?? [];
-    return Promise.resolve(result);
+    return result;
   };
 
-  const proxy: Record<string, unknown> = {};
-  const handler: ProxyHandler<Record<string, unknown>> = {
-    get(_target, prop) {
-      if (prop === 'then') return undefined;
-      if (
-        prop === 'select' ||
-        prop === 'from' ||
-        prop === 'where' ||
-        prop === 'innerJoin' ||
-        prop === 'update' ||
-        prop === 'set' ||
-        prop === 'insert' ||
-        prop === 'values'
-      ) {
-        if (prop === 'set' || prop === 'values') {
-          return (..._args: unknown[]) => new Proxy(proxy, {
-            get(_t, p) {
-              if (p === 'where') return (..._a: unknown[]) => terminal();
-              if (p === 'then') return undefined;
-              return () => new Proxy(proxy, handler);
-            },
-          });
+  function makeQueryProxy(): object {
+    let resolvedRows: unknown[] | undefined;
+
+    const resolve = () => {
+      if (resolvedRows === undefined) resolvedRows = consumeRows() as unknown[];
+      return resolvedRows;
+    };
+
+    const handler: ProxyHandler<object> = {
+      get(_target, prop) {
+        if (prop === 'then') {
+          return (onFulfilled: (v: unknown) => unknown, onRejected?: (e: unknown) => unknown) =>
+            Promise.resolve(resolve()).then(onFulfilled, onRejected);
         }
-        return (..._args: unknown[]) => new Proxy(proxy, handler);
-      }
-      if (prop === 'limit') {
-        return () => terminal();
-      }
+        if (prop === 'limit' || prop === 'returning') {
+          return () => Promise.resolve(resolve());
+        }
+        if (prop === 'from' || prop === 'where' || prop === 'innerJoin') {
+          return (..._args: unknown[]) => proxy; // eslint-disable-line @typescript-eslint/no-use-before-define
+        }
+        return undefined;
+      },
+    };
+    const proxy = new Proxy({}, handler);
+    return proxy;
+  }
+
+  // update().set() chain: set().where() resolves rows (typically a rowCount-like result).
+  function makeUpdateProxy(): object {
+    const handler: ProxyHandler<object> = {
+      get(_target, prop) {
+        if (prop === 'set') {
+          return () => makeQueryProxy();
+        }
+        return undefined;
+      },
+    };
+    return new Proxy({}, handler);
+  }
+
+  const dbHandler: ProxyHandler<object> = {
+    get(_target, prop) {
+      if (prop === 'select') return () => makeQueryProxy();
+      if (prop === 'update') return () => makeUpdateProxy();
+      if (prop === 'insert') return () => ({ values: () => makeQueryProxy() });
       return undefined;
     },
   };
 
-  return new Proxy(proxy, handler) as unknown as import('drizzle-orm/postgres-js').PostgresJsDatabase;
+  return new Proxy({}, dbHandler) as unknown as import('drizzle-orm/postgres-js').PostgresJsDatabase;
 }
 
 // ── Tests ─────────────────────────────────────────────────────────────────────

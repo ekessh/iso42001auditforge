@@ -127,7 +127,7 @@ export class AuditTrailInterceptor implements NestInterceptor {
       firmId: reqCtx.firmId,
       ...(reqCtx.engagementId !== undefined ? { engagementId: reqCtx.engagementId } : {}),
       actorId: reqCtx.auditorId,
-      actorRole: reqCtx.roles[0],
+      ...(reqCtx.roles[0] !== undefined ? { actorRole: reqCtx.roles[0] } : {}),
       type: meta?.type ?? `${req.method}:${req.routeOptions?.url ?? req.url}`,
       entity: meta?.entity ?? 'unknown',
       entityId,
