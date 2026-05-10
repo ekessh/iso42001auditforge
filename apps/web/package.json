@@ -44,7 +44,8 @@
     "@tiptap/starter-kit": "^2.8.0",
     "@tiptap/extension-collaboration": "^2.8.0",
     "@tiptap/extension-collaboration-cursor": "^2.8.0",
-    "@auditforge/working-papers": "workspace:*"
+    "@auditforge/working-papers": "workspace:*",
+    "web-vitals": "^4.2.4"
   },
   "devDependencies": {
     "@types/node": "^22.7.0",
