@@ -1,0 +1,96 @@
+{
+  "$schema": "https://grafana.com/schemas/dashboard/v10.0.0",
+  "uid": "auditforge-slo-overview",
+  "title": "AuditForge - SLO Overview",
+  "tags": ["auditforge", "slo", "sli"],
+  "timezone": "",
+  "schemaVersion": 39,
+  "version": 1,
+  "editable": true,
+  "graphTooltip": 1,
+  "time": { "from": "now-30d", "to": "now" },
+  "refresh": "5m",
+  "templating": {
+    "list": [
+      { "name": "datasource", "type": "datasource", "query": "prometheus", "current": { "text": "Prometheus", "value": "Prometheus" } }
+    ]
+  },
+  "panels": [
+    {
+      "id": 1,
+      "type": "stat",
+      "title": "API request success rate (30d)",
+      "datasource": "$datasource",
+      "gridPos": { "h": 6, "w": 6, "x": 0, "y": 0 },
+      "targets": [
+        {
+          "expr": "(sli:api.request_success_rate:numerator / clamp_min(sli:api.request_success_rate:denominator, 1e-9)) * 100",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": { "defaults": { "unit": "percent", "min": 99, "max": 100 } }
+    },
+    {
+      "id": 2,
+      "type": "stat",
+      "title": "API p99 latency (ms)",
+      "datasource": "$datasource",
+      "gridPos": { "h": 6, "w": 6, "x": 6, "y": 0 },
+      "targets": [
+        {
+          "expr": "sli:api.latency_p99_under_800ms:numerator",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": { "defaults": { "unit": "ms" } }
+    },
+    {
+      "id": 3,
+      "type": "stat",
+      "title": "LLM invocation success",
+      "datasource": "$datasource",
+      "gridPos": { "h": 6, "w": 6, "x": 12, "y": 0 },
+      "targets": [
+        {
+          "expr": "(sli:llm.invocation_success_rate:numerator / clamp_min(sli:llm.invocation_success_rate:denominator, 1e-9)) * 100",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": { "defaults": { "unit": "percent" } }
+    },
+    {
+      "id": 4,
+      "type": "stat",
+      "title": "Ledger append p99 (ms)",
+      "datasource": "$datasource",
+      "gridPos": { "h": 6, "w": 6, "x": 18, "y": 0 },
+      "targets": [
+        {
+          "expr": "sli:ledger.append_latency_p99:numerator",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": { "defaults": { "unit": "ms" } }
+    },
+    {
+      "id": 5,
+      "type": "timeseries",
+      "title": "Error budget burn (per SLO)",
+      "datasource": "$datasource",
+      "gridPos": { "h": 10, "w": 24, "x": 0, "y": 6 },
+      "targets": [
+        {
+          "expr": "(1 - (sli:api.request_success_rate:numerator / clamp_min(sli:api.request_success_rate:denominator, 1e-9))) * 100",
+          "refId": "A",
+          "legendFormat": "API err %"
+        },
+        {
+          "expr": "(1 - (sli:llm.invocation_success_rate:numerator / clamp_min(sli:llm.invocation_success_rate:denominator, 1e-9))) * 100",
+          "refId": "B",
+          "legendFormat": "LLM err %"
+        }
+      ],
+      "fieldConfig": { "defaults": { "unit": "percent" } }
+    }
+  ]
+}

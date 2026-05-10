@@ -1,0 +1,134 @@
+{
+  "$schema": "https://grafana.com/schemas/dashboard/v10.0.0",
+  "uid": "auditforge-wp-sync",
+  "title": "AuditForge - Working-Paper Sync",
+  "tags": ["auditforge", "wp", "yjs"],
+  "timezone": "",
+  "schemaVersion": 39,
+  "version": 1,
+  "editable": true,
+  "graphTooltip": 1,
+  "time": { "from": "now-3h", "to": "now" },
+  "refresh": "30s",
+  "templating": {
+    "list": [
+      { "name": "datasource", "type": "datasource", "query": "prometheus", "current": { "text": "Prometheus", "value": "Prometheus" } },
+      { "name": "room", "type": "query", "datasource": "$datasource", "query": "label_values(auditforge_wp_snapshot_age_seconds, room)", "includeAll": true, "multi": true, "current": { "text": "All", "value": "$__all" } }
+    ]
+  },
+  "panels": [
+    {
+      "id": 1,
+      "type": "stat",
+      "title": "Active rooms",
+      "datasource": "$datasource",
+      "gridPos": { "h": 4, "w": 6, "x": 0, "y": 0 },
+      "targets": [
+        {
+          "expr": "count(auditforge_wp_snapshot_age_seconds{room=~\"$room\"})",
+          "refId": "A",
+          "legendFormat": "rooms"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "type": "stat",
+      "title": "Worst snapshot age (s)",
+      "datasource": "$datasource",
+      "gridPos": { "h": 4, "w": 6, "x": 6, "y": 0 },
+      "targets": [
+        {
+          "expr": "max(auditforge_wp_snapshot_age_seconds{room=~\"$room\"})",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": { "defaults": { "unit": "s" } }
+    },
+    {
+      "id": 3,
+      "type": "stat",
+      "title": "WP sync freshness SLI",
+      "datasource": "$datasource",
+      "gridPos": { "h": 4, "w": 6, "x": 12, "y": 0 },
+      "targets": [
+        {
+          "expr": "(count(auditforge_wp_snapshot_age_seconds <= 60) / clamp_min(count(auditforge_wp_snapshot_age_seconds), 1)) * 100",
+          "refId": "A",
+          "legendFormat": "% fresh"
+        }
+      ],
+      "fieldConfig": { "defaults": { "unit": "percent" } }
+    },
+    {
+      "id": 4,
+      "type": "stat",
+      "title": "Conflict events / 5 min",
+      "datasource": "$datasource",
+      "gridPos": { "h": 4, "w": 6, "x": 18, "y": 0 },
+      "targets": [
+        {
+          "expr": "sum(rate(auditforge_wp_conflict_total[5m])) * 300",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "type": "timeseries",
+      "title": "Snapshot age (s) per room",
+      "datasource": "$datasource",
+      "gridPos": { "h": 9, "w": 12, "x": 0, "y": 4 },
+      "targets": [
+        {
+          "expr": "auditforge_wp_snapshot_age_seconds{room=~\"$room\"}",
+          "refId": "A",
+          "legendFormat": "{{room}}"
+        }
+      ],
+      "fieldConfig": { "defaults": { "unit": "s" } }
+    },
+    {
+      "id": 6,
+      "type": "timeseries",
+      "title": "Peers per room",
+      "datasource": "$datasource",
+      "gridPos": { "h": 9, "w": 12, "x": 12, "y": 4 },
+      "targets": [
+        {
+          "expr": "auditforge_wp_room_peers{room=~\"$room\"}",
+          "refId": "A",
+          "legendFormat": "{{room}}"
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "type": "timeseries",
+      "title": "Sync messages / sec",
+      "datasource": "$datasource",
+      "gridPos": { "h": 9, "w": 24, "x": 0, "y": 13 },
+      "targets": [
+        {
+          "expr": "sum by (kind) (rate(auditforge_wp_sync_messages_total[1m]))",
+          "refId": "A",
+          "legendFormat": "{{kind}}"
+        }
+      ]
+    },
+    {
+      "id": 8,
+      "type": "timeseries",
+      "title": "Conflict events",
+      "datasource": "$datasource",
+      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 22 },
+      "targets": [
+        {
+          "expr": "sum(rate(auditforge_wp_conflict_total[1m]))",
+          "refId": "A",
+          "legendFormat": "conflicts/sec"
+        }
+      ]
+    }
+  ]
+}

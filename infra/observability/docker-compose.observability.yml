@@ -1,0 +1,105 @@
+# SPDX-License-Identifier: BUSL-1.1
+#
+# Local observability stack for AuditForge dev / staging.
+#
+# Bring it up alongside docker-compose.dev.yml:
+#   docker compose -f infra/docker-compose.dev.yml \
+#                  -f infra/observability/docker-compose.observability.yml up -d
+#
+# Endpoints (host network):
+#   - Grafana       http://localhost:3001  (admin / admin on first login)
+#   - Prometheus    http://localhost:9090
+#   - Tempo         http://localhost:3200  (HTTP), :4317 OTLP gRPC
+#   - Loki          http://localhost:3100
+#   - OTel Collector  4317 (gRPC), 4318 (HTTP)
+#
+# Persisting data: each service uses a named volume so a container restart
+# does not wipe historical metrics / traces / logs.
+
+version: "3.9"
+
+services:
+  prometheus:
+    image: prom/prometheus:v2.55.0
+    container_name: auditforge-prometheus
+    restart: unless-stopped
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --storage.tsdb.path=/prometheus
+      - --storage.tsdb.retention.time=30d
+      - --web.enable-lifecycle
+      - --web.enable-remote-write-receiver
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./prometheus/recording_rules.yml:/etc/prometheus/recording_rules.yml:ro
+      - prom-data:/prometheus
+    ports:
+      - "9090:9090"
+    networks: [observability]
+
+  grafana:
+    image: grafana/grafana:11.3.0
+    container_name: auditforge-grafana
+    restart: unless-stopped
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: admin
+      GF_AUTH_ANONYMOUS_ENABLED: "false"
+      GF_FEATURE_TOGGLES_ENABLE: "traceqlEditor metricsSummary"
+    volumes:
+      - ./grafana/provisioning:/etc/grafana/provisioning:ro
+      - ../grafana/dashboards:/var/lib/grafana/dashboards:ro
+      - grafana-data:/var/lib/grafana
+    ports:
+      - "3001:3000"
+    depends_on: [prometheus, tempo, loki]
+    networks: [observability]
+
+  tempo:
+    image: grafana/tempo:2.6.0
+    container_name: auditforge-tempo
+    restart: unless-stopped
+    command: ["-config.file=/etc/tempo/tempo.yml"]
+    volumes:
+      - ./tempo/tempo.yml:/etc/tempo/tempo.yml:ro
+      - tempo-data:/var/tempo
+    ports:
+      - "3200:3200"
+      - "4319:4317"
+    networks: [observability]
+
+  loki:
+    image: grafana/loki:3.2.0
+    container_name: auditforge-loki
+    restart: unless-stopped
+    command: ["-config.file=/etc/loki/local-config.yaml"]
+    volumes:
+      - ./loki/local-config.yaml:/etc/loki/local-config.yaml:ro
+      - loki-data:/loki
+    ports:
+      - "3100:3100"
+    networks: [observability]
+
+  otel-collector:
+    image: otel/opentelemetry-collector-contrib:0.110.0
+    container_name: auditforge-otel-collector
+    restart: unless-stopped
+    command: ["--config=/etc/otelcol-contrib/config.yaml"]
+    volumes:
+      - ./otel-collector-config/collector-config.yaml:/etc/otelcol-contrib/config.yaml:ro
+    ports:
+      - "4317:4317"
+      - "4318:4318"
+      - "8888:8888"
+    depends_on: [prometheus, tempo, loki]
+    networks: [observability]
+
+volumes:
+  prom-data:
+  grafana-data:
+  tempo-data:
+  loki-data:
+
+networks:
+  observability:
+    driver: bridge

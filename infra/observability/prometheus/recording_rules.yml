@@ -1,0 +1,65 @@
+# SPDX-License-Identifier: BUSL-1.1
+# AuditForge SLI recording rules (generated from packages/observability/src/sli.ts).
+groups:
+  - name: auditforge.sli
+    interval: 30s
+    rules:
+      - record: sli:api.request_success_rate:numerator
+        expr: sum(rate(auditforge_http_request_duration_ms_count{status!~"5.."}[5m]))
+        labels: { sli: api.request_success_rate, kind: availability, window: 30d }
+      - record: sli:api.request_success_rate:denominator
+        expr: sum(rate(auditforge_http_request_duration_ms_count[5m]))
+        labels: { sli: api.request_success_rate, kind: availability, window: 30d }
+      - record: sli:api.request_success_rate:objective_pct
+        expr: "99.9"
+        labels: { sli: api.request_success_rate, kind: availability, window: 30d }
+
+      - record: sli:api.latency_p99_under_800ms:numerator
+        expr: histogram_quantile(0.99, sum by (le) (rate(auditforge_http_request_duration_ms_bucket[5m])))
+        labels: { sli: api.latency_p99_under_800ms, kind: latency, window: 30d }
+      - record: sli:api.latency_p99_under_800ms:denominator
+        expr: "800"
+        labels: { sli: api.latency_p99_under_800ms, kind: latency, window: 30d }
+      - record: sli:api.latency_p99_under_800ms:objective_pct
+        expr: "99"
+        labels: { sli: api.latency_p99_under_800ms, kind: latency, window: 30d }
+
+      - record: sli:llm.invocation_success_rate:numerator
+        expr: sum(rate(auditforge_llm_call_duration_ms_count[5m]))
+        labels: { sli: llm.invocation_success_rate, kind: availability, window: 30d }
+      - record: sli:llm.invocation_success_rate:denominator
+        expr: sum(rate(auditforge_llm_call_duration_ms_count[5m]))
+        labels: { sli: llm.invocation_success_rate, kind: availability, window: 30d }
+      - record: sli:llm.invocation_success_rate:objective_pct
+        expr: "99.5"
+        labels: { sli: llm.invocation_success_rate, kind: availability, window: 30d }
+
+      - record: sli:ledger.append_latency_p99:numerator
+        expr: histogram_quantile(0.99, sum by (le) (rate(auditforge_ledger_chain_verify_ms_bucket[5m])))
+        labels: { sli: ledger.append_latency_p99, kind: latency, window: 30d }
+      - record: sli:ledger.append_latency_p99:denominator
+        expr: "250"
+        labels: { sli: ledger.append_latency_p99, kind: latency, window: 30d }
+      - record: sli:ledger.append_latency_p99:objective_pct
+        expr: "99"
+        labels: { sli: ledger.append_latency_p99, kind: latency, window: 30d }
+
+      - record: sli:wp.sync_freshness:numerator
+        expr: auditforge_wp_snapshot_age_seconds
+        labels: { sli: wp.sync_freshness, kind: freshness, window: 7d }
+      - record: sli:wp.sync_freshness:denominator
+        expr: "60"
+        labels: { sli: wp.sync_freshness, kind: freshness, window: 7d }
+      - record: sli:wp.sync_freshness:objective_pct
+        expr: "99"
+        labels: { sli: wp.sync_freshness, kind: freshness, window: 7d }
+
+      - record: sli:surveillance.ingest_success_rate:numerator
+        expr: sum(rate(auditforge_surveillance_ingest_total{result="accepted"}[5m]))
+        labels: { sli: surveillance.ingest_success_rate, kind: availability, window: 30d }
+      - record: sli:surveillance.ingest_success_rate:denominator
+        expr: sum(rate(auditforge_surveillance_ingest_total[5m]))
+        labels: { sli: surveillance.ingest_success_rate, kind: availability, window: 30d }
+      - record: sli:surveillance.ingest_success_rate:objective_pct
+        expr: "99"
+        labels: { sli: surveillance.ingest_success_rate, kind: availability, window: 30d }
