@@ -1,0 +1,42 @@
+{{/* SPDX-License-Identifier: BUSL-1.1 */}}
+{{- if and .Values.enabled .Values.networkPolicy.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ include "vlm-py.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "vlm-py.labels" . | nindent 4 }}
+spec:
+  podSelector:
+    matchLabels:
+      {{- include "vlm-py.selectorLabels" . | nindent 6 }}
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/part-of: auditforge
+      ports:
+        - port: {{ .Values.containerPort }}
+          protocol: TCP
+  egress:
+    - to:
+        - namespaceSelector: {}
+      ports:
+        - port: 53
+          protocol: UDP
+    - to:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/part-of: auditforge
+    {{- if not .Values.global.airGapMode }}
+    - to:
+        - namespaceSelector: {}
+      ports:
+        - port: 443
+          protocol: TCP
+    {{- end }}
+{{- end }}

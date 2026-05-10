@@ -1,0 +1,8 @@
+{{/* SPDX-License-Identifier: BUSL-1.1 */}}
+AuditForge vlm-py is installed.
+
+To verify:
+  kubectl -n {{ .Release.Namespace }} get pods -l app.kubernetes.io/component=vlm-py
+
+Sandbox isolation: runtimeClassName={{ .Values.runtimeClassName | default "(default)" }}.
+For prod set runtimeClassName: gvisor or kata-clh.

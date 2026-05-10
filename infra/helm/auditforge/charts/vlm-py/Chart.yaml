@@ -1,0 +1,22 @@
+# SPDX-License-Identifier: BUSL-1.1
+apiVersion: v2
+name: vlm-py
+description: |
+  AuditForge vlm-py — Qwen2.5-VL / DeepSeek-OCR vision-language evidence
+  extraction service for screenshots, scanned PDFs, and diagrams. GPU-backed
+  in production.
+type: application
+version: 0.14.0
+appVersion: "0.14.0"
+kubeVersion: ">=1.27.0-0"
+keywords:
+  - vlm
+  - qwen2.5-vl
+  - deepseek-ocr
+  - evidence
+maintainers:
+  - name: AuditForge Maintainers
+    email: maintainers@auditforge.example
+annotations:
+  category: Compliance
+  licenses: BUSL-1.1
