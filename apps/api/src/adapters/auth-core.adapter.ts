@@ -59,8 +59,11 @@ export const buildFullPermissionMatrix = coreBuildMatrix;
  * which has a different parameter order — note the intentional swap.
  *
  * Unknown resource strings always return false — no wildcard fallthrough.
+ * The resource is validated against the RESOURCES tuple before delegation so
+ * that super_admin cannot fall through the wildcard path for unknown resources.
  */
 export function can(roles: readonly Role[], resource: Resource | string, action: Action): boolean {
+  if (!(RESOURCES as readonly string[]).includes(resource)) return false;
   for (const role of roles) {
     if (coreCan(role, action, resource as Resource)) return true;
   }
