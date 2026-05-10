@@ -1,35 +1,29 @@
 // SPDX-License-Identifier: BUSL-1.1
 //
-// Findings repository — Drizzle-shaped wrapper that delegates to
-// `@auditforge/findings`'s `FindingRegistry` for CRUD + state transitions.
+// FindingsRepository — Drizzle-backed persistence for the `findings` and
+// `candidate_findings` tables. Mirrors the wave-1 ClientsRepository shape:
+//   - `BaseRepository.withTenant` for RLS session var emission;
+//   - in-memory fallback when the injected sql is the unit-test stub.
 //
-// The legacy API DTO uses a flatter status set (open / capa_pending /
-// capa_in_progress / closed / verified) than the package's canonical
-// (draft / issued / accepted / disputed / resolved / closed). The repository
-// keeps a sidecar map so the controller's contract stays unchanged.
+// API/DB shape: the DB schema stores (id, firm_id, engagement_id,
+// finding_type, finding_state, title, description, raised_at, resolved_at,
+// metadata). The legacy API DTO carries `controlRef`, `severity`, `status`,
+// `evidence` — we map `severity` -> `finding_type`, `status` -> the legacy
+// state via JSONB, and pack `controlRef` + `evidence` into JSONB metadata
+// under a `__af` namespace so DTO projection is lossless.
 //
-// TODO(rls-migration): once `packages/db` exposes a `findings` schema, swap
-// the in-memory FindingRegistry for the Postgres-backed implementation —
-// the registry interface stays identical so this file does not need to
-// change.
+// Severity / state / status mapping:
+//   severity: major_nc | minor_nc | ofi | conformity -> finding_type 1:1
+//   status: open | capa_pending | capa_in_progress | closed | verified
+//     stays in metadata.__af.status (the package's canonical state machine
+//     covers `finding_state` separately and is left to the registry).
 
-import { Inject, Injectable, Optional } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { randomUUID } from 'node:crypto';
 import type postgres from 'postgres';
-import {
-  asAuditorId,
-  asClientId,
-  asEngagementId,
-  asFirmId,
-  brandedFromUuid,
-  type AuditEventId,
-  type FindingId,
-} from '@auditforge/shared';
-import type { Finding, FindingType } from '@auditforge/findings';
 import { TenancyAdapter } from '../../adapters/tenancy.adapter.js';
-import { FindingsAdapter } from '../../adapters/findings.adapter.js';
 import { BaseRepository } from '../../db/base.repository.js';
-import { ConflictError, NotFoundError } from '../../common/errors.js';
+import { NotFoundError } from '../../common/errors.js';
 import { PG_CLIENT } from '../../db/db.module.js';
 import type {
   CreateFindingDto,
@@ -37,115 +31,156 @@ import type {
   UpdateFindingDto,
 } from './dto.js';
 
+interface FindingRow {
+  id: string;
+  firm_id: string;
+  engagement_id: string;
+  finding_type: string;
+  finding_state: string;
+  title: string;
+  description: string | null;
+  raised_at: Date | string;
+  resolved_at: Date | string | null;
+  metadata: Record<string, unknown> | null;
+  created_at: Date | string;
+  updated_at: Date | string;
+}
+
 interface ApiSidecar {
   controlRef: string;
-  title: string;
-  description: string;
   evidence: string[];
   status: FindingDto['status'];
 }
 
-const SYSTEM_CLIENT_ID = '00000000-0000-4000-8000-000000000001';
-const SYSTEM_AUDIT_EVENT_ID = '00000000-0000-4000-8000-000000000002';
+const SIDECAR_KEY = '__af';
 
-function severityToType(s: string): FindingType {
+function toIso(v: Date | string): string {
+  return v instanceof Date ? v.toISOString() : String(v);
+}
+
+function severityToType(s: string): string {
   switch (s) {
     case 'major_nc':
-      return 'major_nc';
     case 'minor_nc':
-      return 'minor_nc';
     case 'ofi':
-      return 'ofi';
+    case 'conformity':
+      return s;
     default:
-      return 'conformity';
+      return 'minor_nc';
   }
+}
+
+function rowToDto(row: FindingRow): FindingDto {
+  const meta = (row.metadata ?? {}) as Record<string, unknown>;
+  const sc = (meta[SIDECAR_KEY] ?? {}) as Partial<ApiSidecar>;
+  return {
+    id: row.id,
+    firmId: row.firm_id,
+    engagementId: row.engagement_id,
+    controlRef: sc.controlRef ?? '',
+    severity: row.finding_type,
+    title: row.title,
+    description: row.description ?? '',
+    evidence: [...(sc.evidence ?? [])],
+    status: sc.status ?? 'open',
+    createdAt: toIso(row.created_at),
+    updatedAt: toIso(row.updated_at),
+  };
 }
 
 @Injectable()
 export class FindingsRepository extends BaseRepository {
-  private readonly sidecar = new Map<string, ApiSidecar>();
   private readonly memory = new Map<string, FindingDto>();
 
-  constructor(
-    @Inject(PG_CLIENT) sql: postgres.Sql,
-    tenancy: TenancyAdapter,
-    @Optional() @Inject(FindingsAdapter) private readonly findings?: FindingsAdapter,
-  ) {
+  constructor(@Inject(PG_CLIENT) sql: postgres.Sql, tenancy: TenancyAdapter) {
     super(sql, tenancy);
   }
 
+  private hasRealDb(): boolean {
+    return typeof (this.sql as unknown as { begin?: unknown }).begin === 'function';
+  }
+
   async create(firmId: string, dto: CreateFindingDto): Promise<FindingDto> {
-    if (!this.findings) return this.createInMemoryFallback(firmId, dto);
     const initialStatus: FindingDto['status'] =
       dto.severity === 'conformity' || dto.severity === 'ofi' ? 'open' : 'capa_pending';
-
-    // TODO(rls-migration): pull real auditorId / clientId / auditEventId
-    // from RequestContext instead of synthesizing system placeholders.
-    const created: Finding = this.findings.registry.create(
-      {
-        firmId: asFirmId(firmId),
-        clientId: asClientId(SYSTEM_CLIENT_ID),
-        engagementId: asEngagementId(dto.engagementId),
-        auditEventId: brandedFromUuid<'AuditEventId'>(SYSTEM_AUDIT_EVENT_ID) as AuditEventId,
-        type: severityToType(dto.severity),
-        clauseLinks: [],
-        controlLinks: [{ controlId: dto.controlRef }],
-        evidenceLinks: dto.evidence.map((id) => ({ evidenceId: brandedFromUuid<'EvidenceId'>(id) })),
-        requirementText: dto.controlRef,
-        statementText: dto.description,
-        rootCausePromptResponse: '',
-        raisedBy: asAuditorId(SYSTEM_CLIENT_ID),
-        severity: 'medium',
-        riskRating: 3,
-      },
-      { firmId: asFirmId(firmId), clientId: asClientId(SYSTEM_CLIENT_ID) },
-    );
-
-    this.sidecar.set(created.id, {
+    if (!this.hasRealDb()) return this.createInMemory(firmId, dto, initialStatus);
+    const id = randomUUID();
+    const sidecar: ApiSidecar = {
       controlRef: dto.controlRef,
-      title: dto.title,
-      description: dto.description,
       evidence: [...dto.evidence],
       status: initialStatus,
+    };
+    const meta = { [SIDECAR_KEY]: sidecar };
+    const findingType = severityToType(dto.severity);
+    return this.withTenant(async (tx) => {
+      await tx`INSERT INTO findings
+                 (id, firm_id, engagement_id, finding_type, finding_state, title, description, raised_at, metadata)
+               VALUES (${id}, ${firmId}, ${dto.engagementId}, ${findingType}, 'draft',
+                       ${dto.title}, ${dto.description}, now(), ${JSON.stringify(meta)}::jsonb)`;
+      const rows = (await tx`SELECT * FROM findings WHERE id = ${id} AND firm_id = ${firmId}`) as unknown as FindingRow[];
+      const row = rows[0];
+      if (!row) throw new NotFoundError('Finding', id);
+      return rowToDto(row);
     });
-    return this.toDto(firmId, created);
   }
 
   async findById(firmId: string, id: string): Promise<FindingDto> {
-    if (!this.findings) return this.findFallback(firmId, id);
-    const tenant = { firmId: asFirmId(firmId), clientId: asClientId(SYSTEM_CLIENT_ID) };
-    const f = this.findings.registry.tryGet(brandedFromUuid<'FindingId'>(id) as FindingId, tenant);
-    if (!f) throw new NotFoundError('Finding', id);
-    return this.toDto(firmId, f);
+    if (!this.hasRealDb()) return this.findInMemory(firmId, id);
+    return this.withTenant(async (tx) => {
+      const rows = (await tx`SELECT * FROM findings WHERE id = ${id} AND firm_id = ${firmId}`) as unknown as FindingRow[];
+      const row = rows[0];
+      if (!row) throw new NotFoundError('Finding', id);
+      return rowToDto(row);
+    });
   }
 
-  async list(firmId: string, opts: { engagementId?: string; cursor?: string; limit: number }) {
-    if (!this.findings) return this.listFallback(firmId, opts);
-    const tenant = { firmId: asFirmId(firmId), clientId: asClientId(SYSTEM_CLIENT_ID) };
-    const list = opts.engagementId
-      ? [...this.findings.registry.listByEngagement(asEngagementId(opts.engagementId), tenant)]
-      : this.collectAllForFirm(tenant);
-    const startIdx = opts.cursor ? list.findIndex((r) => r.id === opts.cursor) + 1 : 0;
-    const slice = list.slice(startIdx, startIdx + opts.limit);
-    const next =
-      startIdx + opts.limit < list.length ? slice[slice.length - 1]?.id ?? null : null;
-    return { items: slice.map((f) => this.toDto(firmId, f)), nextCursor: next };
+  async list(
+    firmId: string,
+    opts: { engagementId?: string; cursor?: string; limit: number },
+  ): Promise<{ items: FindingDto[]; nextCursor: string | null }> {
+    if (!this.hasRealDb()) return this.listInMemory(firmId, opts);
+    const limitPlusOne = opts.limit + 1;
+    return this.withTenant(async (tx) => {
+      const rows =
+        opts.cursor && opts.engagementId
+          ? ((await tx`SELECT * FROM findings WHERE firm_id = ${firmId} AND engagement_id = ${opts.engagementId} AND id > ${opts.cursor} ORDER BY id ASC LIMIT ${limitPlusOne}`) as unknown as FindingRow[])
+          : opts.engagementId
+            ? ((await tx`SELECT * FROM findings WHERE firm_id = ${firmId} AND engagement_id = ${opts.engagementId} ORDER BY id ASC LIMIT ${limitPlusOne}`) as unknown as FindingRow[])
+            : opts.cursor
+              ? ((await tx`SELECT * FROM findings WHERE firm_id = ${firmId} AND id > ${opts.cursor} ORDER BY id ASC LIMIT ${limitPlusOne}`) as unknown as FindingRow[])
+              : ((await tx`SELECT * FROM findings WHERE firm_id = ${firmId} ORDER BY id ASC LIMIT ${limitPlusOne}`) as unknown as FindingRow[]);
+      const hasMore = rows.length > opts.limit;
+      const slice = rows.slice(0, opts.limit);
+      const items = slice.map(rowToDto);
+      const nextCursor = hasMore ? slice[slice.length - 1]?.id ?? null : null;
+      return { items, nextCursor };
+    });
   }
 
   async update(firmId: string, id: string, dto: UpdateFindingDto): Promise<FindingDto> {
-    // The package's registry exposes transitions, not arbitrary mutation, so
-    // sidecar fields take the patch and the canonical core stays immutable.
-    const cur = await this.findById(firmId, id);
-    const sc = this.sidecar.get(id) ?? this.deriveSidecar(cur);
-    const updated: ApiSidecar = {
-      ...sc,
-      ...(dto.controlRef !== undefined ? { controlRef: dto.controlRef } : {}),
-      ...(dto.title !== undefined ? { title: dto.title } : {}),
-      ...(dto.description !== undefined ? { description: dto.description } : {}),
-      ...(dto.evidence !== undefined ? { evidence: [...dto.evidence] } : {}),
-    };
-    this.sidecar.set(id, updated);
-    return { ...cur, ...updated, updatedAt: new Date().toISOString() };
+    if (!this.hasRealDb()) return this.updateInMemory(firmId, id, dto);
+    return this.withTenant(async (tx) => {
+      const rows = (await tx`SELECT * FROM findings WHERE id = ${id} AND firm_id = ${firmId}`) as unknown as FindingRow[];
+      const row = rows[0];
+      if (!row) throw new NotFoundError('Finding', id);
+      const cur = rowToDto(row);
+      const sc: ApiSidecar = {
+        controlRef: dto.controlRef ?? cur.controlRef,
+        evidence: dto.evidence !== undefined ? [...dto.evidence] : [...cur.evidence],
+        status: cur.status,
+      };
+      const meta = { ...((row.metadata ?? {}) as Record<string, unknown>), [SIDECAR_KEY]: sc };
+      const newTitle = dto.title ?? cur.title;
+      const newDesc = dto.description ?? cur.description;
+      await tx`UPDATE findings
+               SET title = ${newTitle}, description = ${newDesc}, metadata = ${JSON.stringify(meta)}::jsonb,
+                   updated_at = now()
+               WHERE id = ${id} AND firm_id = ${firmId}`;
+      const updated = (await tx`SELECT * FROM findings WHERE id = ${id} AND firm_id = ${firmId}`) as unknown as FindingRow[];
+      const out = updated[0];
+      if (!out) throw new NotFoundError('Finding', id);
+      return rowToDto(out);
+    });
   }
 
   async setStatus(
@@ -153,81 +188,77 @@ export class FindingsRepository extends BaseRepository {
     id: string,
     status: FindingDto['status'],
   ): Promise<FindingDto> {
-    if (!this.findings) return this.setStatusFallback(firmId, id, status);
-    // Map legacy status to a package transition. We ride the existing
-    // legacy state machine for the API contract; the package's machine
-    // covers the canonical 17021-1 lifecycle separately and is exercised
-    // through the surveillance / report flows.
-    const cur = await this.findById(firmId, id);
-    const sc = this.sidecar.get(id) ?? this.deriveSidecar(cur);
-    this.sidecar.set(id, { ...sc, status });
-    return { ...cur, status, updatedAt: new Date().toISOString() };
-  }
-
-  /* ---------- DTO bridge ---------- */
-
-  private toDto(firmId: string, f: Finding): FindingDto {
-    const sc = this.sidecar.get(f.id) ?? this.deriveSidecar({
-      id: f.id,
-      controlRef: f.controlLinks[0]?.controlId ?? f.requirementText,
-      title: f.statementText.slice(0, 200),
-      description: f.statementText,
-      evidence: [...f.evidenceLinks.map((e) => e.evidenceId)],
-      status: 'open',
+    if (!this.hasRealDb()) return this.setStatusInMemory(firmId, id, status);
+    return this.withTenant(async (tx) => {
+      const rows = (await tx`SELECT * FROM findings WHERE id = ${id} AND firm_id = ${firmId}`) as unknown as FindingRow[];
+      const row = rows[0];
+      if (!row) throw new NotFoundError('Finding', id);
+      const meta = (row.metadata ?? {}) as Record<string, unknown>;
+      const sc = (meta[SIDECAR_KEY] ?? {}) as ApiSidecar;
+      const updatedMeta = { ...meta, [SIDECAR_KEY]: { ...sc, status } };
+      await tx`UPDATE findings
+               SET metadata = ${JSON.stringify(updatedMeta)}::jsonb, updated_at = now()
+               WHERE id = ${id} AND firm_id = ${firmId}`;
+      const out = (await tx`SELECT * FROM findings WHERE id = ${id} AND firm_id = ${firmId}`) as unknown as FindingRow[];
+      const r = out[0];
+      if (!r) throw new NotFoundError('Finding', id);
+      return rowToDto(r);
     });
-    return {
-      id: f.id,
-      firmId,
-      engagementId: f.engagementId,
-      controlRef: sc.controlRef,
-      severity:
-        f.type === 'conformity'
-          ? 'conformity'
-          : f.type === 'ofi'
-            ? 'ofi'
-            : f.type === 'major_nc'
-              ? 'major_nc'
-              : 'minor_nc',
-      title: sc.title,
-      description: sc.description,
-      evidence: sc.evidence,
-      status: sc.status,
-      createdAt: f.raisedAt,
-      updatedAt: f.updatedAt,
-    };
   }
 
-  private deriveSidecar(p: {
-    id: string;
-    controlRef: string;
-    title: string;
-    description: string;
-    evidence: readonly string[];
-    status: FindingDto['status'];
-  }): ApiSidecar {
-    return {
-      controlRef: p.controlRef,
-      title: p.title,
-      description: p.description,
-      evidence: [...p.evidence],
-      status: p.status,
+  /**
+   * Promote a candidate finding to a formal finding by inserting into the
+   * `findings` table and stamping the candidate row as `promoted`. Returns
+   * the new finding DTO.
+   */
+  async promoteCandidate(
+    firmId: string,
+    candidateId: string,
+    promote: { engagementId: string; severity: string; title: string; description: string; controlRef?: string },
+  ): Promise<FindingDto> {
+    if (!this.hasRealDb()) {
+      return this.create(firmId, {
+        engagementId: promote.engagementId,
+        controlRef: promote.controlRef ?? 'CF',
+        severity: promote.severity as CreateFindingDto['severity'],
+        title: promote.title,
+        description: promote.description,
+        evidence: [],
+      });
+    }
+    const id = randomUUID();
+    const initialStatus: FindingDto['status'] =
+      promote.severity === 'conformity' || promote.severity === 'ofi' ? 'open' : 'capa_pending';
+    const sidecar: ApiSidecar = {
+      controlRef: promote.controlRef ?? 'CF',
+      evidence: [],
+      status: initialStatus,
     };
-  }
-
-  private collectAllForFirm(tenant: { firmId: ReturnType<typeof asFirmId>; clientId: ReturnType<typeof asClientId> }): Finding[] {
-    // Package's registry doesn't expose a firm-level scan; we approximate by
-    // returning an empty list here and rely on engagement-scoped reads. The
-    // Postgres-backed registry will offer this directly.
-    void tenant;
-    return [];
+    const meta = { [SIDECAR_KEY]: sidecar, promotedFromCandidateId: candidateId };
+    const findingType = severityToType(promote.severity);
+    return this.withTenant(async (tx) => {
+      await tx`INSERT INTO findings
+                 (id, firm_id, engagement_id, finding_type, finding_state, title, description, raised_at, metadata)
+               VALUES (${id}, ${firmId}, ${promote.engagementId}, ${findingType}, 'open',
+                       ${promote.title}, ${promote.description}, now(), ${JSON.stringify(meta)}::jsonb)`;
+      await tx`UPDATE candidate_findings
+               SET status = 'promoted', updated_at = now()
+               WHERE id = ${candidateId} AND firm_id = ${firmId}`;
+      const rows = (await tx`SELECT * FROM findings WHERE id = ${id} AND firm_id = ${firmId}`) as unknown as FindingRow[];
+      const row = rows[0];
+      if (!row) throw new NotFoundError('Finding', id);
+      return rowToDto(row);
+    });
   }
 
   /* ---------- legacy in-memory fallback ---------- */
 
-  private async createInMemoryFallback(firmId: string, dto: CreateFindingDto): Promise<FindingDto> {
+  private async createInMemory(
+    firmId: string,
+    dto: CreateFindingDto,
+    initialStatus: FindingDto['status'],
+  ): Promise<FindingDto> {
     const now = new Date().toISOString();
-    const initialStatus: FindingDto['status'] =
-      dto.severity === 'conformity' || dto.severity === 'ofi' ? 'open' : 'capa_pending';
     const row: FindingDto = {
       id: randomUUID(),
       firmId,
@@ -244,12 +275,12 @@ export class FindingsRepository extends BaseRepository {
     this.memory.set(row.id, row);
     return row;
   }
-  private async findFallback(firmId: string, id: string): Promise<FindingDto> {
+  private async findInMemory(firmId: string, id: string): Promise<FindingDto> {
     const r = this.memory.get(id);
     if (!r || r.firmId !== firmId) throw new NotFoundError('Finding', id);
     return r;
   }
-  private async listFallback(
+  private async listInMemory(
     firmId: string,
     opts: { engagementId?: string; cursor?: string; limit: number },
   ) {
@@ -262,16 +293,31 @@ export class FindingsRepository extends BaseRepository {
       startIdx + opts.limit < all.length ? slice[slice.length - 1]?.id ?? null : null;
     return { items: slice, nextCursor: next };
   }
-  private async setStatusFallback(
+  private async updateInMemory(
+    firmId: string,
+    id: string,
+    dto: UpdateFindingDto,
+  ): Promise<FindingDto> {
+    const cur = await this.findInMemory(firmId, id);
+    const updated: FindingDto = {
+      ...cur,
+      ...(dto.controlRef !== undefined ? { controlRef: dto.controlRef } : {}),
+      ...(dto.title !== undefined ? { title: dto.title } : {}),
+      ...(dto.description !== undefined ? { description: dto.description } : {}),
+      ...(dto.evidence !== undefined ? { evidence: [...dto.evidence] } : {}),
+      updatedAt: new Date().toISOString(),
+    };
+    this.memory.set(id, updated);
+    return updated;
+  }
+  private async setStatusInMemory(
     firmId: string,
     id: string,
     status: FindingDto['status'],
   ): Promise<FindingDto> {
-    const cur = await this.findFallback(firmId, id);
+    const cur = await this.findInMemory(firmId, id);
     const updated: FindingDto = { ...cur, status, updatedAt: new Date().toISOString() };
     this.memory.set(id, updated);
     return updated;
   }
-  // Not currently used in the package-path; kept so unused-import lints don't fire.
-  protected readonly _conflict = ConflictError;
 }

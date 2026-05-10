@@ -30,6 +30,13 @@ export class TracesService {
     return this.repo.remove(firmId, id);
   }
 
+  ingest(
+    firmId: string,
+    payload: { name: string; source?: string; spans?: unknown[]; metadata?: Record<string, unknown> },
+  ): Promise<TracesDto> {
+    return this.repo.ingest(firmId, payload);
+  }
+
   /** Pass-through to TraceIngestor + TraceAnalyzer + AutonomyClassifier. */
   analyzer(): TraceAnalyzerAdapter | null {
     return this.adapter ?? null;

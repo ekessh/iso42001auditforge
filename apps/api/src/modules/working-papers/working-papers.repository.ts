@@ -1,124 +1,145 @@
 // SPDX-License-Identifier: BUSL-1.1
 //
-// Working-papers repository — thin Drizzle-shaped wrapper over the
-// `@auditforge/working-papers` `WorkingPaperRegistry`. Persistence is the
-// registry's responsibility; the repository's job is to translate between the
-// API DTOs (legacy shape with `templateId / title / controlRef / bodyMarkdown`)
-// and the package's typed domain model (`WpScope`, `Verdict`, etc).
+// WorkingPapersRepository — Drizzle-backed persistence for the
+// `working_papers` table. Mirrors the wave-1 ClientsRepository pattern:
+// real Postgres path goes through `BaseRepository.withTenant` for RLS
+// session vars; the unit-test stub auto-routes to an in-memory map.
 //
-// TODO(rls-migration): once `packages/db` exposes a `working_papers` Drizzle
-// schema, we'll inject a `PostgresWorkingPaperRegistry` — the package's
-// registry interface stays identical so this file does not need to change.
+// API/DB shape: the schema stores (id, firm_id, engagement_id, title,
+// verdict, body JSONB, crdt_state BYTEA). The legacy API DTO carries
+// `templateId / controlRef / bodyMarkdown / evidenceRefs / status /
+// version`. We pack the API-side fields into the JSONB `body` column under
+// a reserved `__af` namespace so the DTO projection is lossless.
+//
+// CRDT state (`crdt_state`) is owned by Agent G's Yjs sync work; this
+// repository never reads or writes it.
 
-import { Inject, Injectable, Optional } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { randomUUID } from 'node:crypto';
 import type postgres from 'postgres';
-import type {
-  TenantContext,
-  Verdict,
-  WorkingPaper,
-} from '@auditforge/working-papers';
-import { hashContent } from '@auditforge/working-papers';
 import { TenancyAdapter } from '../../adapters/tenancy.adapter.js';
-import { WorkingPapersAdapter } from '../../adapters/working-papers.adapter.js';
 import { BaseRepository } from '../../db/base.repository.js';
 import { ConflictError, NotFoundError } from '../../common/errors.js';
 import { PG_CLIENT } from '../../db/db.module.js';
 import type {
   CreateWorkingPaperDto,
+  EvidenceRefDto,
   UpdateWorkingPaperDto,
   WorkingPaperDto,
 } from './dto.js';
 
-interface ApiSidecar {
-  templateId?: string | undefined;
+interface WpRow {
+  id: string;
+  firm_id: string;
+  engagement_id: string;
   title: string;
+  verdict: string | null;
+  body: Record<string, unknown> | null;
+  created_at: Date | string;
+  updated_at: Date | string;
+  archived_at: Date | string | null;
+}
+
+interface ApiSidecar {
+  templateId?: string;
   controlRef: string;
   bodyMarkdown: string;
-  evidenceRefs: WorkingPaperDto['evidenceRefs'];
+  evidenceRefs: EvidenceRefDto[];
   status: WorkingPaperDto['status'];
   version: number;
 }
 
+const SIDECAR_KEY = '__af';
+
+function toIso(v: Date | string): string {
+  return v instanceof Date ? v.toISOString() : String(v);
+}
+
+function rowToDto(row: WpRow): WorkingPaperDto {
+  const body = (row.body ?? {}) as Record<string, unknown>;
+  const sc = (body[SIDECAR_KEY] ?? {}) as Partial<ApiSidecar>;
+  return {
+    id: row.id,
+    firmId: row.firm_id,
+    engagementId: row.engagement_id,
+    ...(sc.templateId !== undefined ? { templateId: sc.templateId } : {}),
+    title: row.title,
+    controlRef: sc.controlRef ?? '',
+    bodyMarkdown: sc.bodyMarkdown ?? '',
+    evidenceRefs: [...(sc.evidenceRefs ?? [])],
+    status: sc.status ?? 'draft',
+    version: sc.version ?? 1,
+    createdAt: toIso(row.created_at),
+    updatedAt: toIso(row.updated_at),
+  };
+}
+
 @Injectable()
 export class WorkingPapersRepository extends BaseRepository {
-  /**
-   * The package's WorkingPaper carries CRDT-encoded content + verdict. The
-   * legacy API DTO carries plain markdown + status + evidence refs. We keep a
-   * sidecar map keyed by working-paper id to bridge the two until the DTO is
-   * migrated to the package's domain model.
-   */
-  private readonly sidecar = new Map<string, ApiSidecar>();
+  private readonly memory = new Map<string, WorkingPaperDto>();
 
-  constructor(
-    @Inject(PG_CLIENT) sql: postgres.Sql,
-    tenancy: TenancyAdapter,
-    @Optional() @Inject(WorkingPapersAdapter) private readonly wp?: WorkingPapersAdapter,
-  ) {
+  constructor(@Inject(PG_CLIENT) sql: postgres.Sql, tenancy: TenancyAdapter) {
     super(sql, tenancy);
   }
 
+  private hasRealDb(): boolean {
+    return typeof (this.sql as unknown as { begin?: unknown }).begin === 'function';
+  }
+
   async create(firmId: string, dto: CreateWorkingPaperDto): Promise<WorkingPaperDto> {
-    const ctx: TenantContext = { firmId };
-    if (!this.wp) {
-      // Defensive fallback for legacy unit tests that don't provide the
-      // adapter. Never used in production.
-      return this.createInMemoryFallback(firmId, dto);
-    }
-    const created: WorkingPaper = await this.wp.registry.create({
-      tenant: ctx,
-      engagementId: dto.engagementId,
-      scope: { controlId: dto.controlRef },
-      templateId: dto.templateId ?? 'generic-wp@1',
-      templateVersion: '1',
-      initialContent: '', // base64 Y update; empty until editor pushes
-      authorId: ctx.firmId, // TODO(rls-migration): use actual auditorId from ctx
-      initialVerdict: 'conformant',
-      initialConfidence: 0,
-    });
-    this.sidecar.set(created.id, {
+    if (!this.hasRealDb()) return this.createInMemory(firmId, dto);
+    const id = randomUUID();
+    const sidecar: ApiSidecar = {
       ...(dto.templateId !== undefined ? { templateId: dto.templateId } : {}),
-      title: dto.title,
       controlRef: dto.controlRef,
       bodyMarkdown: dto.bodyMarkdown,
-      evidenceRefs: dto.evidenceRefs,
+      evidenceRefs: [...dto.evidenceRefs],
       status: 'draft',
       version: 1,
+    };
+    const body = { [SIDECAR_KEY]: sidecar };
+    return this.withTenant(async (tx) => {
+      await tx`INSERT INTO working_papers (id, firm_id, engagement_id, title, body)
+               VALUES (${id}, ${firmId}, ${dto.engagementId}, ${dto.title},
+                       ${JSON.stringify(body)}::jsonb)`;
+      const rows = (await tx`SELECT * FROM working_papers WHERE id = ${id} AND firm_id = ${firmId}`) as unknown as WpRow[];
+      const row = rows[0];
+      if (!row) throw new NotFoundError('WorkingPaper', id);
+      return rowToDto(row);
     });
-    return this.toDto(firmId, created);
   }
 
   async findById(firmId: string, id: string): Promise<WorkingPaperDto> {
-    const ctx: TenantContext = { firmId };
-    if (!this.wp) return this.findFallback(firmId, id);
-    try {
-      const wp = this.wp.registry.get(ctx, id);
-      return this.toDto(firmId, wp);
-    } catch {
-      throw new NotFoundError('WorkingPaper', id);
-    }
+    if (!this.hasRealDb()) return this.findInMemory(firmId, id);
+    return this.withTenant(async (tx) => {
+      const rows = (await tx`SELECT * FROM working_papers WHERE id = ${id} AND firm_id = ${firmId} AND archived_at IS NULL`) as unknown as WpRow[];
+      const row = rows[0];
+      if (!row) throw new NotFoundError('WorkingPaper', id);
+      return rowToDto(row);
+    });
   }
 
   async list(
     firmId: string,
     opts: { engagementId?: string; cursor?: string; limit: number },
   ): Promise<{ items: WorkingPaperDto[]; nextCursor: string | null }> {
-    const ctx: TenantContext = { firmId };
-    if (!this.wp) return this.listFallback(firmId, opts);
-    if (!opts.engagementId) {
-      // Package's list requires an engagementId; without one we return empty.
-      // TODO(rls-migration): cross-engagement listing arrives with the
-      // Postgres registry which can scan the firm-scoped index.
-      return { items: [], nextCursor: null };
-    }
-    const all = this.wp.registry.list(ctx, opts.engagementId);
-    const startIdx = opts.cursor ? all.findIndex((w) => w.id === opts.cursor) + 1 : 0;
-    const slice = all.slice(startIdx, startIdx + opts.limit);
-    const next =
-      startIdx + opts.limit < all.length
-        ? slice[slice.length - 1]?.id ?? null
-        : null;
-    return { items: slice.map((wp) => this.toDto(firmId, wp)), nextCursor: next };
+    if (!this.hasRealDb()) return this.listInMemory(firmId, opts);
+    const limitPlusOne = opts.limit + 1;
+    return this.withTenant(async (tx) => {
+      const rows =
+        opts.cursor && opts.engagementId
+          ? ((await tx`SELECT * FROM working_papers WHERE firm_id = ${firmId} AND engagement_id = ${opts.engagementId} AND archived_at IS NULL AND id > ${opts.cursor} ORDER BY id ASC LIMIT ${limitPlusOne}`) as unknown as WpRow[])
+          : opts.engagementId
+            ? ((await tx`SELECT * FROM working_papers WHERE firm_id = ${firmId} AND engagement_id = ${opts.engagementId} AND archived_at IS NULL ORDER BY id ASC LIMIT ${limitPlusOne}`) as unknown as WpRow[])
+            : opts.cursor
+              ? ((await tx`SELECT * FROM working_papers WHERE firm_id = ${firmId} AND archived_at IS NULL AND id > ${opts.cursor} ORDER BY id ASC LIMIT ${limitPlusOne}`) as unknown as WpRow[])
+              : ((await tx`SELECT * FROM working_papers WHERE firm_id = ${firmId} AND archived_at IS NULL ORDER BY id ASC LIMIT ${limitPlusOne}`) as unknown as WpRow[]);
+      const hasMore = rows.length > opts.limit;
+      const slice = rows.slice(0, opts.limit);
+      const items = slice.map(rowToDto);
+      const nextCursor = hasMore ? slice[slice.length - 1]?.id ?? null : null;
+      return { items, nextCursor };
+    });
   }
 
   async update(
@@ -126,40 +147,30 @@ export class WorkingPapersRepository extends BaseRepository {
     id: string,
     dto: UpdateWorkingPaperDto,
   ): Promise<WorkingPaperDto> {
-    const ctx: TenantContext = { firmId };
-    if (!this.wp) return this.updateFallback(firmId, id, dto);
-    let wp: WorkingPaper;
-    try {
-      wp = this.wp.registry.get(ctx, id);
-    } catch {
-      throw new NotFoundError('WorkingPaper', id);
-    }
-    // Patch the sidecar; the package's content is opaque CRDT bytes so we
-    // bump revision via `updateContent` whenever bodyMarkdown changes.
-    const sc = this.sidecar.get(id) ?? this.deriveSidecar(wp);
-    if (dto.bodyMarkdown !== undefined && dto.bodyMarkdown !== sc.bodyMarkdown) {
-      const next = await this.wp.registry.updateContent({
-        tenant: ctx,
-        workingPaperId: id,
-        // Y.Doc updates are base64-encoded; the API surface here passes
-        // through plain markdown until the editor wires Yjs end-to-end.
-        content: Buffer.from(dto.bodyMarkdown, 'utf8').toString('base64'),
-        authorId: ctx.firmId, // TODO(rls-migration): real auditorId from ctx
-        searchText: dto.bodyMarkdown,
-      });
-      wp = next;
-    }
-    const updated: ApiSidecar = {
-      ...sc,
-      ...(dto.templateId !== undefined ? { templateId: dto.templateId } : {}),
-      ...(dto.title !== undefined ? { title: dto.title } : {}),
-      ...(dto.controlRef !== undefined ? { controlRef: dto.controlRef } : {}),
-      ...(dto.bodyMarkdown !== undefined ? { bodyMarkdown: dto.bodyMarkdown } : {}),
-      ...(dto.evidenceRefs !== undefined ? { evidenceRefs: dto.evidenceRefs } : {}),
-      version: sc.version + 1,
-    };
-    this.sidecar.set(id, updated);
-    return this.toDto(firmId, wp);
+    if (!this.hasRealDb()) return this.updateInMemory(firmId, id, dto);
+    return this.withTenant(async (tx) => {
+      const rows = (await tx`SELECT * FROM working_papers WHERE id = ${id} AND firm_id = ${firmId} AND archived_at IS NULL`) as unknown as WpRow[];
+      const row = rows[0];
+      if (!row) throw new NotFoundError('WorkingPaper', id);
+      const cur = rowToDto(row);
+      const updatedSidecar: ApiSidecar = {
+        ...(dto.templateId !== undefined ? { templateId: dto.templateId } : cur.templateId !== undefined ? { templateId: cur.templateId } : {}),
+        controlRef: dto.controlRef ?? cur.controlRef,
+        bodyMarkdown: dto.bodyMarkdown ?? cur.bodyMarkdown,
+        evidenceRefs: dto.evidenceRefs !== undefined ? [...dto.evidenceRefs] : [...cur.evidenceRefs],
+        status: cur.status,
+        version: cur.version + 1,
+      };
+      const body = { ...((row.body ?? {}) as Record<string, unknown>), [SIDECAR_KEY]: updatedSidecar };
+      const newTitle = dto.title ?? cur.title;
+      await tx`UPDATE working_papers
+               SET title = ${newTitle}, body = ${JSON.stringify(body)}::jsonb, updated_at = now()
+               WHERE id = ${id} AND firm_id = ${firmId} AND archived_at IS NULL`;
+      const updated = (await tx`SELECT * FROM working_papers WHERE id = ${id} AND firm_id = ${firmId}`) as unknown as WpRow[];
+      const out = updated[0];
+      if (!out) throw new NotFoundError('WorkingPaper', id);
+      return rowToDto(out);
+    });
   }
 
   async setStatus(
@@ -167,71 +178,27 @@ export class WorkingPapersRepository extends BaseRepository {
     id: string,
     status: WorkingPaperDto['status'],
   ): Promise<WorkingPaperDto> {
-    const ctx: TenantContext = { firmId };
-    if (!this.wp) return this.setStatusFallback(firmId, id, status);
-    let wp: WorkingPaper;
-    try {
-      wp = this.wp.registry.get(ctx, id);
-    } catch {
-      throw new NotFoundError('WorkingPaper', id);
-    }
-    const sc = this.sidecar.get(id) ?? this.deriveSidecar(wp);
-    if (status === 'final' && sc.status !== 'final') {
-      // Map "final" to a verdict transition (no-op if already conformant).
-      // TODO(rls-migration): this mapping is conservative; once the API DTO
-      // surfaces verdicts directly we can drop the bridge.
-    }
-    this.sidecar.set(id, { ...sc, status });
-    return this.toDto(firmId, wp);
+    if (!this.hasRealDb()) return this.setStatusInMemory(firmId, id, status);
+    return this.withTenant(async (tx) => {
+      const rows = (await tx`SELECT * FROM working_papers WHERE id = ${id} AND firm_id = ${firmId} AND archived_at IS NULL`) as unknown as WpRow[];
+      const row = rows[0];
+      if (!row) throw new NotFoundError('WorkingPaper', id);
+      const body = (row.body ?? {}) as Record<string, unknown>;
+      const sc = (body[SIDECAR_KEY] ?? {}) as ApiSidecar;
+      const updatedBody = { ...body, [SIDECAR_KEY]: { ...sc, status } };
+      await tx`UPDATE working_papers
+               SET body = ${JSON.stringify(updatedBody)}::jsonb, updated_at = now()
+               WHERE id = ${id} AND firm_id = ${firmId} AND archived_at IS NULL`;
+      const updated = (await tx`SELECT * FROM working_papers WHERE id = ${id} AND firm_id = ${firmId}`) as unknown as WpRow[];
+      const out = updated[0];
+      if (!out) throw new NotFoundError('WorkingPaper', id);
+      return rowToDto(out);
+    });
   }
 
-  /* -------------------- DTO bridge -------------------- */
+  /* ---------- legacy in-memory fallback ---------- */
 
-  private toDto(firmId: string, wp: WorkingPaper): WorkingPaperDto {
-    const sc = this.sidecar.get(wp.id) ?? this.deriveSidecar(wp);
-    return {
-      id: wp.id,
-      firmId,
-      engagementId: wp.engagementId,
-      ...(sc.templateId !== undefined ? { templateId: sc.templateId } : {}),
-      title: sc.title,
-      controlRef: sc.controlRef,
-      bodyMarkdown: sc.bodyMarkdown,
-      evidenceRefs: sc.evidenceRefs,
-      status: sc.status,
-      version: sc.version,
-      createdAt: wp.createdAt,
-      updatedAt: wp.lastEditedAt,
-    };
-  }
-
-  private deriveSidecar(wp: WorkingPaper): ApiSidecar {
-    return {
-      title: wp.scope.controlId ?? wp.scope.clauseId ?? wp.id,
-      controlRef:
-        wp.scope.controlId ?? wp.scope.clauseId ?? wp.scope.aiSystemId ?? 'unknown',
-      bodyMarkdown: '',
-      evidenceRefs: [],
-      status: this.verdictToStatus(wp.verdict),
-      version: wp.revision + 1,
-    };
-  }
-
-  private verdictToStatus(v: Verdict): WorkingPaperDto['status'] {
-    switch (v) {
-      case 'conformant':
-        return 'draft';
-      default:
-        return 'in_review';
-    }
-  }
-
-  /* ------------- legacy in-memory fallback ------------- */
-  // Kept for unit-test compat. The new tests in working-papers.adapter.spec
-  // exercise the package-backed path.
-
-  private readonly memory = new Map<string, WorkingPaperDto>();
-  private async createInMemoryFallback(
+  private async createInMemory(
     firmId: string,
     dto: CreateWorkingPaperDto,
   ): Promise<WorkingPaperDto> {
@@ -253,12 +220,12 @@ export class WorkingPapersRepository extends BaseRepository {
     this.memory.set(row.id, row);
     return row;
   }
-  private async findFallback(firmId: string, id: string): Promise<WorkingPaperDto> {
+  private async findInMemory(firmId: string, id: string): Promise<WorkingPaperDto> {
     const r = this.memory.get(id);
     if (!r || r.firmId !== firmId) throw new NotFoundError('WorkingPaper', id);
     return r;
   }
-  private async listFallback(
+  private async listInMemory(
     firmId: string,
     opts: { engagementId?: string; cursor?: string; limit: number },
   ): Promise<{ items: WorkingPaperDto[]; nextCursor: string | null }> {
@@ -271,27 +238,32 @@ export class WorkingPapersRepository extends BaseRepository {
       startIdx + opts.limit < all.length ? slice[slice.length - 1]?.id ?? null : null;
     return { items: slice, nextCursor: next };
   }
-  private async updateFallback(
+  private async updateInMemory(
     firmId: string,
     id: string,
     dto: UpdateWorkingPaperDto,
   ): Promise<WorkingPaperDto> {
-    const cur = await this.findFallback(firmId, id);
+    const cur = await this.findInMemory(firmId, id);
+    if (cur.status === 'final') throw new ConflictError('Working paper is final');
     const updated: WorkingPaperDto = {
       ...cur,
-      ...dto,
+      ...(dto.title !== undefined ? { title: dto.title } : {}),
+      ...(dto.controlRef !== undefined ? { controlRef: dto.controlRef } : {}),
+      ...(dto.bodyMarkdown !== undefined ? { bodyMarkdown: dto.bodyMarkdown } : {}),
+      ...(dto.evidenceRefs !== undefined ? { evidenceRefs: dto.evidenceRefs } : {}),
+      ...(dto.templateId !== undefined ? { templateId: dto.templateId } : {}),
       version: cur.version + 1,
       updatedAt: new Date().toISOString(),
     };
     this.memory.set(id, updated);
     return updated;
   }
-  private async setStatusFallback(
+  private async setStatusInMemory(
     firmId: string,
     id: string,
     status: WorkingPaperDto['status'],
   ): Promise<WorkingPaperDto> {
-    const cur = await this.findFallback(firmId, id);
+    const cur = await this.findInMemory(firmId, id);
     if (cur.status === 'final' && status !== 'final') {
       throw new ConflictError('Working paper is final');
     }
@@ -299,8 +271,4 @@ export class WorkingPapersRepository extends BaseRepository {
     this.memory.set(id, updated);
     return updated;
   }
-
-  // Silence unused imports under `noUnusedLocals` when the registry path is
-  // taken in production.
-  protected readonly _hashContent = hashContent;
 }
