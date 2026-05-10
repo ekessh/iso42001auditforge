@@ -77,6 +77,9 @@ importers:
       '@auditforge/db':
         specifier: workspace:*
         version: link:../../packages/db
+      '@auditforge/diarization':
+        specifier: workspace:*
+        version: link:../../packages/diarization
       '@auditforge/engagement':
         specifier: workspace:*
         version: link:../../packages/engagement
@@ -92,6 +95,9 @@ importers:
       '@auditforge/interviews':
         specifier: workspace:*
         version: link:../../packages/interviews
+      '@auditforge/live-interview':
+        specifier: workspace:*
+        version: link:../../packages/live-interview
       '@auditforge/observability':
         specifier: workspace:*
         version: link:../../packages/observability
@@ -128,6 +134,12 @@ importers:
       '@auditforge/trace-analyzer':
         specifier: workspace:*
         version: link:../../packages/trace-analyzer
+      '@auditforge/transcription':
+        specifier: workspace:*
+        version: link:../../packages/transcription
+      '@auditforge/vlm-extraction':
+        specifier: workspace:*
+        version: link:../../packages/vlm-extraction
       '@auditforge/working-papers':
         specifier: workspace:*
         version: link:../../packages/working-papers
@@ -186,8 +198,8 @@ importers:
         specifier: ^5.13.2
         version: 5.76.5
       drizzle-orm:
-        specifier: ^0.33.0
-        version: 0.33.0(@opentelemetry/api@1.9.1)(@types/pg@8.20.0)(@types/react@19.2.14)(pg@8.20.0)(postgres@3.4.9)(react@19.2.5)
+        specifier: ^0.36.0
+        version: 0.36.4(@opentelemetry/api@1.9.1)(@types/pg@8.20.0)(@types/react@19.2.14)(pg@8.20.0)(postgres@3.4.9)(react@19.2.5)
       fastify:
         specifier: ^4.28.1
         version: 4.29.1
@@ -258,6 +270,9 @@ importers:
       '@nestjs/testing':
         specifier: ^10.4.4
         version: 10.4.22(@nestjs/common@10.4.22(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@10.4.22(@nestjs/common@10.4.22(reflect-metadata@0.2.2)(rxjs@7.8.2))(reflect-metadata@0.2.2)(rxjs@7.8.2))
+      '@simplewebauthn/types':
+        specifier: ^11.0.0
+        version: 11.0.0
       '@swc-node/register':
         specifier: ^1.10.10
         version: 1.11.1(@emnapi/core@1.10.0)(@emnapi/runtime@1.10.0)(@swc/core@1.15.33)(@swc/types@0.1.26)(typescript@5.9.3)
@@ -835,6 +850,22 @@ importers:
         specifier: ^2.1.1
         version: 2.1.9(@types/node@22.19.17)(happy-dom@15.11.7)(lightningcss@1.32.0)(msw@2.14.2(@types/node@22.19.17)(typescript@5.9.3))(terser@5.46.2)
 
+  packages/cross-engagement-memory:
+    dependencies:
+      zod:
+        specifier: ^3.23.8
+        version: 3.25.76
+    devDependencies:
+      '@types/node':
+        specifier: ^22.7.0
+        version: 22.19.17
+      typescript:
+        specifier: ^5.6.2
+        version: 5.9.3
+      vitest:
+        specifier: ^2.1.1
+        version: 2.1.9(@types/node@22.19.17)(happy-dom@15.11.7)(lightningcss@1.32.0)(msw@2.14.2(@types/node@22.19.17)(typescript@5.9.3))(terser@5.46.2)
+
   packages/cross-framework:
     dependencies:
       zod:
@@ -887,6 +918,28 @@ importers:
       tsx:
         specifier: ^4.19.1
         version: 4.21.0
+      typescript:
+        specifier: ^5.6.2
+        version: 5.9.3
+      vitest:
+        specifier: ^2.1.1
+        version: 2.1.9(@types/node@22.19.17)(happy-dom@15.11.7)(lightningcss@1.32.0)(msw@2.14.2(@types/node@22.19.17)(typescript@5.9.3))(terser@5.46.2)
+
+  packages/diarization:
+    dependencies:
+      '@auditforge/transcription':
+        specifier: workspace:*
+        version: link:../transcription
+      zod:
+        specifier: ^3.23.8
+        version: 3.25.76
+    devDependencies:
+      '@types/node':
+        specifier: ^22.7.0
+        version: 22.19.17
+      '@vitest/coverage-v8':
+        specifier: ^2.1.1
+        version: 2.1.9(vitest@2.1.9(@types/node@22.19.17)(happy-dom@15.11.7)(lightningcss@1.32.0)(msw@2.14.2(@types/node@22.19.17)(typescript@5.9.3))(terser@5.46.2))
       typescript:
         specifier: ^5.6.2
         version: 5.9.3
@@ -982,6 +1035,31 @@ importers:
       fast-check:
         specifier: ^3.22.0
         version: 3.23.2
+      typescript:
+        specifier: ^5.6.2
+        version: 5.9.3
+      vitest:
+        specifier: ^2.1.1
+        version: 2.1.9(@types/node@22.19.17)(happy-dom@15.11.7)(lightningcss@1.32.0)(msw@2.14.2(@types/node@22.19.17)(typescript@5.9.3))(terser@5.46.2)
+
+  packages/live-interview:
+    dependencies:
+      '@auditforge/diarization':
+        specifier: workspace:*
+        version: link:../diarization
+      '@auditforge/transcription':
+        specifier: workspace:*
+        version: link:../transcription
+      zod:
+        specifier: ^3.23.8
+        version: 3.25.76
+    devDependencies:
+      '@types/node':
+        specifier: ^22.7.0
+        version: 22.19.17
+      '@vitest/coverage-v8':
+        specifier: ^2.1.1
+        version: 2.1.9(vitest@2.1.9(@types/node@22.19.17)(happy-dom@15.11.7)(lightningcss@1.32.0)(msw@2.14.2(@types/node@22.19.17)(typescript@5.9.3))(terser@5.46.2))
       typescript:
         specifier: ^5.6.2
         version: 5.9.3
@@ -1453,6 +1531,25 @@ importers:
         specifier: ^2.1.1
         version: 2.1.9(@types/node@22.19.17)(happy-dom@15.11.7)(lightningcss@1.32.0)(msw@2.14.2(@types/node@22.19.17)(typescript@5.9.3))(terser@5.46.2)
 
+  packages/transcription:
+    dependencies:
+      zod:
+        specifier: ^3.23.8
+        version: 3.25.76
+    devDependencies:
+      '@types/node':
+        specifier: ^22.7.0
+        version: 22.19.17
+      '@vitest/coverage-v8':
+        specifier: ^2.1.1
+        version: 2.1.9(vitest@2.1.9(@types/node@22.19.17)(happy-dom@15.11.7)(lightningcss@1.32.0)(msw@2.14.2(@types/node@22.19.17)(typescript@5.9.3))(terser@5.46.2))
+      typescript:
+        specifier: ^5.6.2
+        version: 5.9.3
+      vitest:
+        specifier: ^2.1.1
+        version: 2.1.9(@types/node@22.19.17)(happy-dom@15.11.7)(lightningcss@1.32.0)(msw@2.14.2(@types/node@22.19.17)(typescript@5.9.3))(terser@5.46.2)
+
   packages/tsa:
     dependencies:
       '@auditforge/shared':
@@ -1634,6 +1731,25 @@ importers:
       tailwindcss-animate:
         specifier: ^1.0.7
         version: 1.0.7(tailwindcss@3.4.19(tsx@4.21.0)(yaml@2.8.4))
+      typescript:
+        specifier: ^5.6.2
+        version: 5.9.3
+      vitest:
+        specifier: ^2.1.1
+        version: 2.1.9(@types/node@22.19.17)(happy-dom@15.11.7)(lightningcss@1.32.0)(msw@2.14.2(@types/node@22.19.17)(typescript@5.9.3))(terser@5.46.2)
+
+  packages/vlm-extraction:
+    dependencies:
+      zod:
+        specifier: ^3.23.8
+        version: 3.25.76
+    devDependencies:
+      '@types/node':
+        specifier: ^22.7.0
+        version: 22.19.17
+      '@vitest/coverage-v8':
+        specifier: ^2.1.1
+        version: 2.1.9(vitest@2.1.9(@types/node@22.19.17)(happy-dom@15.11.7)(lightningcss@1.32.0)(msw@2.14.2(@types/node@22.19.17)(typescript@5.9.3))(terser@5.46.2))
       typescript:
         specifier: ^5.6.2
         version: 5.9.3
