@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BUSL-1.1
 import { NextResponse, type NextRequest } from 'next/server';
+import { buildCsp } from './next.config';
 
 /**
  * Per-request CSP nonce middleware.
@@ -62,16 +63,12 @@ export async function middleware(request: NextRequest): Promise<NextResponse> {
   // the request-side convention.
   response.headers.set('x-nonce', nonce);
 
-  // Substitute {NONCE} in both enforce and report-only CSP variants.
-  for (const headerName of [
-    'Content-Security-Policy',
-    'Content-Security-Policy-Report-Only',
-  ]) {
-    const csp = response.headers.get(headerName);
-    if (csp && csp.includes('{NONCE}')) {
-      response.headers.set(headerName, substituteNonce(csp, nonce));
-    }
-  }
+  const csp = buildCsp(nonce);
+  const reportOnly = process.env.NEXT_PUBLIC_CSP_REPORT_ONLY === '1';
+  response.headers.set(
+    reportOnly ? 'Content-Security-Policy-Report-Only' : 'Content-Security-Policy',
+    csp,
+  );
 
   return response;
 }
