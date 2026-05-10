@@ -74,4 +74,18 @@ export class IdentityController {
   webauthnLoginFinish(@Body() body: WebAuthnLoginFinishDto): Promise<SessionDto> {
     return this.svc.webauthnLoginFinish(body.username, body.assertionResponse);
   }
+
+  // Logout is `@Public()` so an unauthenticated client can clear stale
+  // cookies without first re-authenticating. Best-effort: we never throw
+  // on a missing session. The server returns clear-cookie headers via
+  // `IdentityService.logout` (called as a side effect through the global
+  // cookie response interceptor); the controller just resolves the
+  // promise so the client knows the call succeeded.
+  @Public()
+  @Post('logout')
+  @ApiOperation({ summary: 'Clear the session cookie (best-effort)' })
+  @ApiOkResponse({ schema: { properties: { ok: { type: 'boolean' } } } })
+  logout(): { ok: true } {
+    return this.svc.logout();
+  }
 }

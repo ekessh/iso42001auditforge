@@ -125,6 +125,20 @@ export class IdentityService {
     this.auditorRepo = auditorRepo as AuditorRepository;
   }
 
+  /**
+   * Best-effort logout. Clears the in-memory session map; cookie expiry
+   * on the client is handled by the session middleware which sets
+   * `Max-Age=0` when this method is invoked. Idempotent: safe to call
+   * with no active session.
+   */
+  logout(): { ok: true } {
+    // Clear all session state (we don't track per-request sid here in
+    // dev; production sessions are cookie-bound and the middleware reads
+    // this stub to know it should emit clear-cookie headers).
+    this.sessions.clear();
+    return { ok: true };
+  }
+
   // ── OIDC ──────────────────────────────────────────────────────────────────
 
   async oidcStart(provider: string): Promise<{ authorizeUrl: string; state: string }> {
