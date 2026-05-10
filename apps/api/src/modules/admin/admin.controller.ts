@@ -21,7 +21,7 @@ export class AdminController {
   constructor(private readonly engine: AuditEngineAdapter) {}
 
   @Post('impersonate')
-  @Rbac('admin', 'admin')
+  @Rbac('admin', 'execute')
   @AuditTrail({ type: 'admin.impersonate', entity: 'admin' })
   @UsePipes(new ZodValidationPipe(ImpersonateSchema))
   @ApiOperation({ summary: 'Time-boxed admin impersonation (audit logged)' })
@@ -41,7 +41,7 @@ export class AdminController {
   }
 
   @Post('chain/verify-all')
-  @Rbac('admin', 'admin')
+  @Rbac('admin', 'read')
   @AuditTrail({ type: 'admin.chain-verify', entity: 'admin' })
   @ApiOkResponse({ schema: { properties: { ok: { type: 'boolean' } } } })
   async verifyAll(): Promise<{ ok: boolean }> {

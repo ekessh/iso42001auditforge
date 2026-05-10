@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: BUSL-1.1
 import { Global, Inject, Module, type OnModuleDestroy } from '@nestjs/common';
 import { Queue } from 'bullmq';
-import IORedis, { type Redis } from 'ioredis';
+import { Redis as IORedis, type Redis } from 'ioredis';
 import { APP_CONFIG } from '../config/config.module.js';
 import type { AppConfig } from '../config/config.schema.js';
 

@@ -11,7 +11,7 @@ export class TenancyRepository extends BaseRepository {
 
   async create(firmId: string, dto: CreateTenancyDto): Promise<TenancyDto> {
     const now = new Date().toISOString();
-    const row: TenancyDto = { id: randomUUID(), firmId, name: dto.name, metadata: dto.metadata, createdAt: now, updatedAt: now };
+    const row: TenancyDto = { id: randomUUID(), firmId, name: dto.name, ...(dto.metadata !== undefined ? { metadata: dto.metadata } : {}), createdAt: now, updatedAt: now };
     this.memory.set(row.id, row);
     return row;
   }
@@ -32,7 +32,12 @@ export class TenancyRepository extends BaseRepository {
 
   async update(firmId: string, id: string, dto: UpdateTenancyDto): Promise<TenancyDto> {
     const cur = await this.findById(firmId, id);
-    const updated: TenancyDto = { ...cur, ...dto, updatedAt: new Date().toISOString() };
+    const updated: TenancyDto = {
+      ...cur,
+      ...(dto.name !== undefined ? { name: dto.name } : {}),
+      ...(dto.metadata !== undefined ? { metadata: dto.metadata } : {}),
+      updatedAt: new Date().toISOString(),
+    };
     this.memory.set(id, updated);
     return updated;
   }

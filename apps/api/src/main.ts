@@ -29,7 +29,7 @@ async function bootstrap(): Promise<void> {
   app.useLogger(app.get(PinoLogger));
   app.enableVersioning();
 
-  await app.register(fastifyHelmet, {
+  await app.register(fastifyHelmet as unknown as Parameters<typeof app.register>[0], {
     contentSecurityPolicy: {
       directives: {
         defaultSrc: ["'self'"],
@@ -43,8 +43,8 @@ async function bootstrap(): Promise<void> {
     crossOriginResourcePolicy: { policy: 'same-origin' },
     referrerPolicy: { policy: 'no-referrer' },
   });
-  await app.register(fastifyCookie, { secret: cfg.SESSION_SECRET });
-  await app.register(fastifyMultipart, { limits: { fileSize: 5 * 1024 * 1024 * 1024 } });
+  await app.register(fastifyCookie as unknown as Parameters<typeof app.register>[0], { secret: cfg.SESSION_SECRET });
+  await app.register(fastifyMultipart as unknown as Parameters<typeof app.register>[0], { limits: { fileSize: 5 * 1024 * 1024 * 1024 } });
 
   const swagger = new DocumentBuilder()
     .setTitle('AuditForge ISO 42001 API')
@@ -69,9 +69,8 @@ async function bootstrap(): Promise<void> {
   // Ensure OTel SDK shutdown is awaited during the graceful window so in-flight batch exports
   // are not dropped on rolling deploy (addresses MEDIUM-OBS-006).
   const { shutdownOtel } = await import('./otel.js');
-  app.beforeApplicationShutdown(async () => {
-    await shutdownOtel();
-  });
+  process.once('SIGTERM', () => void shutdownOtel());
+  process.once('SIGINT', () => void shutdownOtel());
   await app.listen(cfg.PORT, cfg.HOST);
 }
 

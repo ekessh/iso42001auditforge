@@ -25,7 +25,7 @@ import { PG_CLIENT } from './db.module.js';
 function asTransactionExecutor(tx: postgres.TransactionSql): TransactionExecutor {
   return {
     async executeRaw(sql: string, params: readonly unknown[] = []): Promise<unknown> {
-      return tx.unsafe(sql, params as unknown[]);
+      return tx.unsafe(sql, params as never[]);
     },
     async transaction<T>(fn: (inner: TransactionExecutor) => Promise<T>): Promise<T> {
       // Postgres-js does not expose nested savepoints from a TransactionSql
@@ -60,7 +60,7 @@ export class BaseRepository {
    */
   protected async withTenant<T>(fn: (tx: postgres.TransactionSql) => Promise<T>): Promise<T> {
     const ctx = RequestContextStore.require();
-    return this.sql.begin(async (tx: postgres.TransactionSql) => {
+    return (this.sql.begin(async (tx: postgres.TransactionSql) => {
       const exec = asTransactionExecutor(tx);
       return withTenantContext(
         exec,
@@ -70,15 +70,12 @@ export class BaseRepository {
           ...(ctx.engagementId !== undefined ? { engagementId: ctx.engagementId } : {}),
         },
         async () => {
-          // Engagement is a session var that tenancy-core does not manage
-          // (it sticks to firm + auditor). Set it here so downstream queries
-          // can scope accordingly.
           if (ctx.engagementId) {
             await tx`SET LOCAL app.current_engagement_id = ${ctx.engagementId}`;
           }
           return fn(tx);
         },
       );
-    });
+    }) as Promise<T>);
   }
 }

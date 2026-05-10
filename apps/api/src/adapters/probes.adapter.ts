@@ -77,6 +77,8 @@ export class ProbesAdapter {
         estimatedCallsMin: args.estimatedCallsMin,
         estimatedCallsMax: args.estimatedCallsMax,
         wallClockMaxMs: args.wallClockMaxMs,
+        memoryMaxMb: 512,
+        cpuMaxMs: 30_000,
       },
       args.mode,
     );
