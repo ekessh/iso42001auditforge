@@ -81,7 +81,7 @@ describe('AuditLedger', () => {
     await ledger.emit(
       { firmId: FIRM_A, producer: 'p' },
       'auditor.invited',
-      { auditorId: AUDITOR, email: 'a@b.c' },
+      { auditorId: AUDITOR, email: 'a@example.com' },
     );
     await ledger.emit(
       { firmId: FIRM_A, producer: 'p' },
@@ -99,7 +99,7 @@ describe('AuditLedger', () => {
     await ledger.emit(
       { firmId: FIRM_A, producer: 'p' },
       'auditor.invited',
-      { auditorId: AUDITOR, email: 'a@b.c' },
+      { auditorId: AUDITOR, email: 'a@example.com' },
     );
     repo.unsafeMutateForTamperTest(0, (e) => ({ ...e, payload: Object.freeze({ ...e.payload, name: 'TAMPERED' }) }));
     const r = await ledger.verifyChain({ firmId: FIRM_A });
@@ -113,7 +113,7 @@ describe('AuditLedger', () => {
     await ledger.emit(
       { firmId: FIRM_A, producer: 'p' },
       'auditor.invited',
-      { auditorId: AUDITOR, email: 'a@b.c' },
+      { auditorId: AUDITOR, email: 'a@example.com' },
     );
     repo.unsafeMutateForTamperTest(1, (e) => ({ ...e, prevHash: 'a'.repeat(64) }));
     const r = await ledger.verifyChain({ firmId: FIRM_A });
@@ -125,7 +125,7 @@ describe('AuditLedger', () => {
   it('replay rebuilds projection deterministically', async () => {
     const { ledger } = newLedger();
     const aud = randomUUID();
-    await ledger.emit({ firmId: FIRM_A, producer: 'p' }, 'auditor.invited', { auditorId: aud, email: 'x@y.z' });
+    await ledger.emit({ firmId: FIRM_A, producer: 'p' }, 'auditor.invited', { auditorId: aud, email: 'x@example.com' });
     await ledger.emit({ firmId: FIRM_A, producer: 'p' }, 'auditor.role_assigned', {
       auditorId: aud,
       role: 'lead_auditor',
@@ -150,7 +150,7 @@ describe('AuditLedger', () => {
     );
     const aDef = projection.get(aud);
     expect(aDef).toBeDefined();
-    expect(aDef?.email).toBe('x@y.z');
+    expect(aDef?.email).toBe('x@example.com');
     expect(aDef?.role).toBe('lead_auditor');
   });
 

@@ -11,7 +11,10 @@
     ".": "./src/index.ts",
     "./registry": "./src/registry.ts",
     "./ledger": "./src/ledger.ts",
-    "./tsa": "./src/tsa.ts"
+    "./tsa": "./src/tsa.ts",
+    "./verifier": "./src/verifier.ts",
+    "./projection": "./src/projection.ts",
+    "./outbox": "./src/outbox.ts"
   },
   "scripts": {
     "build": "tsc -p tsconfig.json",

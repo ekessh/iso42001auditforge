@@ -2,7 +2,7 @@
 import { randomUUID } from 'node:crypto';
 import { AuditLedgerCorruption } from '@auditforge/shared';
 import { GENESIS_HASH, canonicalJsonStringify, computeChainHash, sha256Hex } from './hash.js';
-import { EventSchemaRegistry } from './registry.js';
+import type { EventSchemaRegistry } from './registry.js';
 import { StubTsaProvider, type TsaProvider, type TsaToken } from './tsa.js';
 
 export interface LedgerEvent {
@@ -19,6 +19,9 @@ export interface LedgerEvent {
   readonly prevHash: string;
   readonly chainHash: string;
   readonly tsaToken: TsaToken | null;
+  readonly signature?: string;
+  readonly signerKeyId?: string;
+  readonly signerPublicKeyBase64?: string;
 }
 
 export interface EmitContext {
@@ -32,6 +35,15 @@ export interface EmitContext {
 export interface EmitOptions {
   readonly schemaVersion?: number;
   readonly applyTsa?: boolean;
+  readonly sign?: boolean;
+}
+
+export interface EventSigner {
+  sign(canonicalEnvelope: Uint8Array): Promise<{
+    signatureBase64: string;
+    keyId: string;
+    publicKeyBase64: string;
+  }>;
 }
 
 export interface EventQuery {
@@ -96,13 +108,16 @@ export interface VerifyResult {
 
 export class AuditLedger {
   private readonly tsa: TsaProvider;
+  private readonly signer: EventSigner | undefined;
 
   constructor(
     private readonly repo: EventRepository,
     private readonly registry: EventSchemaRegistry,
     tsa?: TsaProvider,
+    signer?: EventSigner,
   ) {
     this.tsa = tsa ?? new StubTsaProvider();
+    this.signer = signer;
   }
 
   async emit(
@@ -141,6 +156,17 @@ export class AuditLedger {
       tsaToken = await this.tsa.sign(digest);
     }
 
+    let signature: string | undefined;
+    let signerKeyId: string | undefined;
+    let signerPublicKeyBase64: string | undefined;
+    if (options.sign === true && this.signer !== undefined) {
+      const envelope = new TextEncoder().encode(canonicalPayload + '|' + metadata);
+      const r = await this.signer.sign(envelope);
+      signature = r.signatureBase64;
+      signerKeyId = r.keyId;
+      signerPublicKeyBase64 = r.publicKeyBase64;
+    }
+
     const event: LedgerEvent = {
       id,
       firmId: ctx.firmId,
@@ -155,6 +181,9 @@ export class AuditLedger {
       prevHash,
       chainHash,
       tsaToken,
+      ...(signature !== undefined ? { signature } : {}),
+      ...(signerKeyId !== undefined ? { signerKeyId } : {}),
+      ...(signerPublicKeyBase64 !== undefined ? { signerPublicKeyBase64 } : {}),
     };
 
     await this.repo.insert(event);

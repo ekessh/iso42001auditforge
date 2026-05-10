@@ -50,6 +50,13 @@
       "when": 1714694406000,
       "tag": "0006_search_hnsw_and_catalogue_embeddings",
       "breakpoints": false
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1714694407000,
+      "tag": "0007_ledger_signing_tsa_outbox",
+      "breakpoints": false
     }
   ]
 }
