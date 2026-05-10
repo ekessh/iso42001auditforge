@@ -1,0 +1,16 @@
+{
+  "name": "@auditforge/mobile",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "description": "AuditForge ISO 42001 mobile - PWA build of @auditforge/web. Install via 'Add to Home Screen' from a mobile browser.",
+  "license": "BUSL-1.1",
+  "scripts": {
+    "dev": "echo 'Mobile is the PWA build of @auditforge/web. Run: pnpm --filter @auditforge/web dev' && exit 0",
+    "build": "echo 'Mobile is the PWA build of @auditforge/web. Run: pnpm --filter @auditforge/web build' && exit 0",
+    "typecheck": "echo 'no-op (PWA built from @auditforge/web)' && exit 0"
+  },
+  "dependencies": {
+    "@auditforge/web": "workspace:*"
+  }
+}

@@ -27,6 +27,7 @@ import type {
   ReRanker,
   WorkingPaperLinker,
 } from '../types/memory-shim.js';
+import type { AttributionEventBus } from './events.js';
 
 export interface AttributionEngineDeps {
   readonly episodeStore: EpisodeStore;
@@ -37,6 +38,8 @@ export interface AttributionEngineDeps {
   readonly graphReader: ClaimGraphReader;
   readonly workingPaperLinker?: WorkingPaperLinker;
   readonly logger?: AttributionLogger;
+  readonly events?: AttributionEventBus;
+  readonly clock?: () => string;
 }
 
 export interface AttributionLogger {
@@ -117,6 +120,16 @@ export class AnswerAttributionEngine {
           claim,
         });
 
+      if (contradictions.length > 0 && this.deps.events) {
+        await this.deps.events.publish({
+          name: 'attribution.contradiction.detected',
+          engagementId: input.answer.engagementId as EngagementId,
+          claim,
+          contradictions,
+          at: this.now(),
+        });
+      }
+
       cards.push({ claim, attributions: valid, contradictions });
 
       // Step 6 — Coverage deltas
@@ -181,7 +194,46 @@ export class AnswerAttributionEngine {
       droppedHallucinations,
     };
 
+    if (this.deps.events) {
+      const partialAttributions: AttributionResult[] = [];
+      for (const c of cards) {
+        for (const a of c.attributions) {
+          if (a.band === 'MEDIUM' || a.band === 'LOW') partialAttributions.push(a);
+        }
+      }
+      if (notCovered.length > 0 || partialAttributions.length > 0) {
+        await this.deps.events.publish({
+          name: 'attribution.evidence.gap.detected',
+          engagementId: input.answer.engagementId as EngagementId,
+          episodeId,
+          notCoveredClauses: notCovered,
+          partialAttributions,
+          at: this.now(),
+        });
+      }
+      for (const d of allDeltas) {
+        await this.deps.events.publish({
+          name: 'attribution.coverage.delta',
+          engagementId: input.answer.engagementId as EngagementId,
+          delta: d,
+          at: this.now(),
+        });
+      }
+      await this.deps.events.publish({
+        name: 'attribution.completed',
+        engagementId: input.answer.engagementId as EngagementId,
+        episodeId,
+        bundle,
+        deltas: allDeltas,
+        at: this.now(),
+      });
+    }
+
     return { bundle, deltas: allDeltas, workingPaperLinks: allLinks };
+  }
+
+  private now(): string {
+    return (this.deps.clock ?? (() => new Date().toISOString()))();
   }
 }
 
