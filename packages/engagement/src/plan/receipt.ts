@@ -38,7 +38,8 @@ export class PlanReceiptStateMachine {
     if (!PlanReceiptStateMachine.canTransition(receipt.status, next)) {
       throw new StateMachineError(receipt.status, next);
     }
-    const stamp: Partial<PlanReceipt> = {};
+    type MutablePartial = { -readonly [K in keyof PlanReceipt]?: PlanReceipt[K] };
+    const stamp: MutablePartial = {};
     switch (next) {
       case 'received':
         stamp.receivedAt = at;
@@ -50,7 +51,6 @@ export class PlanReceiptStateMachine {
         stamp.acknowledgedAt = at;
         break;
       case 'sent':
-        // unreachable per TRANSITIONS but typed exhaustively
         break;
     }
     return { ...receipt, ...stamp, status: next };

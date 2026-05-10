@@ -1,6 +1,6 @@
-// SPDX-License-Identifier: BUSL-1.1
+﻿// SPDX-License-Identifier: BUSL-1.1
 /**
- * FindingRegistry — tenant-scoped CRUD with ledger event emission and
+ * FindingRegistry â€” tenant-scoped CRUD with ledger event emission and
  * state-machine-driven transitions.
  *
  * The registry is intentionally storage-agnostic. The default factory
@@ -177,7 +177,7 @@ export function createFindingRegistry(
         auditEventId: finding.auditEventId,
         at: raisedAt,
         by: finding.raisedBy,
-        payload,
+        payload: payload as unknown as Readonly<Record<string, unknown>>,
       });
 
       return finding;
@@ -245,7 +245,7 @@ export function createFindingRegistry(
       if (result.to === current.status) {
         // The state machine's `apply` returns `to` distinct from `from` for
         // every legal transition. If we ever observe a no-op here, that's
-        // a logic bug — surface as ConflictError so it isn't silently
+        // a logic bug â€” surface as ConflictError so it isn't silently
         // ignored.
         throw new ConflictError(
           `State machine produced no-op transition for action=${request.action}`,
@@ -275,7 +275,7 @@ export function createFindingRegistry(
         auditEventId: updated.auditEventId,
         at,
         by: request.by,
-        payload,
+        payload: payload as unknown as Readonly<Record<string, unknown>>,
       });
 
       return updated;
@@ -308,7 +308,7 @@ export function createFindingRegistry(
         auditEventId: target.newAuditEventId,
         at: target.carriedAt,
         by: target.by,
-        payload,
+        payload: payload as unknown as Readonly<Record<string, unknown>>,
       });
 
       return updated;

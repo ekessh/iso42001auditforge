@@ -4,14 +4,16 @@ import {
   generateRegistrationOptions,
   verifyAuthenticationResponse,
   verifyRegistrationResponse,
-  type AuthenticationResponseJSON,
-  type AuthenticatorTransportFuture,
-  type PublicKeyCredentialCreationOptionsJSON,
-  type PublicKeyCredentialRequestOptionsJSON,
-  type RegistrationResponseJSON,
   type VerifiedAuthenticationResponse,
   type VerifiedRegistrationResponse,
 } from '@simplewebauthn/server';
+import type {
+  AuthenticationResponseJSON,
+  AuthenticatorTransportFuture,
+  PublicKeyCredentialCreationOptionsJSON,
+  PublicKeyCredentialRequestOptionsJSON,
+  RegistrationResponseJSON,
+} from '@simplewebauthn/types';
 
 export interface WebAuthnConfig {
   rpName: string;
@@ -78,7 +80,7 @@ export class WebAuthnService {
       userVerification: 'required',
       allowCredentials: allowCredentials.map((c) => ({
         id: c.credentialId,
-        transports: c.transports,
+        ...(c.transports !== undefined ? { transports: c.transports } : {}),
       })),
     });
   }
@@ -98,7 +100,7 @@ export class WebAuthnService {
         id: credential.credentialId,
         publicKey: credential.publicKey,
         counter: credential.counter,
-        transports: credential.transports,
+        ...(credential.transports !== undefined ? { transports: credential.transports } : {}),
       },
     });
   }

@@ -15,8 +15,9 @@ import type {
   AuditEventId,
   AuditorId,
   EngagementId,
+  FindingId,
 } from '@auditforge/shared';
-import type { Finding, FindingId } from '../types/finding.js';
+import type { Finding } from '../types/finding.js';
 import { isOpenFinding } from '../types/finding.js';
 import type {
   FindingRegistry,

@@ -24,6 +24,7 @@
   "dependencies": {
     "@auditforge/shared": "workspace:*",
     "@simplewebauthn/server": "^11.0.0",
+    "@simplewebauthn/types": "^11.0.0",
     "argon2": "^0.41.1",
     "jose": "^5.9.0",
     "openid-client": "^6.0.0",

@@ -93,10 +93,10 @@ export class OidcClient {
     return {
       accessToken: tokens.access_token,
       idToken: tokens.id_token,
-      refreshToken: tokens.refresh_token,
+      ...(tokens.refresh_token !== undefined ? { refreshToken: tokens.refresh_token } : {}),
       expiresInSeconds: tokens.expires_in ?? 0,
       tokenType: tokens.token_type ?? 'Bearer',
-      scope: tokens.scope,
+      ...(tokens.scope !== undefined ? { scope: tokens.scope } : {}),
     };
   }
 
@@ -112,7 +112,7 @@ export class OidcClient {
       refreshToken: tokens.refresh_token ?? refreshToken,
       expiresInSeconds: tokens.expires_in ?? 0,
       tokenType: tokens.token_type ?? 'Bearer',
-      scope: tokens.scope,
+      ...(tokens.scope !== undefined ? { scope: tokens.scope } : {}),
     };
   }
 
@@ -121,11 +121,10 @@ export class OidcClient {
     const claims = await oidc.fetchUserInfo(config, accessToken, expectedSubject);
     return {
       sub: claims.sub,
-      email: typeof claims.email === 'string' ? claims.email : undefined,
-      emailVerified: typeof claims.email_verified === 'boolean' ? claims.email_verified : undefined,
-      name: typeof claims.name === 'string' ? claims.name : undefined,
-      preferredUsername:
-        typeof claims.preferred_username === 'string' ? claims.preferred_username : undefined,
+      ...(typeof claims.email === 'string' ? { email: claims.email } : {}),
+      ...(typeof claims.email_verified === 'boolean' ? { emailVerified: claims.email_verified } : {}),
+      ...(typeof claims.name === 'string' ? { name: claims.name } : {}),
+      ...(typeof claims.preferred_username === 'string' ? { preferredUsername: claims.preferred_username } : {}),
     };
   }
 }
