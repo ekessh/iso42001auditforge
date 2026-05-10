@@ -71,6 +71,13 @@
       "when": 1714694409000,
       "tag": "0009_llm_governance",
       "breakpoints": false
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1714694410000,
+      "tag": "0010_observability_and_surveillance_plan",
+      "breakpoints": false
     }
   ]
 }
