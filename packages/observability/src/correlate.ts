@@ -18,7 +18,7 @@ import { AsyncLocalStorage } from 'node:async_hooks';
 import { trace } from '@opentelemetry/api';
 
 interface CorrelationFrame {
-  pendingLedgerEventId?: string;
+  pendingLedgerEventId?: string | undefined;
 }
 
 const correlationStorage = new AsyncLocalStorage<CorrelationFrame>();
