@@ -90,6 +90,28 @@ export const TOOL_POLICIES: Readonly<Record<string, ToolPolicy>> = Object.freeze
     ],
     requiresEngagementMembership: false,
   },
+  'clause.lookup': {
+    // Catalogue lookup is global; every auditor role can read.
+    allowedRoles: [
+      'lead_auditor',
+      'team_auditor',
+      'peer_reviewer',
+      'audit_manager',
+      'firm_admin',
+      'technical_expert',
+    ],
+    requiresEngagementMembership: false,
+  },
+  'memory.query': {
+    // Cross-engagement memory is firm-scoped; lead auditors and audit managers.
+    allowedRoles: ['lead_auditor', 'audit_manager'],
+    requiresEngagementMembership: false,
+  },
+  'memory.export': {
+    // Lead-auditor only AND requires a confirmation token (enforced at handler).
+    allowedRoles: ['lead_auditor'],
+    requiresEngagementMembership: false,
+  },
 });
 
 export interface AuthorizationResult {

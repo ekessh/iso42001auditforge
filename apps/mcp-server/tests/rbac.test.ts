@@ -27,10 +27,11 @@ const auditee: Principal = {
 };
 
 describe('rbac', () => {
-  it('publishes the 13 tool policies', () => {
+  it('publishes the 16 tool policies', () => {
     const tools = listKnownTools().sort();
     expect(tools).toEqual([
       'aiSystemInventory.profile',
+      'clause.lookup',
       'draft_followup_question',
       'get_candidate_findings',
       'get_coverage_state',
@@ -38,13 +39,15 @@ describe('rbac', () => {
       'library.search',
       'list_engagements',
       'list_findings',
+      'memory.export',
+      'memory.query',
       'report.list',
       'report.publish',
       'search_claims',
       'summarize_engagement',
       'working-paper.read',
     ]);
-    expect(Object.keys(TOOL_POLICIES)).toHaveLength(13);
+    expect(Object.keys(TOOL_POLICIES)).toHaveLength(16);
   });
 
   it('denies unknown tools fail-closed', () => {

@@ -153,6 +153,26 @@ export interface EngagementSummary {
  * Methods are membership-checked: implementations MUST return `null` /
  * empty array when the principal is not provisioned against the engagement.
  */
+export interface ClauseDetail {
+  readonly id: ClauseId;
+  readonly title: string;
+  readonly framework: 'ISO_42001' | 'ANNEX_A';
+  readonly text: string;
+  readonly requirements: readonly string[];
+  readonly commonEvidenceTypes: readonly string[];
+}
+
+export interface CrossEngagementMemoryPattern {
+  readonly id: string;
+  readonly firmId: FirmId;
+  readonly patternKind: 'clause_evidence_failure_rate' | 'probe_failure_rate';
+  readonly dimensions: Readonly<Record<string, string | number | boolean>>;
+  readonly sampleSize: number;
+  readonly observation: string;
+  readonly confidence: number;
+  readonly lastUpdated: string;
+}
+
 export interface AuditDataPort {
   listEngagements(p: Principal, filters: ListEngagementsFilters): Promise<readonly EngagementRecord[]>;
   getEngagement(p: Principal, id: EngagementId): Promise<EngagementRecord | null>;
@@ -168,6 +188,12 @@ export interface AuditDataPort {
   searchLibrary(p: Principal, query: string, clauseFilter: readonly ClauseId[] | null, limit: number): Promise<readonly LibraryQuestionRecord[]>;
   listReports(p: Principal, engagementId: EngagementId): Promise<readonly ReportRecord[]>;
   publishReport(p: Principal, engagementId: EngagementId, reportId: string, confirmationToken: string): Promise<ReportRecord | null>;
+  lookupClause(p: Principal, clauseId: ClauseId): Promise<ClauseDetail | null>;
+  queryCrossEngagementMemory(
+    p: Principal,
+    args: { kind?: 'clause_evidence_failure_rate' | 'probe_failure_rate'; scope?: Readonly<Record<string, string>>; limit: number },
+  ): Promise<readonly CrossEngagementMemoryPattern[]>;
+  exportCrossEngagementMemory(p: Principal): Promise<readonly CrossEngagementMemoryPattern[]>;
 }
 
 export interface ListEngagementsFilters {

@@ -11,6 +11,8 @@ import { z } from 'zod';
 
 import type {
   AuditDataPort,
+  ClauseDetail,
+  CrossEngagementMemoryPattern,
   EngagementId,
   Principal,
   EngagementRecord,
@@ -25,6 +27,7 @@ import type {
   WorkingPaperRecord,
 } from '../types.js';
 import type { McpReceiptSigner } from '../signing.js';
+import { buildSelfProfile } from '../self-profile.js';
 
 export interface ToolDefinition<TInput, TOutput> {
   readonly name: string;
@@ -619,10 +622,17 @@ export type AiInvProfileInputT = z.infer<typeof AiInvProfileInput>;
 
 const AiInvProfileOutput = z.object({
   modelName: z.literal('auditforge-mcp'),
+  displayName: z.string(),
   version: z.string(),
   purpose: z.string(),
   capabilities: z.array(z.string()),
+  toolsExposed: z.array(z.string()),
+  modelsUsedDownstream: z.array(z.string()),
+  trainingDataSummary: z.string(),
+  knownBiases: z.array(z.string()),
   limitations: z.array(z.string()),
+  auditRetention: z.string(),
+  outOfScopeUse: z.array(z.string()),
   dataAccess: z.object({
     scope: z.literal('per-engagement'),
     pii: z.boolean(),
@@ -649,38 +659,193 @@ export const aiInvProfileDef: ToolDefinition<AiInvProfileInputT, AiInvProfileOut
 export const aiInvProfile: ToolHandler<AiInvProfileInputT, AiInvProfileOutputT> = {
   definition: aiInvProfileDef,
   engagementOf: () => null,
-  handle: async (_p, _input, deps) => ({
-    modelName: 'auditforge-mcp',
-    version: deps.serverVersion,
-    purpose:
-      'MCP gateway exposing AuditForge engagement data (engagements, findings, candidate findings, coverage, claims, library, working papers, reports) to MCP-compatible clients used by ISO/IEC 42001 Lead Auditors.',
-    capabilities: [
-      'list/get engagements (RBAC-scoped)',
-      'list findings + candidate findings',
-      'coverage state per clause',
-      'claim search (engagement-scoped)',
-      'library question search',
-      'working paper read (read-only)',
-      'report list + report publish (publish requires confirmation token)',
-      'follow-up question drafting (LLM-backed; emits llm_invocations)',
-    ],
-    limitations: [
-      'no write operations beyond report.publish',
-      'cross-engagement queries disabled by RBAC',
-      'auditee role denied on every tool',
-      'no auto-promotion of candidate findings',
-    ],
-    dataAccess: {
-      scope: 'per-engagement',
-      pii: true,
-      cloudEgress: false,
-    },
-    governance: {
-      standard: 'ISO/IEC 42001',
-      auditTrail: 'ed25519-signed-receipts',
-      confirmationRequired: ['report.publish'],
-    },
+  handle: async (_p, _input, deps) => {
+    const toolsExposed = ALL_TOOLS.map((t) => t.definition.name);
+    const profile = buildSelfProfile({
+      version: deps.serverVersion,
+      toolsExposed,
+    });
+    return {
+      modelName: profile.modelName,
+      displayName: profile.displayName,
+      version: profile.version,
+      purpose: profile.purpose,
+      capabilities: [...profile.capabilities],
+      toolsExposed: [...profile.toolsExposed],
+      modelsUsedDownstream: [...profile.modelsUsedDownstream],
+      trainingDataSummary: profile.trainingDataSummary,
+      knownBiases: [...profile.knownBiases],
+      limitations: [...profile.limitations],
+      auditRetention: profile.auditRetention,
+      outOfScopeUse: [...profile.outOfScopeUse],
+      dataAccess: {
+        scope: profile.dataAccess.scope,
+        pii: profile.dataAccess.pii,
+        cloudEgress: profile.dataAccess.cloudEgress,
+      },
+      governance: {
+        standard: profile.governance.standard,
+        auditTrail: profile.governance.auditTrail,
+        confirmationRequired: [...profile.governance.confirmationRequired],
+      },
+    };
+  },
+};
+
+// ---------- clause.lookup -------------------------------------------------
+
+const ClauseLookupInput = z
+  .object({
+    clauseId: z.string().min(1).max(64),
+  })
+  .strict();
+export type ClauseLookupInputT = z.infer<typeof ClauseLookupInput>;
+
+const ClauseLookupOutput = z
+  .object({
+    id: z.string(),
+    title: z.string(),
+    framework: z.enum(['ISO_42001', 'ANNEX_A']),
+    text: z.string(),
+    requirements: z.array(z.string()),
+    commonEvidenceTypes: z.array(z.string()),
+  })
+  .nullable();
+export type ClauseLookupOutputT = z.infer<typeof ClauseLookupOutput>;
+
+export const clauseLookupDef: ToolDefinition<ClauseLookupInputT, ClauseLookupOutputT> = {
+  name: 'clause.lookup',
+  description:
+    'Look up a single ISO 42001 clause or Annex A control by id. Returns title, full text, mandatory requirements, and common evidence types. Catalogue is global to the firm; engagement-agnostic.',
+  fingerprint: '',
+  inputSchema: ClauseLookupInput,
+  outputSchema: ClauseLookupOutput,
+};
+(clauseLookupDef as { fingerprint: string }).fingerprint = fingerprintTool(clauseLookupDef);
+
+export const clauseLookup: ToolHandler<ClauseLookupInputT, ClauseLookupOutputT> = {
+  definition: clauseLookupDef,
+  engagementOf: () => null,
+  handle: async (p, input, deps) => {
+    const c = await deps.data.lookupClause(p, input.clauseId);
+    if (!c) return null;
+    return toClauseOut(c);
+  },
+};
+
+// ---------- memory.query --------------------------------------------------
+
+const MemoryQueryInput = z
+  .object({
+    kind: z.enum(['clause_evidence_failure_rate', 'probe_failure_rate']).optional(),
+    scope: z.record(z.string()).optional(),
+    limit: z.number().int().min(1).max(200).optional(),
+  })
+  .strict();
+export type MemoryQueryInputT = z.infer<typeof MemoryQueryInput>;
+
+const MemoryPatternSchema = z.object({
+  id: z.string(),
+  firmId: z.string(),
+  patternKind: z.enum(['clause_evidence_failure_rate', 'probe_failure_rate']),
+  dimensions: z.record(z.union([z.string(), z.number(), z.boolean()])),
+  sampleSize: z.number(),
+  observation: z.string(),
+  confidence: z.number(),
+  lastUpdated: z.string(),
+});
+const MemoryQueryOutput = z.array(MemoryPatternSchema);
+export type MemoryQueryOutputT = z.infer<typeof MemoryQueryOutput>;
+
+export const memoryQueryDef: ToolDefinition<MemoryQueryInputT, MemoryQueryOutputT> = {
+  name: 'memory.query',
+  description:
+    'Query anonymized per-firm cross-engagement pattern memory (Phase 15). Returns aggregated patterns (clause evidence failure rates, probe failure rates) scoped by dimensions. Anonymized at extraction time — no auditee identifiers.',
+  fingerprint: '',
+  inputSchema: MemoryQueryInput,
+  outputSchema: MemoryQueryOutput,
+};
+(memoryQueryDef as { fingerprint: string }).fingerprint = fingerprintTool(memoryQueryDef);
+
+export const memoryQuery: ToolHandler<MemoryQueryInputT, MemoryQueryOutputT> = {
+  definition: memoryQueryDef,
+  engagementOf: () => null,
+  handle: async (p, input, deps) => {
+    const rows = await deps.data.queryCrossEngagementMemory(p, {
+      ...(input.kind ? { kind: input.kind } : {}),
+      ...(input.scope ? { scope: input.scope } : {}),
+      limit: input.limit ?? 50,
+    });
+    return rows.map(toMemoryOut);
+  },
+};
+
+// ---------- memory.export -------------------------------------------------
+
+const MemoryExportInput = z
+  .object({
+    confirmationToken: z.string().min(8),
+  })
+  .strict();
+export type MemoryExportInputT = z.infer<typeof MemoryExportInput>;
+
+const MemoryExportOutput = z.object({
+  firmId: z.string(),
+  patternCount: z.number(),
+  patterns: z.array(MemoryPatternSchema),
+  signature: z.object({
+    keyId: z.string(),
+    algorithm: z.string(),
+    signatureBase64: z.string(),
   }),
+});
+export type MemoryExportOutputT = z.infer<typeof MemoryExportOutput>;
+
+export const memoryExportDef: ToolDefinition<MemoryExportInputT, MemoryExportOutputT> = {
+  name: 'memory.export',
+  description:
+    'Export the firm-scoped anonymized cross-engagement memory snapshot. Lead-auditor only. Requires a single-use confirmationToken minted via the web UI consent flow. Emits an Ed25519-signed receipt to the audit ledger.',
+  fingerprint: '',
+  inputSchema: MemoryExportInput,
+  outputSchema: MemoryExportOutput,
+};
+(memoryExportDef as { fingerprint: string }).fingerprint = fingerprintTool(memoryExportDef);
+
+export const memoryExport: ToolHandler<MemoryExportInputT, MemoryExportOutputT> = {
+  definition: memoryExportDef,
+  engagementOf: () => null,
+  handle: async (p, input, deps) => {
+    if (!deps.receiptSigner) {
+      throw new ToolError(
+        'mcp.tool.unavailable',
+        'memory.export requires a configured receipt signer; not provisioned in this environment',
+      );
+    }
+    if (!input.confirmationToken.startsWith('confirm-mem-')) {
+      throw new ToolError(
+        'mcp.tool.confirmation_required',
+        'invalid memory.export confirmation token',
+      );
+    }
+    const rows = await deps.data.exportCrossEngagementMemory(p);
+    const receipt = await deps.receiptSigner.sign({
+      tool: 'memory.export',
+      engagementId: '',
+      auditorId: p.auditorId,
+      reportId: `mem-${p.firmId}`,
+      publishedAt: new Date().toISOString(),
+    });
+    return {
+      firmId: p.firmId,
+      patternCount: rows.length,
+      patterns: rows.map(toMemoryOut),
+      signature: {
+        keyId: receipt.keyId,
+        algorithm: receipt.algorithm,
+        signatureBase64: receipt.signatureBase64,
+      },
+    };
+  },
 };
 
 // -------------------------------------------------------------------------
@@ -708,6 +873,9 @@ export const ALL_TOOLS: readonly ToolHandler<unknown, unknown>[] = [
   reportList as unknown as ToolHandler<unknown, unknown>,
   reportPublish as unknown as ToolHandler<unknown, unknown>,
   aiInvProfile as unknown as ToolHandler<unknown, unknown>,
+  clauseLookup as unknown as ToolHandler<unknown, unknown>,
+  memoryQuery as unknown as ToolHandler<unknown, unknown>,
+  memoryExport as unknown as ToolHandler<unknown, unknown>,
 ];
 
 export function toolByName(name: string): ToolHandler<unknown, unknown> | null {
@@ -765,5 +933,27 @@ function toReportOut(r: ReportRecord): ReportListOutputT[number] {
     status: r.status,
     createdAt: r.createdAt,
     publishedAt: r.publishedAt,
+  };
+}
+function toClauseOut(c: ClauseDetail): NonNullable<ClauseLookupOutputT> {
+  return {
+    id: c.id,
+    title: c.title,
+    framework: c.framework,
+    text: c.text,
+    requirements: [...c.requirements],
+    commonEvidenceTypes: [...c.commonEvidenceTypes],
+  };
+}
+function toMemoryOut(p: CrossEngagementMemoryPattern): MemoryQueryOutputT[number] {
+  return {
+    id: p.id,
+    firmId: p.firmId,
+    patternKind: p.patternKind,
+    dimensions: { ...p.dimensions },
+    sampleSize: p.sampleSize,
+    observation: p.observation,
+    confidence: p.confidence,
+    lastUpdated: p.lastUpdated,
   };
 }

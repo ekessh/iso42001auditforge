@@ -10,7 +10,9 @@ import type {
   AuditDataPort,
   CandidateFindingRecord,
   ClaimRecord,
+  ClauseDetail,
   CoverageStateRecord,
+  CrossEngagementMemoryPattern,
   EngagementRecord,
   EngagementSummary,
   FindingRecord,
@@ -347,6 +349,92 @@ export class InMemoryData implements AuditDataPort {
     const idx = this.reports.indexOf(r);
     this.reports[idx] = published;
     return published;
+  }
+
+  readonly clauses: ClauseDetail[] = [
+    {
+      id: 'A.7.4',
+      title: 'Data quality for AI systems',
+      framework: 'ANNEX_A',
+      text: 'The organisation should ensure data quality is fit for purpose across the AI system lifecycle.',
+      requirements: [
+        'Document data quality criteria',
+        'Measure data quality at intake and during retraining',
+      ],
+      commonEvidenceTypes: ['Data quality policy', 'Quality metric reports', 'Sampling logs'],
+    },
+    {
+      id: '6.1',
+      title: 'Actions to address risks and opportunities',
+      framework: 'ISO_42001',
+      text: 'The organisation shall determine the risks and opportunities relevant to the AI management system.',
+      requirements: ['Documented risk assessment', 'Treatment plan'],
+      commonEvidenceTypes: ['Risk register', 'AI impact assessment'],
+    },
+  ];
+
+  readonly patterns: CrossEngagementMemoryPattern[] = [
+    {
+      id: 'pat_demo_1',
+      firmId: 'firm-cb-1',
+      patternKind: 'clause_evidence_failure_rate',
+      dimensions: { industry: 'healthcare', clause_id: 'A.7.4' },
+      sampleSize: 17,
+      observation: 'clause A.7.4 fails evidence requirements at 23% across 17 observations',
+      confidence: 0.75,
+      lastUpdated: '2026-04-30T00:00:00Z',
+    },
+    {
+      id: 'pat_demo_2',
+      firmId: 'firm-cb-1',
+      patternKind: 'probe_failure_rate',
+      dimensions: { industry: 'customer-service', probe_id: 'P-LLM-15' },
+      sampleSize: 12,
+      observation: 'probe P-LLM-15 fails on 41% of 12 runs in this scope',
+      confidence: 0.75,
+      lastUpdated: '2026-04-29T00:00:00Z',
+    },
+    {
+      id: 'pat_demo_3',
+      firmId: 'firm-cb-2',
+      patternKind: 'probe_failure_rate',
+      dimensions: { probe_id: 'P-MCP-01' },
+      sampleSize: 5,
+      observation: 'probe P-MCP-01 fails on 0% of 5 runs in this scope',
+      confidence: 0.5,
+      lastUpdated: '2026-04-28T00:00:00Z',
+    },
+  ];
+
+  async lookupClause(_p: Principal, clauseId: string): Promise<ClauseDetail | null> {
+    return this.clauses.find((c) => c.id === clauseId) ?? null;
+  }
+
+  async queryCrossEngagementMemory(
+    p: Principal,
+    args: {
+      kind?: 'clause_evidence_failure_rate' | 'probe_failure_rate';
+      scope?: Readonly<Record<string, string>>;
+      limit: number;
+    },
+  ): Promise<readonly CrossEngagementMemoryPattern[]> {
+    const filtered = this.patterns.filter((row) => {
+      if (row.firmId !== p.firmId) return false;
+      if (args.kind && row.patternKind !== args.kind) return false;
+      if (args.scope) {
+        for (const [k, v] of Object.entries(args.scope)) {
+          if (row.dimensions[k] !== v) return false;
+        }
+      }
+      return true;
+    });
+    return filtered.slice(0, args.limit);
+  }
+
+  async exportCrossEngagementMemory(
+    p: Principal,
+  ): Promise<readonly CrossEngagementMemoryPattern[]> {
+    return this.patterns.filter((row) => row.firmId === p.firmId);
   }
 }
 
