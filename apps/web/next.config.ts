@@ -41,42 +41,28 @@ const WS_ORIGIN = API_ORIGIN.replace(/^http/, 'ws');
 // Toggle CSP report-only mode for gradual rollout.
 const CSP_REPORT_ONLY = process.env.NEXT_PUBLIC_CSP_REPORT_ONLY === '1';
 
-/** The CSP directive value. Exported for unit tests. */
-export function buildCsp(nonce: string): string {
+/** The CSP directive value. Exported for unit tests.
+ *
+ * NOTE: nonce parameter retained for API compatibility but currently unused.
+ * Netlify edge middleware does not propagate modified request headers to the
+ * Next.js SSR renderer, so the renderer never sees x-nonce and emits inline
+ * script tags without a nonce attribute. Until that path is verified,
+ * script-src ships 'unsafe-inline' instead of strict-dynamic+nonce.
+ */
+export function buildCsp(_nonce: string): string {
+  void _nonce;
   const directives = [
     "default-src 'self'",
-
-    // strict-dynamic + nonce: allows scripts loaded by the trusted nonce-bearing
-    // inline loader to load further scripts. 'unsafe-inline' and 'unsafe-eval'
-    // are intentionally absent.
-    `script-src 'nonce-${nonce}' 'strict-dynamic' 'self'`,
-
-    // style-src: 'unsafe-inline' kept for Next.js CSS-in-JS (Tailwind global
-    // styles injected via <style> tags). Narrow this to hashes or nonces once
-    // all dynamic styles are moved to static CSS files.
-    // TODO: replace 'unsafe-inline' with computed hashes once all inline
-    //       <style> usage is catalogued.
+    "script-src 'self' 'unsafe-inline'",
     "style-src 'self' 'unsafe-inline'",
-
     "img-src 'self' data: blob:",
     "font-src 'self' data:",
     `connect-src 'self' ${API_ORIGIN} ${WS_ORIGIN}`,
-
-    // Security directives.
     "frame-ancestors 'none'",
     "form-action 'self'",
     "base-uri 'self'",
-
-    // object-src / media-src: deny by default via default-src; explicit here
-    // for defence-in-depth.
     "object-src 'none'",
-
-    // Trusted Types (report-only until all inline eval is removed).
-    // Un-comment the second line to enforce once all violations are resolved.
-    // "require-trusted-types-for 'script'",
-    // "trusted-types 'default'",
   ];
-
   return directives.join('; ');
 }
 
