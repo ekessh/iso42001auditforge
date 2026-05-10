@@ -1,0 +1,23 @@
+# SPDX-License-Identifier: BUSL-1.1
+apiVersion: v2
+name: audit-evidence-runner
+description: |
+  AuditForge audit-evidence-runner — Python FastAPI sandbox for running probes
+  (garak / PyRIT / HarmBench wrappers) against AI systems under test. Runs in
+  a hardened, gVisor / kata-friendly pod with no egress except to internal
+  AuditForge services and the configured target.
+type: application
+version: 0.14.0
+appVersion: "0.14.0"
+kubeVersion: ">=1.27.0-0"
+keywords:
+  - probes
+  - garak
+  - pyrit
+  - harmbench
+maintainers:
+  - name: AuditForge Maintainers
+    email: maintainers@auditforge.example
+annotations:
+  category: Compliance
+  licenses: BUSL-1.1
