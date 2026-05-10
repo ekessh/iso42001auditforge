@@ -140,7 +140,7 @@ export default function LiveInterviewPage({ params }: PageProps) {
       <main className="grid min-h-0 grid-cols-[1fr_320px] gap-3">
         <div className="grid min-h-0 grid-rows-[1fr_auto] gap-3">
           <TranscriptPane segments={transcript} onMarkCandidate={onMarkCandidate} />
-          <EvidenceUploader engagementId={undefined} />
+          <EvidenceUploader />
         </div>
         <CoverageDeltaSidebar items={coverageDelta} />
       </main>
