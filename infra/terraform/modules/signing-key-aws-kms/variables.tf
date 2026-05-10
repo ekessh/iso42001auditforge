@@ -1,0 +1,7 @@
+# SPDX-License-Identifier: BUSL-1.1
+
+variable "name" { type = string }
+variable "tags" {
+  type    = map(string)
+  default = {}
+}
