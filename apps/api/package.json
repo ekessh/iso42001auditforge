@@ -71,7 +71,7 @@
     "@opentelemetry/exporter-trace-otlp-http": "^0.53.0",
     "@opentelemetry/sdk-node": "^0.53.0",
     "@simplewebauthn/server": "^11.0.0",
-    "argon2": "^0.41.1",
+    "argon2": "^0.44.0",
     "bullmq": "^5.13.2",
     "drizzle-orm": "^0.36.0",
     "fastify": "^4.28.1",
