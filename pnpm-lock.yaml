@@ -8,6 +8,12 @@ importers:
 
   .:
     devDependencies:
+      '@axe-core/playwright':
+        specifier: ^4.10.0
+        version: 4.11.3(playwright-core@1.59.1)
+      '@playwright/test':
+        specifier: ^1.48.0
+        version: 1.59.1
       '@types/node':
         specifier: ^22.7.0
         version: 22.19.17
@@ -17,6 +23,9 @@ importers:
       '@typescript-eslint/parser':
         specifier: ^8.6.0
         version: 8.59.1(eslint@9.39.4(jiti@2.6.1))(typescript@5.9.3)
+      dotenv:
+        specifier: ^16.4.5
+        version: 16.6.1
       eslint:
         specifier: ^9.11.0
         version: 9.39.4(jiti@2.6.1)
@@ -77,6 +86,9 @@ importers:
       '@auditforge/findings':
         specifier: workspace:*
         version: link:../../packages/findings
+      '@auditforge/interview-library':
+        specifier: workspace:*
+        version: link:../../packages/interview-library
       '@auditforge/interviews':
         specifier: workspace:*
         version: link:../../packages/interviews
@@ -89,6 +101,9 @@ importers:
       '@auditforge/probe-engine':
         specifier: workspace:*
         version: link:../../packages/probe-engine
+      '@auditforge/qa-checklist':
+        specifier: workspace:*
+        version: link:../../packages/qa-checklist
       '@auditforge/risks':
         specifier: workspace:*
         version: link:../../packages/risks
@@ -1388,6 +1403,22 @@ importers:
         specifier: ^2.1.1
         version: 2.1.9(@types/node@22.19.17)(happy-dom@15.11.7)(lightningcss@1.32.0)(msw@2.14.2(@types/node@22.19.17)(typescript@5.9.3))(terser@5.46.2)
 
+  packages/test-helpers:
+    dependencies:
+      zod:
+        specifier: ^3.23.8
+        version: 3.25.76
+    devDependencies:
+      '@types/node':
+        specifier: ^22.7.0
+        version: 22.19.17
+      typescript:
+        specifier: ^5.6.2
+        version: 5.9.3
+      vitest:
+        specifier: ^2.1.1
+        version: 2.1.9(@types/node@22.19.17)(happy-dom@15.11.7)(lightningcss@1.32.0)(msw@2.14.2(@types/node@22.19.17)(typescript@5.9.3))(terser@5.46.2)
+
   packages/trace-analyzer:
     dependencies:
       '@auditforge/audit-engine':
@@ -1655,6 +1686,9 @@ importers:
 
   tests/e2e:
     devDependencies:
+      '@axe-core/playwright':
+        specifier: ^4.10.0
+        version: 4.11.3(playwright-core@1.59.1)
       '@playwright/test':
         specifier: ^1.48.0
         version: 1.59.1
