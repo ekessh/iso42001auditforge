@@ -9,8 +9,6 @@ const requireFromHere = createRequire(import.meta.url);
 const config: NextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
-  eslint: { ignoreDuringBuilds: true },
-  typescript: { ignoreBuildErrors: true },
 
   async headers() {
     return [

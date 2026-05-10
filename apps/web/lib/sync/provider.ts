@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: BUSL-1.1
 'use client';
 
-import * as Y from 'yjs';
+import type * as Y from 'yjs';
 import { WebsocketProvider } from 'y-websocket';
 import { IndexeddbPersistence } from 'y-indexeddb';
 import { Awareness } from 'y-protocols/awareness';
