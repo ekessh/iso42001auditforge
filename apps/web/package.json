@@ -32,7 +32,19 @@
     "clsx": "^2.1.1",
     "tailwind-merge": "^2.5.4",
     "date-fns": "^4.1.0",
-    "msw": "^2.4.9"
+    "msw": "^2.4.9",
+    "next-pwa": "^5.6.0",
+    "yjs": "^13.6.18",
+    "y-protocols": "^1.0.6",
+    "y-websocket": "^2.0.4",
+    "y-indexeddb": "^9.0.12",
+    "@tiptap/core": "^2.8.0",
+    "@tiptap/pm": "^2.8.0",
+    "@tiptap/react": "^2.8.0",
+    "@tiptap/starter-kit": "^2.8.0",
+    "@tiptap/extension-collaboration": "^2.8.0",
+    "@tiptap/extension-collaboration-cursor": "^2.8.0",
+    "@auditforge/working-papers": "workspace:*"
   },
   "devDependencies": {
     "@types/node": "^22.7.0",

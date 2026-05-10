@@ -24,12 +24,15 @@ import { AdminModule } from './modules/admin/admin.module.js';
 import { AgentWorkflowsModule } from './modules/agent-workflows/agent-workflows.module.js';
 import { AiSystemsModule } from './modules/ai-systems/ai-systems.module.js';
 import { ArchiveModule } from './modules/archive/archive.module.js';
+import { AuditDashboardModule } from './modules/audit-dashboard/audit-dashboard.module.js';
 import { AuditLedgerModule } from './modules/audit-ledger/audit-ledger.module.js';
 import { AuditPlansModule } from './modules/audit-plans/audit-plans.module.js';
 import { BillingModule } from './modules/billing/billing.module.js';
+import { CandidateFindingsModule } from './modules/candidate-findings/candidate-findings.module.js';
 import { CapaModule } from './modules/capa/capa.module.js';
 import { ClientsModule } from './modules/clients/clients.module.js';
 import { CoAuditorModule } from './modules/co-auditor/co-auditor.module.js';
+import { CoverageModule } from './modules/coverage/coverage.module.js';
 import { CrossFrameworkModule } from './modules/cross-framework/cross-framework.module.js';
 import { EngagementsModule } from './modules/engagements/engagements.module.js';
 import { EvidenceVaultModule } from './modules/evidence-vault/evidence-vault.module.js';
@@ -37,6 +40,8 @@ import { FindingsModule } from './modules/findings/findings.module.js';
 import { HealthModule } from './modules/health/health.module.js';
 import { IdentityModule } from './modules/identity/identity.module.js';
 import { InterviewsModule } from './modules/interviews/interviews.module.js';
+import { LibraryModule } from './modules/library/library.module.js';
+import { ReadinessModule } from './modules/readiness/readiness.module.js';
 import { PeerReviewModule } from './modules/peer-review/peer-review.module.js';
 import { ProbesModule } from './modules/probes/probes.module.js';
 import { ReportsModule } from './modules/reports/reports.module.js';
@@ -48,6 +53,7 @@ import { SurveillanceModule } from './modules/surveillance/surveillance.module.j
 import { TenancyModule } from './modules/tenancy/tenancy.module.js';
 import { TracesModule } from './modules/traces/traces.module.js';
 import { WorkingPapersModule } from './modules/working-papers/working-papers.module.js';
+import { WorkingPapersSyncModule } from './modules/working-papers-sync/working-papers-sync.module.js';
 
 import type { AppConfig } from './config/config.schema.js';
 
@@ -98,6 +104,7 @@ import type { AppConfig } from './config/config.schema.js';
     TenancyModule,
     TracesModule,
     WorkingPapersModule,
+    WorkingPapersSyncModule,
   ],
   providers: [
     { provide: APP_FILTER, useClass: ProblemDetailsFilter },

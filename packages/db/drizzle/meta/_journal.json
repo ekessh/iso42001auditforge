@@ -57,6 +57,20 @@
       "when": 1714694407000,
       "tag": "0007_ledger_signing_tsa_outbox",
       "breakpoints": false
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1714694408000,
+      "tag": "0008_working_paper_crdt",
+      "breakpoints": false
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1714694409000,
+      "tag": "0009_llm_governance",
+      "breakpoints": false
     }
   ]
 }

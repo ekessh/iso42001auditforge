@@ -8,4 +8,6 @@ export * from './sync.js';
 export * from './search.js';
 export * from './registry.js';
 export * from './ledger.js';
+export * from './yjs/index.js';
+export * from './offline/index.js';
 export { loadBundledTemplates, templatesDir } from './templates/index.js';
