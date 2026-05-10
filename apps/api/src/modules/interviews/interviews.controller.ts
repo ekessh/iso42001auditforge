@@ -9,7 +9,18 @@ import { AuditTrail } from '../../common/audit-trail.interceptor.js';
 import { ZodValidationPipe } from '../../common/zod-validation.pipe.js';
 import { CursorPageQuerySchema } from '../../common/pagination.js';
 import { requireAuth } from '../../common/rls.middleware.js';
-import { CreateInterviewsSchema, UpdateInterviewsSchema, type CreateInterviewsDto, type UpdateInterviewsDto, InterviewsDto, InterviewsPageDto } from './dto.js';
+import {
+  CreateInterviewsSchema,
+  UpdateInterviewsSchema,
+  ComposeInterviewPlanSchema,
+  type CreateInterviewsDto,
+  type UpdateInterviewsDto,
+  type ComposeInterviewPlanDto,
+  InterviewsDto,
+  InterviewsPageDto,
+  InterviewLibraryListDto,
+  InterviewPlanDto,
+} from './dto.js';
 import { InterviewsService } from './interviews.service.js';
 
 @ApiTags('interviews')
@@ -25,6 +36,39 @@ export class InterviewsController {
     const auth = requireAuth(req);
     const q = CursorPageQuerySchema.parse(qRaw);
     return this.svc.list(auth.firmId, { cursor: q.cursor, limit: q.limit });
+  }
+
+  @Get('library')
+  @Rbac('interviews', 'read')
+  @ApiOperation({ summary: 'List curated interview library entries (filterable).' })
+  @ApiOkResponse({ type: InterviewLibraryListDto })
+  async library(
+    @Req() req: FastifyRequest,
+    @Query('role') role?: string,
+    @Query('clause') clause?: string,
+    @Query('mode') mode?: string,
+  ): Promise<InterviewLibraryListDto> {
+    void req;
+    const filter = {
+      ...(role ? { roles: [role as never] } : {}),
+      ...(clause ? { clauses: [clause] } : {}),
+      ...(mode ? { modes: [mode as never] } : {}),
+    };
+    return { items: this.svc.listLibrary(filter) as unknown as InterviewLibraryListDto['items'] };
+  }
+
+  @Post('plan')
+  @Rbac('interviews', 'create')
+  @AuditTrail({ type: 'interviews.plan_composed', entity: 'interviews' })
+  @UsePipes(new ZodValidationPipe(ComposeInterviewPlanSchema))
+  @ApiOperation({ summary: 'Compose a time-boxed interview plan from the library.' })
+  @ApiCreatedResponse({ type: InterviewPlanDto })
+  async composePlan(
+    @Req() req: FastifyRequest,
+    @Body() body: ComposeInterviewPlanDto,
+  ): Promise<InterviewPlanDto> {
+    void req;
+    return this.svc.compose(body) as unknown as InterviewPlanDto;
   }
 
   @Get(':id')

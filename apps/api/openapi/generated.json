@@ -1,0 +1,6831 @@
+{
+  "openapi": "3.0.0",
+  "paths": {
+    "/v1/admin/impersonate": {
+      "post": {
+        "operationId": "AdminController_impersonate",
+        "summary": "Time-boxed admin impersonation (audit logged)",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "ok": {
+                      "type": "boolean"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "admin"
+        ]
+      }
+    },
+    "/v1/admin/chain/verify-all": {
+      "post": {
+        "operationId": "AdminController_verifyAll",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "ok": {
+                      "type": "boolean"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "admin"
+        ]
+      }
+    },
+    "/v1/agent-workflows": {
+      "get": {
+        "operationId": "AgentWorkflowsController_list",
+        "summary": "List agent-workflows",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AgentWorkflowsPageDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "agent-workflows"
+        ]
+      },
+      "post": {
+        "operationId": "AgentWorkflowsController_create",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AgentWorkflowsDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "agent-workflows"
+        ]
+      }
+    },
+    "/v1/agent-workflows/{id}": {
+      "get": {
+        "operationId": "AgentWorkflowsController_get",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AgentWorkflowsDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "agent-workflows"
+        ]
+      },
+      "patch": {
+        "operationId": "AgentWorkflowsController_update",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AgentWorkflowsDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "agent-workflows"
+        ]
+      },
+      "delete": {
+        "operationId": "AgentWorkflowsController_remove",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "agent-workflows"
+        ]
+      }
+    },
+    "/v1/ai-systems": {
+      "get": {
+        "operationId": "AiSystemsController_list",
+        "summary": "List ai-systems",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AiSystemsPageDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "ai-systems"
+        ]
+      },
+      "post": {
+        "operationId": "AiSystemsController_create",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AiSystemsDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "ai-systems"
+        ]
+      }
+    },
+    "/v1/ai-systems/{id}": {
+      "get": {
+        "operationId": "AiSystemsController_get",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AiSystemsDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "ai-systems"
+        ]
+      },
+      "patch": {
+        "operationId": "AiSystemsController_update",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AiSystemsDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "ai-systems"
+        ]
+      },
+      "delete": {
+        "operationId": "AiSystemsController_remove",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "ai-systems"
+        ]
+      }
+    },
+    "/v1/archive": {
+      "get": {
+        "operationId": "ArchiveController_list",
+        "summary": "List archive",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ArchivePageDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "archive"
+        ]
+      },
+      "post": {
+        "operationId": "ArchiveController_create",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ArchiveDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "archive"
+        ]
+      }
+    },
+    "/v1/archive/{id}": {
+      "get": {
+        "operationId": "ArchiveController_get",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ArchiveDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "archive"
+        ]
+      },
+      "patch": {
+        "operationId": "ArchiveController_update",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ArchiveDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "archive"
+        ]
+      },
+      "delete": {
+        "operationId": "ArchiveController_remove",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "archive"
+        ]
+      }
+    },
+    "/v1/engagements/{engagementId}/dashboard/audit": {
+      "get": {
+        "operationId": "AuditDashboardController_get",
+        "summary": "Audit Mode dashboard for the engagement",
+        "parameters": [
+          {
+            "name": "engagementId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuditDashboardDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "audit-dashboard"
+        ]
+      }
+    },
+    "/v1/engagements/{engagementId}/candidate-findings": {
+      "get": {
+        "operationId": "CandidateFindingsController_list",
+        "summary": "List candidate findings drafted by the conversational engine",
+        "parameters": [
+          {
+            "name": "engagementId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CandidateFindingDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "candidate-findings"
+        ]
+      }
+    },
+    "/v1/engagements/{engagementId}/candidate-findings/{cfId}/promote": {
+      "post": {
+        "operationId": "CandidateFindingsController_promote",
+        "summary": "Promote a candidate to a formal finding (auditor confirmation only)",
+        "parameters": [
+          {
+            "name": "engagementId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "cfId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PromoteResultDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "candidate-findings"
+        ]
+      }
+    },
+    "/v1/engagements/{engagementId}/candidate-findings/{cfId}/dismiss": {
+      "post": {
+        "operationId": "CandidateFindingsController_dismiss",
+        "summary": "Dismiss a candidate finding with rationale",
+        "parameters": [
+          {
+            "name": "cfId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DismissResultDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "candidate-findings"
+        ]
+      }
+    },
+    "/v1/findings": {
+      "get": {
+        "operationId": "FindingsController_list",
+        "parameters": [
+          {
+            "name": "engagementId",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FindingPageDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "findings"
+        ]
+      },
+      "post": {
+        "operationId": "FindingsController_create",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FindingDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "findings"
+        ]
+      }
+    },
+    "/v1/findings/{id}": {
+      "get": {
+        "operationId": "FindingsController_get",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FindingDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "findings"
+        ]
+      },
+      "patch": {
+        "operationId": "FindingsController_update",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FindingDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "findings"
+        ]
+      }
+    },
+    "/v1/findings/{id}/transition": {
+      "post": {
+        "operationId": "FindingsController_transition",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FindingDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "findings"
+        ]
+      }
+    },
+    "/v1/engagements/{engagementId}/coverage": {
+      "get": {
+        "operationId": "CoverageController_get",
+        "summary": "Compute clause-by-clause coverage for the engagement",
+        "parameters": [
+          {
+            "name": "engagementId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CoverageAreaDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "coverage"
+        ]
+      }
+    },
+    "/v1/audit-ledger/events": {
+      "get": {
+        "operationId": "AuditLedgerController_list",
+        "summary": "Stream ledger events for the current firm",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LedgerPageDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "audit-ledger"
+        ]
+      }
+    },
+    "/v1/audit-ledger/verify": {
+      "get": {
+        "operationId": "AuditLedgerController_verify",
+        "summary": "Verify the hash chain for the current firm",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChainVerificationDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "audit-ledger"
+        ]
+      }
+    },
+    "/v1/audit-plans": {
+      "get": {
+        "operationId": "AuditPlansController_list",
+        "summary": "List audit-plans",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuditPlansPageDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "audit-plans"
+        ]
+      },
+      "post": {
+        "operationId": "AuditPlansController_create",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuditPlansDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "audit-plans"
+        ]
+      }
+    },
+    "/v1/audit-plans/{id}": {
+      "get": {
+        "operationId": "AuditPlansController_get",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuditPlansDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "audit-plans"
+        ]
+      },
+      "patch": {
+        "operationId": "AuditPlansController_update",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuditPlansDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "audit-plans"
+        ]
+      },
+      "delete": {
+        "operationId": "AuditPlansController_remove",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "audit-plans"
+        ]
+      }
+    },
+    "/v1/billing": {
+      "get": {
+        "operationId": "BillingController_list",
+        "summary": "List billing",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BillingPageDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "billing"
+        ]
+      },
+      "post": {
+        "operationId": "BillingController_create",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BillingDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "billing"
+        ]
+      }
+    },
+    "/v1/billing/{id}": {
+      "get": {
+        "operationId": "BillingController_get",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BillingDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "billing"
+        ]
+      },
+      "patch": {
+        "operationId": "BillingController_update",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BillingDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "billing"
+        ]
+      },
+      "delete": {
+        "operationId": "BillingController_remove",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "billing"
+        ]
+      }
+    },
+    "/v1/capa": {
+      "get": {
+        "operationId": "CapaController_list",
+        "summary": "List capa",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CapaPageDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "capa"
+        ]
+      },
+      "post": {
+        "operationId": "CapaController_create",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CapaDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "capa"
+        ]
+      }
+    },
+    "/v1/capa/{id}": {
+      "get": {
+        "operationId": "CapaController_get",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CapaDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "capa"
+        ]
+      },
+      "patch": {
+        "operationId": "CapaController_update",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CapaDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "capa"
+        ]
+      },
+      "delete": {
+        "operationId": "CapaController_remove",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "capa"
+        ]
+      }
+    },
+    "/v1/clients": {
+      "get": {
+        "operationId": "ClientsController_list",
+        "summary": "List clients",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClientsPageDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "clients"
+        ]
+      },
+      "post": {
+        "operationId": "ClientsController_create",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClientsDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "clients"
+        ]
+      }
+    },
+    "/v1/clients/{id}": {
+      "get": {
+        "operationId": "ClientsController_get",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClientsDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "clients"
+        ]
+      },
+      "patch": {
+        "operationId": "ClientsController_update",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClientsDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "clients"
+        ]
+      },
+      "delete": {
+        "operationId": "ClientsController_remove",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "clients"
+        ]
+      }
+    },
+    "/v1/co-auditor": {
+      "get": {
+        "operationId": "CoAuditorController_list",
+        "summary": "List co-auditor",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CoAuditorPageDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "co-auditor"
+        ]
+      },
+      "post": {
+        "operationId": "CoAuditorController_create",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CoAuditorDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "co-auditor"
+        ]
+      }
+    },
+    "/v1/co-auditor/{id}": {
+      "get": {
+        "operationId": "CoAuditorController_get",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CoAuditorDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "co-auditor"
+        ]
+      },
+      "patch": {
+        "operationId": "CoAuditorController_update",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CoAuditorDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "co-auditor"
+        ]
+      },
+      "delete": {
+        "operationId": "CoAuditorController_remove",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "co-auditor"
+        ]
+      }
+    },
+    "/v1/cross-framework": {
+      "get": {
+        "operationId": "CrossFrameworkController_list",
+        "summary": "List cross-framework",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CrossFrameworkPageDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "cross-framework"
+        ]
+      },
+      "post": {
+        "operationId": "CrossFrameworkController_create",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CrossFrameworkDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "cross-framework"
+        ]
+      }
+    },
+    "/v1/cross-framework/{id}": {
+      "get": {
+        "operationId": "CrossFrameworkController_get",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CrossFrameworkDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "cross-framework"
+        ]
+      },
+      "patch": {
+        "operationId": "CrossFrameworkController_update",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CrossFrameworkDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "cross-framework"
+        ]
+      },
+      "delete": {
+        "operationId": "CrossFrameworkController_remove",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "cross-framework"
+        ]
+      }
+    },
+    "/v1/engagements": {
+      "get": {
+        "operationId": "EngagementsController_list",
+        "summary": "List engagements (cursor paginated)",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EngagementPageDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "engagements"
+        ]
+      },
+      "post": {
+        "operationId": "EngagementsController_create",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EngagementDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "engagements"
+        ]
+      }
+    },
+    "/v1/engagements/{id}": {
+      "get": {
+        "operationId": "EngagementsController_get",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EngagementDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "engagements"
+        ]
+      },
+      "patch": {
+        "operationId": "EngagementsController_update",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EngagementDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "engagements"
+        ]
+      }
+    },
+    "/v1/engagements/{id}/transition": {
+      "post": {
+        "operationId": "EngagementsController_transition",
+        "summary": "Transition engagement lifecycle state",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EngagementDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "engagements"
+        ]
+      }
+    },
+    "/v1/evidence/uploads/presign": {
+      "post": {
+        "operationId": "EvidenceController_presign",
+        "summary": "Get a presigned URL for direct browser upload",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PresignedUploadResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "evidence-vault"
+        ]
+      }
+    },
+    "/v1/evidence/uploads/finalize": {
+      "post": {
+        "operationId": "EvidenceController_finalize",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EvidenceDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "evidence-vault"
+        ]
+      }
+    },
+    "/v1/evidence": {
+      "get": {
+        "operationId": "EvidenceController_list",
+        "parameters": [
+          {
+            "name": "engagementId",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EvidencePageDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "evidence-vault"
+        ]
+      }
+    },
+    "/v1/evidence/{id}": {
+      "get": {
+        "operationId": "EvidenceController_get",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EvidenceDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "evidence-vault"
+        ]
+      }
+    },
+    "/v1/evidence/{id}/download-url": {
+      "post": {
+        "operationId": "EvidenceController_download",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DownloadUrlDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "evidence-vault"
+        ]
+      }
+    },
+    "/healthz/live": {
+      "get": {
+        "operationId": "HealthController_liveness",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "ok"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "health"
+        ]
+      }
+    },
+    "/healthz": {
+      "get": {
+        "operationId": "HealthController_livenessAlias",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "health"
+        ]
+      }
+    },
+    "/healthz/ready": {
+      "get": {
+        "operationId": "HealthController_readiness",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "ok"
+                    },
+                    "postgres": {
+                      "type": "boolean"
+                    },
+                    "redis": {
+                      "type": "boolean"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "One or more downstream dependencies unreachable"
+          }
+        },
+        "tags": [
+          "health"
+        ]
+      }
+    },
+    "/readyz": {
+      "get": {
+        "operationId": "HealthController_readinessAlias",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "health"
+        ]
+      }
+    },
+    "/metrics": {
+      "get": {
+        "operationId": "HealthController_metrics",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "health"
+        ]
+      }
+    },
+    "/v1/identity/oidc/start": {
+      "post": {
+        "operationId": "IdentityController_oidcStart",
+        "summary": "Begin OIDC authorization",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "authorizeUrl": {
+                      "type": "string"
+                    },
+                    "state": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "identity"
+        ]
+      }
+    },
+    "/v1/identity/oidc/callback": {
+      "post": {
+        "operationId": "IdentityController_oidcCallback",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SessionDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "identity"
+        ]
+      }
+    },
+    "/v1/identity/webauthn/register/start": {
+      "post": {
+        "operationId": "IdentityController_webauthnRegisterStart",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChallengeDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "identity"
+        ]
+      }
+    },
+    "/v1/identity/webauthn/register/finish": {
+      "post": {
+        "operationId": "IdentityController_webauthnRegisterFinish",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SessionDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "identity"
+        ]
+      }
+    },
+    "/v1/identity/webauthn/login/start": {
+      "post": {
+        "operationId": "IdentityController_webauthnLoginStart",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChallengeDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "identity"
+        ]
+      }
+    },
+    "/v1/identity/webauthn/login/finish": {
+      "post": {
+        "operationId": "IdentityController_webauthnLoginFinish",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SessionDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "identity"
+        ]
+      }
+    },
+    "/v1/identity/logout": {
+      "post": {
+        "operationId": "IdentityController_logout",
+        "summary": "Clear the session cookie (best-effort)",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "ok": {
+                      "type": "boolean"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "identity"
+        ]
+      }
+    },
+    "/healthz/deps": {
+      "get": {
+        "operationId": "ObservabilityController_health",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Deep deps health snapshot"
+          }
+        },
+        "tags": [
+          "observability"
+        ]
+      }
+    },
+    "/v1/observability/web-vitals": {
+      "post": {
+        "operationId": "ObservabilityController_webVitals",
+        "parameters": [],
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "observability"
+        ]
+      }
+    },
+    "/v1/observability/errors": {
+      "post": {
+        "operationId": "ObservabilityController_errors",
+        "parameters": [],
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "observability"
+        ]
+      }
+    },
+    "/v1/surveillance/clients/{id}/timeline": {
+      "get": {
+        "operationId": "SurveillanceTimelineController_timeline",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Surveillance timeline for a certified client"
+          }
+        },
+        "tags": [
+          "surveillance"
+        ]
+      }
+    },
+    "/v1/interviews": {
+      "get": {
+        "operationId": "InterviewsController_list",
+        "summary": "List interviews",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InterviewsPageDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "interviews"
+        ]
+      },
+      "post": {
+        "operationId": "InterviewsController_create",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InterviewsDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "interviews"
+        ]
+      }
+    },
+    "/v1/interviews/library": {
+      "get": {
+        "operationId": "InterviewsController_library",
+        "summary": "List curated interview library entries (filterable).",
+        "parameters": [
+          {
+            "name": "role",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "clause",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "mode",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InterviewLibraryListDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "interviews"
+        ]
+      }
+    },
+    "/v1/interviews/plan": {
+      "post": {
+        "operationId": "InterviewsController_composePlan",
+        "summary": "Compose a time-boxed interview plan from the library.",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InterviewPlanDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "interviews"
+        ]
+      }
+    },
+    "/v1/interviews/{id}": {
+      "get": {
+        "operationId": "InterviewsController_get",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InterviewsDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "interviews"
+        ]
+      },
+      "patch": {
+        "operationId": "InterviewsController_update",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InterviewsDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "interviews"
+        ]
+      },
+      "delete": {
+        "operationId": "InterviewsController_remove",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "interviews"
+        ]
+      }
+    },
+    "/v1/library": {
+      "get": {
+        "operationId": "LibraryController_list",
+        "summary": "Search the question library + framework catalogues",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LibraryPageDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "library"
+        ]
+      }
+    },
+    "/v1/peer-review": {
+      "get": {
+        "operationId": "PeerReviewController_list",
+        "summary": "List peer-review",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PeerReviewPageDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "peer-review"
+        ]
+      },
+      "post": {
+        "operationId": "PeerReviewController_create",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PeerReviewDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "peer-review"
+        ]
+      }
+    },
+    "/v1/peer-review/{id}": {
+      "get": {
+        "operationId": "PeerReviewController_get",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PeerReviewDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "peer-review"
+        ]
+      },
+      "patch": {
+        "operationId": "PeerReviewController_update",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PeerReviewDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "peer-review"
+        ]
+      },
+      "delete": {
+        "operationId": "PeerReviewController_remove",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "peer-review"
+        ]
+      }
+    },
+    "/v1/peer-review/{id}/comments": {
+      "get": {
+        "operationId": "PeerReviewController_listComments",
+        "summary": "List comments on a peer-review package",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PeerReviewCommentListDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "peer-review"
+        ]
+      },
+      "post": {
+        "operationId": "PeerReviewController_addComment",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PeerReviewCommentDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "peer-review"
+        ]
+      }
+    },
+    "/v1/peer-review/{id}/comments/{commentId}/resolve": {
+      "post": {
+        "operationId": "PeerReviewController_resolveComment",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "commentId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PeerReviewCommentDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "peer-review"
+        ]
+      }
+    },
+    "/v1/probes": {
+      "get": {
+        "operationId": "ProbesController_list",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProbePageDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "probes"
+        ]
+      },
+      "post": {
+        "operationId": "ProbesController_create",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProbeDefinitionDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "probes"
+        ]
+      }
+    },
+    "/v1/probes/{id}": {
+      "get": {
+        "operationId": "ProbesController_get",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProbeDefinitionDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "probes"
+        ]
+      }
+    },
+    "/v1/probes/{id}/execute": {
+      "post": {
+        "operationId": "ProbesController_execute",
+        "summary": "Queue a probe execution",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProbeExecutionDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "probes"
+        ]
+      }
+    },
+    "/v1/probes/executions/list": {
+      "get": {
+        "operationId": "ProbesController_listExecutions",
+        "parameters": [
+          {
+            "name": "engagementId",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProbeExecutionPageDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "probes"
+        ]
+      }
+    },
+    "/v1/probes/executions/{executionId}": {
+      "get": {
+        "operationId": "ProbesController_getExecution",
+        "parameters": [
+          {
+            "name": "executionId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProbeExecutionDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "probes"
+        ]
+      }
+    },
+    "/v1/probes/budget/{engagementId}": {
+      "get": {
+        "operationId": "ProbesController_budget",
+        "parameters": [
+          {
+            "name": "engagementId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "spent": {
+                      "type": "number"
+                    },
+                    "allowance": {
+                      "type": "number"
+                    },
+                    "remaining": {
+                      "type": "number"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "probes"
+        ]
+      }
+    },
+    "/v1/qa-checklist/evaluate": {
+      "post": {
+        "operationId": "QaChecklistController_evaluate",
+        "summary": "Evaluate the QA checklist for a draft report; returns deterministic { passed, items }.",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChecklistResultDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "qa-checklist"
+        ]
+      }
+    },
+    "/v1/qa-checklist/override": {
+      "post": {
+        "operationId": "QaChecklistController_override",
+        "summary": "Lead-auditor override for a single failed checklist item. Rationale is logged to the audit ledger.",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChecklistResultDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "qa-checklist"
+        ]
+      }
+    },
+    "/v1/engagements/{engagementId}/dashboard/readiness": {
+      "get": {
+        "operationId": "ReadinessController_get",
+        "summary": "Readiness Mode dashboard for the engagement",
+        "parameters": [
+          {
+            "name": "engagementId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReadinessDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "readiness"
+        ]
+      }
+    },
+    "/v1/reports": {
+      "get": {
+        "operationId": "ReportsController_list",
+        "parameters": [
+          {
+            "name": "engagementId",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReportPageDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "reports"
+        ]
+      },
+      "post": {
+        "operationId": "ReportsController_create",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReportDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "reports"
+        ]
+      }
+    },
+    "/v1/reports/{id}": {
+      "get": {
+        "operationId": "ReportsController_get",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReportDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "reports"
+        ]
+      },
+      "patch": {
+        "operationId": "ReportsController_update",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReportDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "reports"
+        ]
+      }
+    },
+    "/v1/reports/{id}/render": {
+      "post": {
+        "operationId": "ReportsController_render",
+        "summary": "Queue PDF rendering",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "reports"
+        ]
+      }
+    },
+    "/v1/reports/{id}/sign": {
+      "post": {
+        "operationId": "ReportsController_sign",
+        "summary": "Sign and issue report (WebAuthn-attested)",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReportDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "reports"
+        ]
+      }
+    },
+    "/v1/risks": {
+      "get": {
+        "operationId": "RisksController_list",
+        "summary": "List risks",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RisksPageDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "risks"
+        ]
+      },
+      "post": {
+        "operationId": "RisksController_create",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RisksDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "risks"
+        ]
+      }
+    },
+    "/v1/risks/{id}": {
+      "get": {
+        "operationId": "RisksController_get",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RisksDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "risks"
+        ]
+      },
+      "patch": {
+        "operationId": "RisksController_update",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RisksDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "risks"
+        ]
+      },
+      "delete": {
+        "operationId": "RisksController_remove",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "risks"
+        ]
+      }
+    },
+    "/v1/samples": {
+      "get": {
+        "operationId": "SamplesController_list",
+        "summary": "List samples",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SamplesPageDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "samples"
+        ]
+      },
+      "post": {
+        "operationId": "SamplesController_create",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SamplesDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "samples"
+        ]
+      }
+    },
+    "/v1/samples/{id}": {
+      "get": {
+        "operationId": "SamplesController_get",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SamplesDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "samples"
+        ]
+      },
+      "patch": {
+        "operationId": "SamplesController_update",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SamplesDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "samples"
+        ]
+      },
+      "delete": {
+        "operationId": "SamplesController_remove",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "samples"
+        ]
+      }
+    },
+    "/v1/samples/draw": {
+      "post": {
+        "operationId": "SamplesController_draw",
+        "summary": "Draw a deterministic sample from a population.",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DrawSampleResultDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "samples"
+        ]
+      }
+    },
+    "/v1/samples/override": {
+      "post": {
+        "operationId": "SamplesController_override",
+        "summary": "Swap a sampled unit for cause; rationale is logged to the ledger.",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DrawSampleResultDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "samples"
+        ]
+      }
+    },
+    "/v1/samples/calculate-size": {
+      "post": {
+        "operationId": "SamplesController_calculateSize",
+        "summary": "Compute textbook attribute / variable / MUS sample size.",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SizeCalculatorResultDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "samples"
+        ]
+      }
+    },
+    "/v1/search": {
+      "post": {
+        "operationId": "SearchController_hybrid",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SearchResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "search"
+        ]
+      }
+    },
+    "/v1/search/semantic": {
+      "post": {
+        "operationId": "SearchController_semantic",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SearchResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "search"
+        ]
+      }
+    },
+    "/v1/search/keyword": {
+      "post": {
+        "operationId": "SearchController_keyword",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SearchResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "search"
+        ]
+      }
+    },
+    "/v1/soa": {
+      "get": {
+        "operationId": "SoaController_list",
+        "summary": "List soa",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SoaPageDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "soa"
+        ]
+      },
+      "post": {
+        "operationId": "SoaController_create",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SoaDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "soa"
+        ]
+      }
+    },
+    "/v1/soa/{id}": {
+      "get": {
+        "operationId": "SoaController_get",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SoaDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "soa"
+        ]
+      },
+      "patch": {
+        "operationId": "SoaController_update",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SoaDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "soa"
+        ]
+      },
+      "delete": {
+        "operationId": "SoaController_remove",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "soa"
+        ]
+      }
+    },
+    "/v1/surveillance": {
+      "get": {
+        "operationId": "SurveillanceController_list",
+        "summary": "List surveillance",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SurveillancePageDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "surveillance"
+        ]
+      },
+      "post": {
+        "operationId": "SurveillanceController_create",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SurveillanceDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "surveillance"
+        ]
+      }
+    },
+    "/v1/surveillance/{id}": {
+      "get": {
+        "operationId": "SurveillanceController_get",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SurveillanceDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "surveillance"
+        ]
+      },
+      "patch": {
+        "operationId": "SurveillanceController_update",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SurveillanceDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "surveillance"
+        ]
+      },
+      "delete": {
+        "operationId": "SurveillanceController_remove",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "surveillance"
+        ]
+      }
+    },
+    "/v1/tenancy": {
+      "get": {
+        "operationId": "TenancyController_list",
+        "summary": "List tenancy",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TenancyPageDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "tenancy"
+        ]
+      },
+      "post": {
+        "operationId": "TenancyController_create",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TenancyDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "tenancy"
+        ]
+      }
+    },
+    "/v1/tenancy/{id}": {
+      "get": {
+        "operationId": "TenancyController_get",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TenancyDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "tenancy"
+        ]
+      },
+      "patch": {
+        "operationId": "TenancyController_update",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TenancyDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "tenancy"
+        ]
+      },
+      "delete": {
+        "operationId": "TenancyController_remove",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "tenancy"
+        ]
+      }
+    },
+    "/v1/traces": {
+      "get": {
+        "operationId": "TracesController_list",
+        "summary": "List traces",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TracesPageDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "traces"
+        ]
+      },
+      "post": {
+        "operationId": "TracesController_create",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TracesDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "traces"
+        ]
+      }
+    },
+    "/v1/traces/{id}": {
+      "get": {
+        "operationId": "TracesController_get",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TracesDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "traces"
+        ]
+      },
+      "patch": {
+        "operationId": "TracesController_update",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TracesDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "traces"
+        ]
+      },
+      "delete": {
+        "operationId": "TracesController_remove",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "traces"
+        ]
+      }
+    },
+    "/v1/traces/ingest": {
+      "post": {
+        "operationId": "TracesController_ingest",
+        "summary": "Ingest a raw trace dump (OTel/Langfuse/Phoenix)",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TracesDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "traces"
+        ]
+      }
+    },
+    "/v1/working-papers": {
+      "get": {
+        "operationId": "WorkingPapersController_list",
+        "parameters": [
+          {
+            "name": "engagementId",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkingPaperPageDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "working-papers"
+        ]
+      },
+      "post": {
+        "operationId": "WorkingPapersController_create",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkingPaperDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "working-papers"
+        ]
+      }
+    },
+    "/v1/working-papers/{id}": {
+      "get": {
+        "operationId": "WorkingPapersController_get",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkingPaperDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "working-papers"
+        ]
+      },
+      "patch": {
+        "operationId": "WorkingPapersController_update",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkingPaperDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "working-papers"
+        ]
+      }
+    },
+    "/v1/working-papers/{id}/submit": {
+      "post": {
+        "operationId": "WorkingPapersController_submit",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkingPaperDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "working-papers"
+        ]
+      }
+    },
+    "/v1/working-papers/{id}/finalize": {
+      "post": {
+        "operationId": "WorkingPapersController_finalize",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkingPaperDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "working-papers"
+        ]
+      }
+    },
+    "/v1/sync/health": {
+      "get": {
+        "operationId": "WorkingPapersSyncController_health",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean"
+                    },
+                    "ts": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "ts"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "working-papers-sync"
+        ]
+      }
+    }
+  },
+  "info": {
+    "title": "AuditForge ISO 42001 API",
+    "description": "",
+    "version": "1.0.0",
+    "contact": {}
+  },
+  "tags": [],
+  "servers": [],
+  "components": {
+    "schemas": {
+      "AgentWorkflowsDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "firmId": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "metadata": {
+            "type": "object"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "firmId",
+          "name",
+          "createdAt",
+          "updatedAt"
+        ]
+      },
+      "AgentWorkflowsPageDto": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AgentWorkflowsDto"
+            }
+          },
+          "nextCursor": {
+            "type": "object",
+            "nullable": true
+          },
+          "prevCursor": {
+            "type": "object",
+            "nullable": true
+          }
+        },
+        "required": [
+          "items",
+          "nextCursor",
+          "prevCursor"
+        ]
+      },
+      "AiSystemsDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "firmId": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "metadata": {
+            "type": "object"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "firmId",
+          "name",
+          "createdAt",
+          "updatedAt"
+        ]
+      },
+      "AiSystemsPageDto": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AiSystemsDto"
+            }
+          },
+          "nextCursor": {
+            "type": "object",
+            "nullable": true
+          },
+          "prevCursor": {
+            "type": "object",
+            "nullable": true
+          }
+        },
+        "required": [
+          "items",
+          "nextCursor",
+          "prevCursor"
+        ]
+      },
+      "ArchiveDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "firmId": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "metadata": {
+            "type": "object"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "firmId",
+          "name",
+          "createdAt",
+          "updatedAt"
+        ]
+      },
+      "ArchivePageDto": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ArchiveDto"
+            }
+          },
+          "nextCursor": {
+            "type": "object",
+            "nullable": true
+          },
+          "prevCursor": {
+            "type": "object",
+            "nullable": true
+          }
+        },
+        "required": [
+          "items",
+          "nextCursor",
+          "prevCursor"
+        ]
+      },
+      "AreaCoverageBarDto": {
+        "type": "object",
+        "properties": {
+          "areaId": {
+            "type": "string"
+          },
+          "areaTitle": {
+            "type": "string"
+          },
+          "planned": {
+            "type": "number"
+          },
+          "covered": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "areaId",
+          "areaTitle",
+          "planned",
+          "covered"
+        ]
+      },
+      "ManDayPointDto": {
+        "type": "object",
+        "properties": {
+          "day": {
+            "type": "number"
+          },
+          "planned": {
+            "type": "number"
+          },
+          "actual": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "day",
+          "planned",
+          "actual"
+        ]
+      },
+      "FindingTypeBreakdownDto": {
+        "type": "object",
+        "properties": {
+          "major": {
+            "type": "number"
+          },
+          "minor": {
+            "type": "number"
+          },
+          "ofi": {
+            "type": "number"
+          },
+          "observation": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "major",
+          "minor",
+          "ofi",
+          "observation"
+        ]
+      },
+      "AttentionAreaDto": {
+        "type": "object",
+        "properties": {
+          "areaId": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "areaId",
+          "reason"
+        ]
+      },
+      "AuditDashboardDto": {
+        "type": "object",
+        "properties": {
+          "coveragePct": {
+            "type": "number"
+          },
+          "areaBars": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AreaCoverageBarDto"
+            }
+          },
+          "manDays": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ManDayPointDto"
+            }
+          },
+          "manDaysSpent": {
+            "type": "number"
+          },
+          "manDaysPlanned": {
+            "type": "number"
+          },
+          "candidateFindings": {
+            "$ref": "#/components/schemas/FindingTypeBreakdownDto"
+          },
+          "promotedFindings": {
+            "type": "number"
+          },
+          "samplingCompletePct": {
+            "type": "number"
+          },
+          "risk": {
+            "type": "string",
+            "enum": [
+              "on_track",
+              "coverage_gap",
+              "time_overrun"
+            ]
+          },
+          "attentionAreas": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AttentionAreaDto"
+            }
+          }
+        },
+        "required": [
+          "coveragePct",
+          "areaBars",
+          "manDays",
+          "manDaysSpent",
+          "manDaysPlanned",
+          "candidateFindings",
+          "promotedFindings",
+          "samplingCompletePct",
+          "risk",
+          "attentionAreas"
+        ]
+      },
+      "ClauseChipDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "label": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "label"
+        ]
+      },
+      "CandidateFindingDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "major",
+              "minor",
+              "ofi",
+              "observation"
+            ]
+          },
+          "typeLabel": {
+            "type": "string"
+          },
+          "statement": {
+            "type": "string"
+          },
+          "clauses": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ClauseChipDto"
+            }
+          },
+          "confidence": {
+            "type": "string",
+            "enum": [
+              "low",
+              "medium",
+              "high"
+            ]
+          },
+          "source": {
+            "type": "string"
+          },
+          "claimRefs": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "parked": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "id",
+          "type",
+          "typeLabel",
+          "statement",
+          "clauses",
+          "confidence",
+          "source",
+          "claimRefs",
+          "parked"
+        ]
+      },
+      "PromoteResultDto": {
+        "type": "object",
+        "properties": {
+          "findingId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "findingId"
+        ]
+      },
+      "DismissResultDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "status"
+        ]
+      },
+      "FindingDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "firmId": {
+            "type": "string"
+          },
+          "engagementId": {
+            "type": "string"
+          },
+          "controlRef": {
+            "type": "string"
+          },
+          "severity": {
+            "type": "string",
+            "enum": [
+              "major_nc",
+              "minor_nc",
+              "ofi",
+              "conformity"
+            ]
+          },
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "evidence": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "open",
+              "capa_pending",
+              "capa_in_progress",
+              "closed",
+              "verified"
+            ]
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "firmId",
+          "engagementId",
+          "controlRef",
+          "severity",
+          "title",
+          "description",
+          "evidence",
+          "status",
+          "createdAt",
+          "updatedAt"
+        ]
+      },
+      "FindingPageDto": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FindingDto"
+            }
+          },
+          "nextCursor": {
+            "type": "object",
+            "nullable": true
+          },
+          "prevCursor": {
+            "type": "object",
+            "nullable": true
+          }
+        },
+        "required": [
+          "items",
+          "nextCursor",
+          "prevCursor"
+        ]
+      },
+      "CoverageCellDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "evidenced",
+              "partial",
+              "contradicted",
+              "untouched"
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "status"
+        ]
+      },
+      "CoverageAreaDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "cells": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CoverageCellDto"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "title",
+          "cells"
+        ]
+      },
+      "LedgerEventDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "sequence": {
+            "type": "number"
+          },
+          "firmId": {
+            "type": "string"
+          },
+          "engagementId": {
+            "type": "string"
+          },
+          "actorId": {
+            "type": "string"
+          },
+          "actorRole": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          },
+          "entity": {
+            "type": "string"
+          },
+          "entityId": {
+            "type": "string"
+          },
+          "payload": {
+            "type": "object"
+          },
+          "prevHash": {
+            "type": "string"
+          },
+          "hash": {
+            "type": "string"
+          },
+          "emittedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "sequence",
+          "firmId",
+          "actorId",
+          "type",
+          "entity",
+          "entityId",
+          "payload",
+          "prevHash",
+          "hash",
+          "emittedAt"
+        ]
+      },
+      "LedgerPageDto": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/LedgerEventDto"
+            }
+          },
+          "nextCursor": {
+            "type": "object",
+            "nullable": true
+          },
+          "prevCursor": {
+            "type": "object",
+            "nullable": true
+          }
+        },
+        "required": [
+          "items",
+          "nextCursor",
+          "prevCursor"
+        ]
+      },
+      "ChainVerificationDto": {
+        "type": "object",
+        "properties": {
+          "ok": {
+            "type": "boolean"
+          },
+          "head": {
+            "type": "string"
+          },
+          "verifiedAt": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "ok",
+          "verifiedAt"
+        ]
+      },
+      "AuditPlansDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "firmId": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "metadata": {
+            "type": "object"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "firmId",
+          "name",
+          "createdAt",
+          "updatedAt"
+        ]
+      },
+      "AuditPlansPageDto": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AuditPlansDto"
+            }
+          },
+          "nextCursor": {
+            "type": "object",
+            "nullable": true
+          },
+          "prevCursor": {
+            "type": "object",
+            "nullable": true
+          }
+        },
+        "required": [
+          "items",
+          "nextCursor",
+          "prevCursor"
+        ]
+      },
+      "BillingDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "firmId": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "metadata": {
+            "type": "object"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "firmId",
+          "name",
+          "createdAt",
+          "updatedAt"
+        ]
+      },
+      "BillingPageDto": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BillingDto"
+            }
+          },
+          "nextCursor": {
+            "type": "object",
+            "nullable": true
+          },
+          "prevCursor": {
+            "type": "object",
+            "nullable": true
+          }
+        },
+        "required": [
+          "items",
+          "nextCursor",
+          "prevCursor"
+        ]
+      },
+      "CapaDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "firmId": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "metadata": {
+            "type": "object"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "firmId",
+          "name",
+          "createdAt",
+          "updatedAt"
+        ]
+      },
+      "CapaPageDto": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CapaDto"
+            }
+          },
+          "nextCursor": {
+            "type": "object",
+            "nullable": true
+          },
+          "prevCursor": {
+            "type": "object",
+            "nullable": true
+          }
+        },
+        "required": [
+          "items",
+          "nextCursor",
+          "prevCursor"
+        ]
+      },
+      "ClientsDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "firmId": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "metadata": {
+            "type": "object"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "firmId",
+          "name",
+          "createdAt",
+          "updatedAt"
+        ]
+      },
+      "ClientsPageDto": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ClientsDto"
+            }
+          },
+          "nextCursor": {
+            "type": "object",
+            "nullable": true
+          },
+          "prevCursor": {
+            "type": "object",
+            "nullable": true
+          }
+        },
+        "required": [
+          "items",
+          "nextCursor",
+          "prevCursor"
+        ]
+      },
+      "CoAuditorDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "firmId": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "metadata": {
+            "type": "object"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "firmId",
+          "name",
+          "createdAt",
+          "updatedAt"
+        ]
+      },
+      "CoAuditorPageDto": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CoAuditorDto"
+            }
+          },
+          "nextCursor": {
+            "type": "object",
+            "nullable": true
+          },
+          "prevCursor": {
+            "type": "object",
+            "nullable": true
+          }
+        },
+        "required": [
+          "items",
+          "nextCursor",
+          "prevCursor"
+        ]
+      },
+      "CrossFrameworkDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "firmId": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "metadata": {
+            "type": "object"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "firmId",
+          "name",
+          "createdAt",
+          "updatedAt"
+        ]
+      },
+      "CrossFrameworkPageDto": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CrossFrameworkDto"
+            }
+          },
+          "nextCursor": {
+            "type": "object",
+            "nullable": true
+          },
+          "prevCursor": {
+            "type": "object",
+            "nullable": true
+          }
+        },
+        "required": [
+          "items",
+          "nextCursor",
+          "prevCursor"
+        ]
+      },
+      "EngagementDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "firmId": {
+            "type": "string"
+          },
+          "clientId": {
+            "type": "string"
+          },
+          "mode": {
+            "type": "string",
+            "enum": [
+              "audit",
+              "readiness"
+            ],
+            "description": "Engagement mode (ADR-0013). Immutable after creation. `audit` = formal conformity audit; `readiness` = self-assessment using ISO/IEC 42001 as a reference framework (NOT a certification)."
+          },
+          "stage": {
+            "type": "string",
+            "enum": [
+              "stage1",
+              "stage2",
+              "surveillance",
+              "recertification",
+              "special"
+            ]
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "planned",
+              "in_progress",
+              "reporting",
+              "reviewed",
+              "issued",
+              "archived",
+              "cancelled"
+            ]
+          },
+          "scopeStatement": {
+            "type": "string"
+          },
+          "startsOn": {
+            "type": "string",
+            "format": "date"
+          },
+          "endsOn": {
+            "type": "string",
+            "format": "date"
+          },
+          "leadAuditorId": {
+            "type": "string"
+          },
+          "teamMemberIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "metadata": {
+            "type": "object"
+          }
+        },
+        "required": [
+          "id",
+          "firmId",
+          "clientId",
+          "mode",
+          "stage",
+          "status",
+          "scopeStatement",
+          "startsOn",
+          "endsOn",
+          "leadAuditorId",
+          "teamMemberIds",
+          "createdAt",
+          "updatedAt"
+        ]
+      },
+      "EngagementPageDto": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/EngagementDto"
+            }
+          },
+          "nextCursor": {
+            "type": "object",
+            "nullable": true
+          },
+          "prevCursor": {
+            "type": "object",
+            "nullable": true
+          }
+        },
+        "required": [
+          "items",
+          "nextCursor",
+          "prevCursor"
+        ]
+      },
+      "PresignedUploadResponseDto": {
+        "type": "object",
+        "properties": {
+          "uploadId": {
+            "type": "string"
+          },
+          "bucket": {
+            "type": "string"
+          },
+          "objectKey": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          },
+          "expiresAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "uploadId",
+          "bucket",
+          "objectKey",
+          "url",
+          "expiresAt"
+        ]
+      },
+      "EvidenceDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "firmId": {
+            "type": "string"
+          },
+          "engagementId": {
+            "type": "string"
+          },
+          "filename": {
+            "type": "string"
+          },
+          "mimeType": {
+            "type": "string"
+          },
+          "sizeBytes": {
+            "type": "number"
+          },
+          "sha256": {
+            "type": "string"
+          },
+          "bucket": {
+            "type": "string"
+          },
+          "objectKey": {
+            "type": "string"
+          },
+          "avStatus": {
+            "type": "string",
+            "enum": [
+              "uploaded",
+              "scanning",
+              "clean",
+              "infected",
+              "failed"
+            ]
+          },
+          "ocrStatus": {
+            "type": "string",
+            "enum": [
+              "pending",
+              "running",
+              "done",
+              "skipped"
+            ]
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "firmId",
+          "filename",
+          "mimeType",
+          "sizeBytes",
+          "sha256",
+          "bucket",
+          "objectKey",
+          "avStatus",
+          "ocrStatus",
+          "createdAt"
+        ]
+      },
+      "EvidencePageDto": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/EvidenceDto"
+            }
+          },
+          "nextCursor": {
+            "type": "object",
+            "nullable": true
+          },
+          "prevCursor": {
+            "type": "object",
+            "nullable": true
+          }
+        },
+        "required": [
+          "items",
+          "nextCursor",
+          "prevCursor"
+        ]
+      },
+      "DownloadUrlDto": {
+        "type": "object",
+        "properties": {
+          "url": {
+            "type": "string"
+          },
+          "expiresAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "url",
+          "expiresAt"
+        ]
+      },
+      "SessionDto": {
+        "type": "object",
+        "properties": {
+          "auditorId": {
+            "type": "string"
+          },
+          "firmId": {
+            "type": "string"
+          },
+          "roles": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "expiresAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "auditorId",
+          "firmId",
+          "roles",
+          "expiresAt"
+        ]
+      },
+      "ChallengeDto": {
+        "type": "object",
+        "properties": {
+          "challenge": {
+            "type": "string"
+          },
+          "rpId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "challenge",
+          "rpId"
+        ]
+      },
+      "InterviewsDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "firmId": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "metadata": {
+            "type": "object"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "firmId",
+          "name",
+          "createdAt",
+          "updatedAt"
+        ]
+      },
+      "InterviewsPageDto": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/InterviewsDto"
+            }
+          },
+          "nextCursor": {
+            "type": "object",
+            "nullable": true
+          },
+          "prevCursor": {
+            "type": "object",
+            "nullable": true
+          }
+        },
+        "required": [
+          "items",
+          "nextCursor",
+          "prevCursor"
+        ]
+      },
+      "InterviewLibraryEntryDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "role": {
+            "type": "string"
+          },
+          "clauseRefs": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "applicableModes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "aiSystemClasses": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "question": {
+            "type": "string"
+          },
+          "followUps": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "evidenceToSeek": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "commonPitfalls": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "timeBoxMinutes": {
+            "type": "number"
+          },
+          "weight": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "id",
+          "role",
+          "clauseRefs",
+          "applicableModes",
+          "aiSystemClasses",
+          "question",
+          "followUps",
+          "evidenceToSeek",
+          "commonPitfalls",
+          "timeBoxMinutes",
+          "weight"
+        ]
+      },
+      "InterviewLibraryListDto": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/InterviewLibraryEntryDto"
+            }
+          }
+        },
+        "required": [
+          "items"
+        ]
+      },
+      "InterviewPlanItemDto": {
+        "type": "object",
+        "properties": {
+          "entry": {
+            "$ref": "#/components/schemas/InterviewLibraryEntryDto"
+          },
+          "score": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "entry",
+          "score"
+        ]
+      },
+      "InterviewPlanDto": {
+        "type": "object",
+        "properties": {
+          "engagementId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "totalDurationMinutes": {
+            "type": "number"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/InterviewPlanItemDto"
+            }
+          },
+          "coverage": {
+            "type": "object"
+          }
+        },
+        "required": [
+          "engagementId",
+          "totalDurationMinutes",
+          "items",
+          "coverage"
+        ]
+      },
+      "LibraryEntryDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "iso42001_clause",
+              "annex_a_control",
+              "eu_ai_act_article",
+              "nist_ai_rmf",
+              "owasp_llm",
+              "mitre_atlas",
+              "avid",
+              "mit_air",
+              "question"
+            ]
+          },
+          "ref": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "body": {
+            "type": "string"
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "kind",
+          "ref",
+          "title",
+          "tags"
+        ]
+      },
+      "LibraryPageDto": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/LibraryEntryDto"
+            }
+          },
+          "nextCursor": {
+            "type": "object",
+            "nullable": true
+          },
+          "prevCursor": {
+            "type": "object",
+            "nullable": true
+          }
+        },
+        "required": [
+          "items",
+          "nextCursor",
+          "prevCursor"
+        ]
+      },
+      "PeerReviewDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "firmId": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "metadata": {
+            "type": "object"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "firmId",
+          "name",
+          "createdAt",
+          "updatedAt"
+        ]
+      },
+      "PeerReviewPageDto": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PeerReviewDto"
+            }
+          },
+          "nextCursor": {
+            "type": "object",
+            "nullable": true
+          },
+          "prevCursor": {
+            "type": "object",
+            "nullable": true
+          }
+        },
+        "required": [
+          "items",
+          "nextCursor",
+          "prevCursor"
+        ]
+      },
+      "PeerReviewCommentDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "packageId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "parentId": {
+            "type": "object",
+            "nullable": true,
+            "format": "uuid"
+          },
+          "authorId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "scope": {
+            "type": "object"
+          },
+          "body": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "resolvedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "resolvedBy": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "resolutionNote": {
+            "type": "string"
+          },
+          "flag": {
+            "type": "string",
+            "enum": [
+              "standard",
+              "security",
+              "data-protection"
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "packageId",
+          "parentId",
+          "authorId",
+          "scope",
+          "body",
+          "createdAt",
+          "flag"
+        ]
+      },
+      "PeerReviewCommentListDto": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PeerReviewCommentDto"
+            }
+          }
+        },
+        "required": [
+          "items"
+        ]
+      },
+      "ProbeDefinitionDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "firmId": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "category": {
+            "type": "string"
+          },
+          "mode": {
+            "type": "string",
+            "enum": [
+              "offline",
+              "live",
+              "replay"
+            ]
+          },
+          "spec": {
+            "type": "object"
+          },
+          "budgetUsd": {
+            "type": "number"
+          },
+          "cpuMs": {
+            "type": "number"
+          },
+          "memMb": {
+            "type": "number"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "firmId",
+          "name",
+          "category",
+          "mode",
+          "spec",
+          "budgetUsd",
+          "cpuMs",
+          "memMb",
+          "createdAt"
+        ]
+      },
+      "ProbePageDto": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ProbeDefinitionDto"
+            }
+          },
+          "nextCursor": {
+            "type": "object",
+            "nullable": true
+          },
+          "prevCursor": {
+            "type": "object",
+            "nullable": true
+          }
+        },
+        "required": [
+          "items",
+          "nextCursor",
+          "prevCursor"
+        ]
+      },
+      "ProbeExecutionDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "firmId": {
+            "type": "string"
+          },
+          "engagementId": {
+            "type": "string"
+          },
+          "probeId": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "queued",
+              "running",
+              "success",
+              "failed",
+              "cancelled",
+              "budget_exceeded"
+            ]
+          },
+          "jobId": {
+            "type": "string"
+          },
+          "result": {
+            "type": "object"
+          },
+          "costUsd": {
+            "type": "number"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "finishedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "firmId",
+          "engagementId",
+          "probeId",
+          "status",
+          "costUsd",
+          "createdAt"
+        ]
+      },
+      "ProbeExecutionPageDto": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ProbeExecutionDto"
+            }
+          },
+          "nextCursor": {
+            "type": "object",
+            "nullable": true
+          },
+          "prevCursor": {
+            "type": "object",
+            "nullable": true
+          }
+        },
+        "required": [
+          "items",
+          "nextCursor",
+          "prevCursor"
+        ]
+      },
+      "ChecklistItemDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "pass",
+              "fail",
+              "overridden",
+              "skipped"
+            ]
+          },
+          "reason": {
+            "type": "string"
+          },
+          "overrideRationale": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "status",
+          "reason"
+        ]
+      },
+      "ChecklistResultDto": {
+        "type": "object",
+        "properties": {
+          "passed": {
+            "type": "boolean"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ChecklistItemDto"
+            }
+          }
+        },
+        "required": [
+          "passed",
+          "items"
+        ]
+      },
+      "AnnexFamilyDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "readinessPct": {
+            "type": "number"
+          },
+          "evidenced": {
+            "type": "number"
+          },
+          "partial": {
+            "type": "number"
+          },
+          "untouched": {
+            "type": "number"
+          },
+          "totalClauses": {
+            "type": "number"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "green",
+              "amber",
+              "red",
+              "grey"
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "title",
+          "description",
+          "readinessPct",
+          "evidenced",
+          "partial",
+          "untouched",
+          "totalClauses",
+          "status"
+        ]
+      },
+      "ReadinessTrendPointDto": {
+        "type": "object",
+        "properties": {
+          "date": {
+            "type": "string"
+          },
+          "readinessPct": {
+            "type": "number"
+          },
+          "event": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "date",
+          "readinessPct"
+        ]
+      },
+      "BlockerDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "clauseId": {
+            "type": "string"
+          },
+          "clauseTitle": {
+            "type": "string"
+          },
+          "impact": {
+            "type": "string",
+            "enum": [
+              "high",
+              "medium",
+              "low"
+            ]
+          },
+          "recommendedAction": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "clauseId",
+          "clauseTitle",
+          "impact",
+          "recommendedAction"
+        ]
+      },
+      "OpenItemDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "major",
+              "minor",
+              "ofi",
+              "observation"
+            ]
+          },
+          "title": {
+            "type": "string"
+          },
+          "clauseId": {
+            "type": "string"
+          },
+          "age": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "type",
+          "title",
+          "clauseId",
+          "age"
+        ]
+      },
+      "ReadinessAiSystemBarDto": {
+        "type": "object",
+        "properties": {
+          "systemId": {
+            "type": "string"
+          },
+          "systemName": {
+            "type": "string"
+          },
+          "readinessPct": {
+            "type": "number"
+          },
+          "weight": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "systemId",
+          "systemName",
+          "readinessPct",
+          "weight"
+        ]
+      },
+      "WeightsDto": {
+        "type": "object",
+        "properties": {
+          "mandatory": {
+            "type": "number"
+          },
+          "annexA": {
+            "type": "number"
+          },
+          "description": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "mandatory",
+          "annexA",
+          "description"
+        ]
+      },
+      "ReadinessDto": {
+        "type": "object",
+        "properties": {
+          "overallPct": {
+            "type": "number"
+          },
+          "trend30dDelta": {
+            "type": "number"
+          },
+          "trend90dDelta": {
+            "type": "number"
+          },
+          "targetCertDate": {
+            "type": "string"
+          },
+          "daysToTarget": {
+            "type": "number"
+          },
+          "families": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AnnexFamilyDto"
+            }
+          },
+          "trend": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ReadinessTrendPointDto"
+            }
+          },
+          "blockers": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BlockerDto"
+            }
+          },
+          "openItems": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OpenItemDto"
+            }
+          },
+          "aiSystems": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ReadinessAiSystemBarDto"
+            }
+          },
+          "weights": {
+            "$ref": "#/components/schemas/WeightsDto"
+          },
+          "mode": {
+            "type": "string"
+          },
+          "disclaimer": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "overallPct",
+          "trend30dDelta",
+          "trend90dDelta",
+          "targetCertDate",
+          "daysToTarget",
+          "families",
+          "trend",
+          "blockers",
+          "openItems",
+          "aiSystems",
+          "weights",
+          "mode",
+          "disclaimer"
+        ]
+      },
+      "ReportDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "firmId": {
+            "type": "string"
+          },
+          "engagementId": {
+            "type": "string"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "stage1",
+              "stage2",
+              "surveillance",
+              "recertification",
+              "special"
+            ]
+          },
+          "title": {
+            "type": "string"
+          },
+          "bodyMarkdown": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "draft",
+              "in_review",
+              "reviewed",
+              "issued",
+              "archived"
+            ]
+          },
+          "version": {
+            "type": "number"
+          },
+          "issuedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "signedBy": {
+            "type": "string"
+          },
+          "signatureRef": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "firmId",
+          "engagementId",
+          "kind",
+          "title",
+          "bodyMarkdown",
+          "status",
+          "version",
+          "createdAt",
+          "updatedAt"
+        ]
+      },
+      "ReportPageDto": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ReportDto"
+            }
+          },
+          "nextCursor": {
+            "type": "object",
+            "nullable": true
+          },
+          "prevCursor": {
+            "type": "object",
+            "nullable": true
+          }
+        },
+        "required": [
+          "items",
+          "nextCursor",
+          "prevCursor"
+        ]
+      },
+      "RisksDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "firmId": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "metadata": {
+            "type": "object"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "firmId",
+          "name",
+          "createdAt",
+          "updatedAt"
+        ]
+      },
+      "RisksPageDto": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RisksDto"
+            }
+          },
+          "nextCursor": {
+            "type": "object",
+            "nullable": true
+          },
+          "prevCursor": {
+            "type": "object",
+            "nullable": true
+          }
+        },
+        "required": [
+          "items",
+          "nextCursor",
+          "prevCursor"
+        ]
+      },
+      "SamplesDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "firmId": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "metadata": {
+            "type": "object"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "firmId",
+          "name",
+          "createdAt",
+          "updatedAt"
+        ]
+      },
+      "SamplesPageDto": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SamplesDto"
+            }
+          },
+          "nextCursor": {
+            "type": "object",
+            "nullable": true
+          },
+          "prevCursor": {
+            "type": "object",
+            "nullable": true
+          }
+        },
+        "required": [
+          "items",
+          "nextCursor",
+          "prevCursor"
+        ]
+      },
+      "DrawnSampleUnitDto": {
+        "type": "object",
+        "properties": {
+          "unitId": {
+            "type": "string"
+          },
+          "planId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "selectionIndex": {
+            "type": "number"
+          },
+          "weight": {
+            "type": "number"
+          },
+          "stratum": {
+            "type": "string"
+          },
+          "rationale": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "unitId",
+          "planId",
+          "selectionIndex",
+          "weight"
+        ]
+      },
+      "DrawSampleResultDto": {
+        "type": "object",
+        "properties": {
+          "planId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "method": {
+            "type": "string"
+          },
+          "seed": {
+            "type": "string"
+          },
+          "populationSize": {
+            "type": "number"
+          },
+          "sampleSize": {
+            "type": "number"
+          },
+          "units": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DrawnSampleUnitDto"
+            }
+          }
+        },
+        "required": [
+          "planId",
+          "method",
+          "seed",
+          "populationSize",
+          "sampleSize",
+          "units"
+        ]
+      },
+      "SizeCalculatorResultDto": {
+        "type": "object",
+        "properties": {
+          "size": {
+            "type": "number"
+          },
+          "formula": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "size",
+          "formula"
+        ]
+      },
+      "SearchHitDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "scope": {
+            "type": "object"
+          },
+          "score": {
+            "type": "number"
+          },
+          "bm25Score": {
+            "type": "number"
+          },
+          "vectorScore": {
+            "type": "number"
+          },
+          "snippet": {
+            "type": "string"
+          },
+          "payload": {
+            "type": "object",
+            "additionalProperties": true
+          }
+        },
+        "required": [
+          "id",
+          "scope",
+          "score",
+          "payload"
+        ]
+      },
+      "SearchResponseDto": {
+        "type": "object",
+        "properties": {
+          "hits": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SearchHitDto"
+            }
+          },
+          "totalEstimated": {
+            "type": "number"
+          },
+          "tookMs": {
+            "type": "number"
+          },
+          "modes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "hits",
+          "totalEstimated",
+          "tookMs",
+          "modes"
+        ]
+      },
+      "SoaDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "firmId": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "metadata": {
+            "type": "object"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "firmId",
+          "name",
+          "createdAt",
+          "updatedAt"
+        ]
+      },
+      "SoaPageDto": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SoaDto"
+            }
+          },
+          "nextCursor": {
+            "type": "object",
+            "nullable": true
+          },
+          "prevCursor": {
+            "type": "object",
+            "nullable": true
+          }
+        },
+        "required": [
+          "items",
+          "nextCursor",
+          "prevCursor"
+        ]
+      },
+      "SurveillanceDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "firmId": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "metadata": {
+            "type": "object"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "firmId",
+          "name",
+          "createdAt",
+          "updatedAt"
+        ]
+      },
+      "SurveillancePageDto": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SurveillanceDto"
+            }
+          },
+          "nextCursor": {
+            "type": "object",
+            "nullable": true
+          },
+          "prevCursor": {
+            "type": "object",
+            "nullable": true
+          }
+        },
+        "required": [
+          "items",
+          "nextCursor",
+          "prevCursor"
+        ]
+      },
+      "TenancyDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "firmId": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "metadata": {
+            "type": "object"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "firmId",
+          "name",
+          "createdAt",
+          "updatedAt"
+        ]
+      },
+      "TenancyPageDto": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TenancyDto"
+            }
+          },
+          "nextCursor": {
+            "type": "object",
+            "nullable": true
+          },
+          "prevCursor": {
+            "type": "object",
+            "nullable": true
+          }
+        },
+        "required": [
+          "items",
+          "nextCursor",
+          "prevCursor"
+        ]
+      },
+      "TracesDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "firmId": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "metadata": {
+            "type": "object"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "firmId",
+          "name",
+          "createdAt",
+          "updatedAt"
+        ]
+      },
+      "TracesPageDto": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TracesDto"
+            }
+          },
+          "nextCursor": {
+            "type": "object",
+            "nullable": true
+          },
+          "prevCursor": {
+            "type": "object",
+            "nullable": true
+          }
+        },
+        "required": [
+          "items",
+          "nextCursor",
+          "prevCursor"
+        ]
+      },
+      "WorkingPaperDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "firmId": {
+            "type": "string"
+          },
+          "engagementId": {
+            "type": "string"
+          },
+          "templateId": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "controlRef": {
+            "type": "string"
+          },
+          "bodyMarkdown": {
+            "type": "string"
+          },
+          "evidenceRefs": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "draft",
+              "in_review",
+              "final"
+            ]
+          },
+          "version": {
+            "type": "number"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "firmId",
+          "engagementId",
+          "title",
+          "controlRef",
+          "bodyMarkdown",
+          "evidenceRefs",
+          "status",
+          "version",
+          "createdAt",
+          "updatedAt"
+        ]
+      },
+      "WorkingPaperPageDto": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/WorkingPaperDto"
+            }
+          },
+          "nextCursor": {
+            "type": "object",
+            "nullable": true
+          },
+          "prevCursor": {
+            "type": "object",
+            "nullable": true
+          }
+        },
+        "required": [
+          "items",
+          "nextCursor",
+          "prevCursor"
+        ]
+      }
+    }
+  }
+}

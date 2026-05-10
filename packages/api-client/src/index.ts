@@ -13,6 +13,10 @@ export * as workingPapers from './working-papers.js';
 export * as coverage from './coverage.js';
 export * as library from './library.js';
 export * as auth from './auth.js';
+export * as peerReview from './peer-review.js';
+export * as sampling from './sampling.js';
+export * as interviews from './interviews.js';
+export * as qaChecklist from './qa-checklist.js';
 
 export type { Engagement, EngagementMode, EngagementStage, EngagementStatus } from './engagements.js';
 export type { Finding, FindingSeverity, FindingStatus } from './findings.js';
@@ -25,3 +29,7 @@ export type { CoverageArea, CoverageCell, CoverageStatus, AuditDashboard } from 
 export type { Readiness, AnnexFamily } from './readiness.js';
 export type { LibraryEntry, LibraryEntryKind } from './library.js';
 export type { Session, Challenge } from './auth.js';
+export type { PeerReviewPackage, PeerReviewComment } from './peer-review.js';
+export type { DrawSampleResult, DrawnUnit, SamplingMethod } from './sampling.js';
+export type { InterviewPlan, InterviewLibraryEntry, InterviewRole } from './interviews.js';
+export type { ChecklistResult, ChecklistItem } from './qa-checklist.js';

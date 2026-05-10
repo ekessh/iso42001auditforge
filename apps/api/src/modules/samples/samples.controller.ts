@@ -9,7 +9,22 @@ import { AuditTrail } from '../../common/audit-trail.interceptor.js';
 import { ZodValidationPipe } from '../../common/zod-validation.pipe.js';
 import { CursorPageQuerySchema } from '../../common/pagination.js';
 import { requireAuth } from '../../common/rls.middleware.js';
-import { CreateSamplesSchema, UpdateSamplesSchema, type CreateSamplesDto, type UpdateSamplesDto, SamplesDto, SamplesPageDto } from './dto.js';
+import {
+  CreateSamplesSchema,
+  UpdateSamplesSchema,
+  DrawSampleSchema,
+  OverrideSampleSchema,
+  SizeCalculatorSchema,
+  type CreateSamplesDto,
+  type UpdateSamplesDto,
+  type DrawSampleDto,
+  type OverrideSampleDto,
+  type SizeCalculatorDto,
+  SamplesDto,
+  SamplesPageDto,
+  DrawSampleResultDto,
+  SizeCalculatorResultDto,
+} from './dto.js';
 import { SamplesService } from './samples.service.js';
 
 @ApiTags('samples')
@@ -62,5 +77,65 @@ export class SamplesController {
     const auth = requireAuth(req);
     await this.svc.remove(auth.firmId, id);
     return { id };
+  }
+
+  // ---------------------------------------------------------------------
+  // Sampling-domain endpoints (Phase 10).
+  // ---------------------------------------------------------------------
+
+  @Post('draw')
+  @Rbac('samples', 'create')
+  @AuditTrail({ type: 'sampling.drawn', entity: 'samples' })
+  @UsePipes(new ZodValidationPipe(DrawSampleSchema))
+  @ApiOperation({ summary: 'Draw a deterministic sample from a population.' })
+  @ApiCreatedResponse({ type: DrawSampleResultDto })
+  async draw(
+    @Req() req: FastifyRequest,
+    @Body() body: DrawSampleDto,
+  ): Promise<DrawSampleResultDto> {
+    const auth = requireAuth(req);
+    return this.svc.draw({ firmId: auth.firmId, actorId: auth.auditorId ?? 'system', dto: body });
+  }
+
+  @Post('override')
+  @Rbac('samples', 'update')
+  @AuditTrail({ type: 'sampling.overridden', entity: 'samples' })
+  @UsePipes(new ZodValidationPipe(OverrideSampleSchema))
+  @ApiOperation({ summary: 'Swap a sampled unit for cause; rationale is logged to the ledger.' })
+  @ApiOkResponse({ type: DrawSampleResultDto })
+  async override(
+    @Req() req: FastifyRequest,
+    @Body() body: OverrideSampleDto,
+  ): Promise<{ planId: string; units: { unitId: string; planId: string; selectionIndex: number; weight: number; stratum?: string; rationale?: string }[] }> {
+    const auth = requireAuth(req);
+    const result = this.svc.override({
+      firmId: auth.firmId,
+      actorId: auth.auditorId ?? 'system',
+      dto: body,
+    });
+    return {
+      planId: result.planId,
+      units: result.units.map((u) => ({
+        unitId: u.unitId,
+        planId: u.planId,
+        selectionIndex: u.selectionIndex,
+        weight: u.weight,
+        ...(u.stratum ? { stratum: u.stratum } : {}),
+        ...(u.rationale ? { rationale: u.rationale } : {}),
+      })),
+    };
+  }
+
+  @Post('calculate-size')
+  @Rbac('samples', 'read')
+  @UsePipes(new ZodValidationPipe(SizeCalculatorSchema))
+  @ApiOperation({ summary: 'Compute textbook attribute / variable / MUS sample size.' })
+  @ApiOkResponse({ type: SizeCalculatorResultDto })
+  async calculateSize(
+    @Req() req: FastifyRequest,
+    @Body() body: SizeCalculatorDto,
+  ): Promise<SizeCalculatorResultDto> {
+    void req;
+    return this.svc.calculateSize(body);
   }
 }

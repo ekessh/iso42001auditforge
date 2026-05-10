@@ -4,18 +4,36 @@ import {
 } from '@nestjs/common';
 import { ApiTags, ApiOkResponse, ApiCreatedResponse, ApiOperation } from '@nestjs/swagger';
 import type { FastifyRequest } from 'fastify';
+import type { PeerReviewRequest } from '@auditforge/peer-review';
 import { Rbac } from '../../common/rbac.guard.js';
 import { AuditTrail } from '../../common/audit-trail.interceptor.js';
 import { ZodValidationPipe } from '../../common/zod-validation.pipe.js';
 import { CursorPageQuerySchema } from '../../common/pagination.js';
 import { requireAuth } from '../../common/rls.middleware.js';
-import { CreatePeerReviewSchema, UpdatePeerReviewSchema, type CreatePeerReviewDto, type UpdatePeerReviewDto, PeerReviewDto, PeerReviewPageDto } from './dto.js';
+import {
+  CreatePeerReviewSchema,
+  UpdatePeerReviewSchema,
+  AddCommentSchema,
+  ResolveCommentSchema,
+  type CreatePeerReviewDto,
+  type UpdatePeerReviewDto,
+  type AddCommentDto,
+  type ResolveCommentDto,
+  PeerReviewDto,
+  PeerReviewPageDto,
+  PeerReviewCommentDto,
+  PeerReviewCommentListDto,
+} from './dto.js';
 import { PeerReviewService } from './peer-review.service.js';
+import { PeerReviewCommentsApiService } from './comments.service.js';
 
 @ApiTags('peer-review')
 @Controller({ path: 'peer-review', version: '1' })
 export class PeerReviewController {
-  constructor(private readonly svc: PeerReviewService) {}
+  constructor(
+    private readonly svc: PeerReviewService,
+    private readonly comments: PeerReviewCommentsApiService,
+  ) {}
 
   @Get()
   @Rbac('peer-review', 'read')
@@ -62,5 +80,99 @@ export class PeerReviewController {
     const auth = requireAuth(req);
     await this.svc.remove(auth.firmId, id);
     return { id };
+  }
+
+  // ---------------------------------------------------------------------
+  // Comment threads on a peer-review package.
+  // ---------------------------------------------------------------------
+
+  @Get(':id/comments')
+  @Rbac('peer-review', 'read')
+  @ApiOperation({ summary: 'List comments on a peer-review package' })
+  @ApiOkResponse({ type: PeerReviewCommentListDto })
+  async listComments(
+    @Req() req: FastifyRequest,
+    @Param('id') id: string,
+  ): Promise<PeerReviewCommentListDto> {
+    const auth = requireAuth(req);
+    // Existence check on the package — also enforces RLS read.
+    await this.svc.get(auth.firmId, id);
+    return { items: this.comments.list(auth.firmId, id) as unknown as PeerReviewCommentDto[] };
+  }
+
+  @Post(':id/comments')
+  @Rbac('peer-review', 'update')
+  @AuditTrail({ type: 'peer-review.comment_added', entity: 'peer-review', entityIdParam: 'id' })
+  @UsePipes(new ZodValidationPipe(AddCommentSchema))
+  @ApiCreatedResponse({ type: PeerReviewCommentDto })
+  async addComment(
+    @Req() req: FastifyRequest,
+    @Param('id') id: string,
+    @Body() body: AddCommentDto,
+  ): Promise<PeerReviewCommentDto> {
+    const auth = requireAuth(req);
+    const reqRow = await this.svc.get(auth.firmId, id);
+    // The package needs a richer PeerReviewRequest; we synthesize the
+    // minimum fields required by the comments service from the row.
+    const synthRequest: PeerReviewRequest = {
+      id: reqRow.id,
+      firmId: reqRow.firmId,
+      engagementId: (reqRow.metadata?.['engagementId'] as string | undefined) ?? reqRow.id,
+      auditKind: 'stage2',
+      primaryAuditorId: auth.auditorId ?? reqRow.firmId,
+      engagementTeamIds: [],
+      checklistId: 'pr-stage2-default',
+      checklistVersion: '1.0.0',
+      responses: [],
+      status: 'in_review',
+      createdAt: reqRow.createdAt,
+      updatedAt: reqRow.updatedAt,
+      revisionCount: 0,
+    };
+    const out = this.comments.add({
+      firmId: auth.firmId,
+      request: synthRequest,
+      actorId: auth.auditorId ?? 'system',
+      dto: body,
+    });
+    return out as unknown as PeerReviewCommentDto;
+  }
+
+  @Post(':id/comments/:commentId/resolve')
+  @Rbac('peer-review', 'update')
+  @AuditTrail({ type: 'peer-review.comment_resolved', entity: 'peer-review', entityIdParam: 'id' })
+  @UsePipes(new ZodValidationPipe(ResolveCommentSchema))
+  @ApiOkResponse({ type: PeerReviewCommentDto })
+  async resolveComment(
+    @Req() req: FastifyRequest,
+    @Param('id') id: string,
+    @Param('commentId') commentId: string,
+    @Body() body: ResolveCommentDto,
+  ): Promise<PeerReviewCommentDto> {
+    const auth = requireAuth(req);
+    const reqRow = await this.svc.get(auth.firmId, id);
+    const synthRequest: PeerReviewRequest = {
+      id: reqRow.id,
+      firmId: reqRow.firmId,
+      engagementId: (reqRow.metadata?.['engagementId'] as string | undefined) ?? reqRow.id,
+      auditKind: 'stage2',
+      primaryAuditorId: auth.auditorId ?? reqRow.firmId,
+      engagementTeamIds: [],
+      checklistId: 'pr-stage2-default',
+      checklistVersion: '1.0.0',
+      responses: [],
+      status: 'in_review',
+      createdAt: reqRow.createdAt,
+      updatedAt: reqRow.updatedAt,
+      revisionCount: 0,
+    };
+    const out = this.comments.resolve({
+      firmId: auth.firmId,
+      request: synthRequest,
+      commentId,
+      actorId: auth.auditorId ?? 'system',
+      dto: body,
+    });
+    return out as unknown as PeerReviewCommentDto;
   }
 }

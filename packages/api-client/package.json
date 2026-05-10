@@ -56,6 +56,22 @@
       "types": "./dist/auth.d.ts",
       "default": "./dist/auth.js"
     },
+    "./peer-review": {
+      "types": "./dist/peer-review.d.ts",
+      "default": "./dist/peer-review.js"
+    },
+    "./sampling": {
+      "types": "./dist/sampling.d.ts",
+      "default": "./dist/sampling.js"
+    },
+    "./interviews": {
+      "types": "./dist/interviews.d.ts",
+      "default": "./dist/interviews.js"
+    },
+    "./qa-checklist": {
+      "types": "./dist/qa-checklist.d.ts",
+      "default": "./dist/qa-checklist.js"
+    },
     "./fetcher": {
       "types": "./dist/fetcher.d.ts",
       "default": "./dist/fetcher.js"
