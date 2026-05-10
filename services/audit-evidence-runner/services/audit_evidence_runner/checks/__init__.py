@@ -23,3 +23,8 @@ from . import (  # noqa: F401 — import for side-effects (registry population)
     p_mcp_07_cross_server_session_isolation,
     p_mcp_08_gateway_policy_enforcement,
 )
+
+# Wave-5: conformance evidence checks (P-LLM, P-DATA, P-RISK, P-GOV,
+# P-AGENT, P-CHAIN). The registry module imports each check module for
+# its register-on-import side effect.
+from .. import registry as _wave5_registry  # noqa: F401, E402
