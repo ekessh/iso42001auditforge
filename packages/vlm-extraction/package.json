@@ -1,0 +1,35 @@
+{
+  "name": "@auditforge/vlm-extraction",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "description": "AuditForge ISO 42001 — Schema-constrained VLM evidence extraction (Stub + Qwen2.5-VL / DeepSeek-OCR sidecar). v3 Phase 7.6.",
+  "license": "BUSL-1.1",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./types": "./src/types.ts",
+    "./schemas": "./src/schemas.ts",
+    "./redaction": "./src/redaction.ts",
+    "./providers/stub": "./src/providers/stub.ts",
+    "./providers/qwen": "./src/providers/qwen.ts",
+    "./providers/deepseek": "./src/providers/deepseek.ts"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "lint": "eslint src tests",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/node": "^22.7.0",
+    "@vitest/coverage-v8": "^2.1.1",
+    "typescript": "^5.6.2",
+    "vitest": "^2.1.1"
+  }
+}
