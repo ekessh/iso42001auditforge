@@ -16,6 +16,8 @@ export * as auth from './auth.js';
 export * as peerReview from './peer-review.js';
 export * as sampling from './sampling.js';
 export * as interviews from './interviews.js';
+export * as liveInterview from './live-interview.js';
+export * as evidenceExtraction from './evidence-extraction.js';
 export * as qaChecklist from './qa-checklist.js';
 
 export type { Engagement, EngagementMode, EngagementStage, EngagementStatus } from './engagements.js';
@@ -32,4 +34,17 @@ export type { Session, Challenge } from './auth.js';
 export type { PeerReviewPackage, PeerReviewComment } from './peer-review.js';
 export type { DrawSampleResult, DrawnUnit, SamplingMethod } from './sampling.js';
 export type { InterviewPlan, InterviewLibraryEntry, InterviewRole } from './interviews.js';
+export type {
+  LiveSession,
+  LiveTranscript,
+  LiveTranscriptSegment,
+  CoverageDelta,
+  LiveParticipant,
+  StartSessionBody,
+} from './live-interview.js';
+export type {
+  ExtractedField,
+  ExtractEvidenceBody,
+  ExtractionSchemaId,
+} from './evidence-extraction.js';
 export type { ChecklistResult, ChecklistItem } from './qa-checklist.js';

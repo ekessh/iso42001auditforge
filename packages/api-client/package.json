@@ -68,6 +68,14 @@
       "types": "./dist/interviews.d.ts",
       "default": "./dist/interviews.js"
     },
+    "./live-interview": {
+      "types": "./dist/live-interview.d.ts",
+      "default": "./dist/live-interview.js"
+    },
+    "./evidence-extraction": {
+      "types": "./dist/evidence-extraction.d.ts",
+      "default": "./dist/evidence-extraction.js"
+    },
     "./qa-checklist": {
       "types": "./dist/qa-checklist.d.ts",
       "default": "./dist/qa-checklist.js"
