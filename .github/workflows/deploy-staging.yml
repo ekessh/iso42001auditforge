@@ -1,0 +1,118 @@
+# SPDX-License-Identifier: BUSL-1.1
+name: deploy-staging
+
+on:
+  push:
+    branches: [main]
+    paths-ignore:
+      - "docs/**"
+      - "*.md"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: write
+  id-token: write
+
+concurrency:
+  group: deploy-staging
+  cancel-in-progress: false
+
+env:
+  REGISTRY: ghcr.io
+  CHART_DIR: infra/helm/auditforge
+  CLUSTER_NAME: auditforge-staging-eks
+  AWS_REGION: us-east-1
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-22.04
+    strategy:
+      matrix:
+        service:
+          - { name: api, context: ., dockerfile: apps/api/Dockerfile }
+          - { name: web, context: ., dockerfile: apps/web/Dockerfile }
+          - { name: worker, context: ., dockerfile: apps/worker/Dockerfile }
+          - { name: mcp-server, context: ., dockerfile: apps/mcp-server/Dockerfile }
+          - { name: audit-evidence-runner, context: services/audit-evidence-runner, dockerfile: services/audit-evidence-runner/Dockerfile }
+          - { name: transcription-py, context: services/transcription-py, dockerfile: services/transcription-py/Dockerfile }
+          - { name: vlm-py, context: services/vlm-py, dockerfile: services/vlm-py/Dockerfile }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          context: ${{ matrix.service.context }}
+          file: ${{ matrix.service.dockerfile }}
+          push: true
+          tags: |
+            ${{ env.REGISTRY }}/auditforge/${{ matrix.service.name }}:${{ github.sha }}
+            ${{ env.REGISTRY }}/auditforge/${{ matrix.service.name }}:staging
+          cache-from: type=gha,scope=${{ matrix.service.name }}
+          cache-to: type=gha,scope=${{ matrix.service.name }},mode=max
+
+  helm-deploy:
+    needs: build-and-push
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Cache Helm plugins
+        uses: actions/cache@v4
+        with:
+          path: ~/.local/share/helm/plugins
+          key: helm-plugins-${{ runner.os }}
+
+      - name: Install helm + kubectl
+        uses: azure/setup-helm@v4
+        with:
+          version: v3.14.4
+
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_DEPLOY_ROLE_STAGING }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: kubeconfig
+        run: aws eks update-kubeconfig --region $AWS_REGION --name $CLUSTER_NAME
+
+      - name: Helm dep update
+        run: helm dependency update $CHART_DIR
+
+      - name: Helm lint
+        run: |
+          helm lint $CHART_DIR -f $CHART_DIR/values.yaml -f $CHART_DIR/values-staging.yaml
+
+      - name: Helm template + kubeconform
+        run: |
+          curl -fsSL https://github.com/yannh/kubeconform/releases/download/v0.6.7/kubeconform-linux-amd64.tar.gz \
+            | tar xz
+          helm template $CHART_DIR -f $CHART_DIR/values.yaml -f $CHART_DIR/values-staging.yaml \
+            | ./kubeconform -strict -summary -ignore-missing-schemas -kubernetes-version 1.30.0
+
+      - name: Helm upgrade
+        run: |
+          helm upgrade --install auditforge $CHART_DIR \
+            -f $CHART_DIR/values.yaml \
+            -f $CHART_DIR/values-staging.yaml \
+            --set api.image.tag=${{ github.sha }} \
+            --set web.image.tag=${{ github.sha }} \
+            --set worker.image.tag=${{ github.sha }} \
+            --set mcp-server.image.tag=${{ github.sha }} \
+            --set audit-evidence-runner.image.tag=${{ github.sha }} \
+            -n auditforge \
+            --wait --timeout 10m
+
+      - name: Smoke test
+        run: |
+          for i in $(seq 1 30); do
+            if curl -fsS https://api-staging.auditforge.example.com/healthz/ready; then exit 0; fi
+            sleep 10
+          done
+          exit 1

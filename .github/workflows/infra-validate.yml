@@ -1,0 +1,80 @@
+# SPDX-License-Identifier: BUSL-1.1
+name: infra-validate
+
+on:
+  pull_request:
+    paths:
+      - "infra/**"
+      - ".github/workflows/infra-validate.yml"
+  push:
+    branches: [main]
+    paths:
+      - "infra/**"
+
+permissions:
+  contents: read
+
+jobs:
+  helm:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: azure/setup-helm@v4
+        with:
+          version: v3.14.4
+      - name: Cache helm plugins
+        uses: actions/cache@v4
+        with:
+          path: ~/.local/share/helm/plugins
+          key: helm-plugins-${{ runner.os }}
+      - run: helm dependency update infra/helm/auditforge || true
+      - run: helm lint infra/helm/auditforge -f infra/helm/auditforge/values.yaml
+      - run: helm lint infra/helm/auditforge -f infra/helm/auditforge/values.yaml -f infra/helm/auditforge/values-dev.yaml
+      - run: helm lint infra/helm/auditforge -f infra/helm/auditforge/values.yaml -f infra/helm/auditforge/values-staging.yaml
+      - run: helm lint infra/helm/auditforge -f infra/helm/auditforge/values.yaml -f infra/helm/auditforge/values-prod.yaml
+      - name: kubeconform manifest validation
+        run: |
+          curl -fsSL https://github.com/yannh/kubeconform/releases/download/v0.6.7/kubeconform-linux-amd64.tar.gz | tar xz
+          for env in dev staging prod; do
+            helm template infra/helm/auditforge \
+              -f infra/helm/auditforge/values.yaml \
+              -f infra/helm/auditforge/values-$env.yaml \
+              | ./kubeconform -strict -summary -ignore-missing-schemas -kubernetes-version 1.30.0
+          done
+
+  terraform:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.9.5
+      - name: terraform fmt
+        run: terraform fmt -check -recursive infra/terraform
+      - name: terraform validate (dev)
+        working-directory: infra/terraform/environments/dev
+        run: |
+          terraform init -backend=false
+          terraform validate
+      - name: terraform validate (staging)
+        working-directory: infra/terraform/environments/staging
+        run: |
+          terraform init -backend=false
+          terraform validate
+      - name: terraform validate (prod)
+        working-directory: infra/terraform/environments/prod
+        run: |
+          terraform init -backend=false
+          terraform validate
+      - name: tflint
+        uses: terraform-linters/setup-tflint@v4
+        with:
+          tflint_version: v0.52.0
+      - run: tflint --recursive --chdir=infra/terraform
+        continue-on-error: true
+      - name: checkov
+        uses: bridgecrewio/checkov-action@v12
+        with:
+          directory: infra/terraform
+          framework: terraform
+          soft_fail: true

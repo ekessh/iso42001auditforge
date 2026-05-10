@@ -1,0 +1,116 @@
+# SPDX-License-Identifier: BUSL-1.1
+name: deploy-prod
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Image tag to deploy"
+        required: true
+        type: string
+
+permissions:
+  contents: read
+  packages: read
+  id-token: write
+
+concurrency:
+  group: deploy-prod
+  cancel-in-progress: false
+
+env:
+  REGISTRY: ghcr.io
+  CHART_DIR: infra/helm/auditforge
+  CLUSTER_NAME: auditforge-prod-eks
+  AWS_REGION: us-east-1
+
+jobs:
+  approve:
+    runs-on: ubuntu-22.04
+    environment:
+      name: production
+    steps:
+      - run: echo "Awaiting required reviewers."
+
+  blue-green:
+    needs: approve
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: azure/setup-helm@v4
+        with:
+          version: v3.14.4
+
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_DEPLOY_ROLE_PROD }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: kubeconfig
+        run: aws eks update-kubeconfig --region $AWS_REGION --name $CLUSTER_NAME
+
+      - name: Helm dep update
+        run: helm dependency update $CHART_DIR
+
+      - name: Determine tag
+        id: tag
+        run: |
+          TAG="${{ github.event.inputs.tag }}"
+          if [ -z "$TAG" ]; then TAG="${GITHUB_REF_NAME}"; fi
+          echo "tag=$TAG" >> $GITHUB_OUTPUT
+
+      - name: Deploy GREEN
+        run: |
+          helm upgrade --install auditforge-green $CHART_DIR \
+            -f $CHART_DIR/values.yaml \
+            -f $CHART_DIR/values-prod.yaml \
+            --set api.image.tag=${{ steps.tag.outputs.tag }} \
+            --set web.image.tag=${{ steps.tag.outputs.tag }} \
+            --set worker.image.tag=${{ steps.tag.outputs.tag }} \
+            --set mcp-server.image.tag=${{ steps.tag.outputs.tag }} \
+            --set audit-evidence-runner.image.tag=${{ steps.tag.outputs.tag }} \
+            --set transcription-py.image.tag=${{ steps.tag.outputs.tag }} \
+            --set vlm-py.image.tag=${{ steps.tag.outputs.tag }} \
+            -n auditforge-green --create-namespace \
+            --wait --timeout 15m
+
+      - name: Smoke test (green private endpoint)
+        run: |
+          for i in $(seq 1 30); do
+            if curl -fsS -H "Host: api.auditforge.example.com" \
+              http://auditforge-green-api.auditforge-green.svc.cluster.local/healthz/ready 2>/dev/null; then
+              exit 0
+            fi
+            sleep 10
+          done
+          exit 1
+
+      - name: ZAP DAST baseline against canary
+        uses: zaproxy/action-baseline@v0.12.0
+        with:
+          target: https://canary.auditforge.example.com
+          fail_action: true
+
+      - name: Shift traffic 5% → 25% → 100%
+        run: |
+          for w in 5 25 100; do
+            aws elbv2 modify-listener-rule \
+              --rule-arn ${{ secrets.PROD_ALB_RULE_ARN }} \
+              --actions Type=forward,ForwardConfig="{TargetGroups=[{TargetGroupArn=${{ secrets.PROD_GREEN_TG }},Weight=$w},{TargetGroupArn=${{ secrets.PROD_BLUE_TG }},Weight=$((100-w))}]}"
+            echo "shift to $w% green; waiting 10 min for SLO observation"
+            sleep 600
+          done
+
+      - name: Hold-for-rollback (60 min monitor)
+        run: sleep 3600
+
+      - name: Scale down BLUE (kept for fast rollback for 7 days)
+        run: |
+          helm upgrade auditforge-blue $CHART_DIR \
+            -f $CHART_DIR/values.yaml -f $CHART_DIR/values-prod.yaml \
+            --set api.replicaCount=0 --set web.replicaCount=0 --set worker.replicaCount=0 \
+            -n auditforge-blue
