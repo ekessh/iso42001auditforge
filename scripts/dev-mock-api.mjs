@@ -174,12 +174,32 @@ const TRACES = [
   {
     id: 'trc-001',
     firmId: FIRM,
-    engagementId: 'eng-001',
-    source: 'agent-runtime',
-    spanCount: 124,
-    capturedAt: '2026-04-26T08:00:00Z',
-    sizeBytes: 482311,
-    status: 'imported',
+    name: 'LangGraph clinical-triage agent — 2026-04-26 08:00',
+    metadata: {
+      engagementId: 'eng-001',
+      source: 'agent-runtime',
+      framework: 'langgraph',
+      spanCount: 124,
+      capturedAt: '2026-04-26T08:00:00Z',
+      sizeBytes: 482311,
+    },
+    createdAt: '2026-04-26T08:00:00Z',
+    updatedAt: '2026-04-26T08:00:00Z',
+  },
+  {
+    id: 'trc-002',
+    firmId: FIRM,
+    name: 'CrewAI marketing-research crew — 2026-04-27 14:30',
+    metadata: {
+      engagementId: 'eng-002',
+      source: 'crewai',
+      framework: 'crewai',
+      spanCount: 89,
+      capturedAt: '2026-04-27T14:30:00Z',
+      sizeBytes: 312445,
+    },
+    createdAt: '2026-04-27T14:30:00Z',
+    updatedAt: '2026-04-27T14:30:00Z',
   },
 ];
 

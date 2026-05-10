@@ -77,6 +77,14 @@ test.describe('Local stack @smoke — stub auth + mock API', () => {
     await expect(page.getByRole('main').getByText(/System prompt frozen/i).first()).toBeVisible({ timeout: 15_000 });
   });
 
+  test('traces page lists ingested traces', async ({ page }) => {
+    await page.goto(`${BASE}/login`);
+    await page.getByRole('button', { name: /Continue with passkey/i }).click();
+    await page.getByRole('link', { name: /Traces/i }).first().click();
+    await expect(page).toHaveURL(/\/traces$/);
+    await expect(page.getByRole('main').getByText(/LangGraph clinical-triage|CrewAI marketing/i).first()).toBeVisible({ timeout: 15_000 });
+  });
+
   test('library page lists question library', async ({ page }) => {
     await page.goto(`${BASE}/login`);
     await page.getByRole('button', { name: /Continue with passkey/i }).click();
