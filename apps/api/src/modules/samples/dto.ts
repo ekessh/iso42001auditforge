@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: BUSL-1.1
+﻿// SPDX-License-Identifier: BUSL-1.1
 import { ApiProperty } from '@nestjs/swagger';
 import { z } from 'zod';
 
@@ -23,7 +23,7 @@ export class SamplesDto {
 export class SamplesPageDto {
   @ApiProperty({ type: [SamplesDto] }) items!: SamplesDto[];
   @ApiProperty({ nullable: true }) nextCursor!: string | null;
-  @ApiProperty({ nullable: true }) prevCursor!: string | null;
+  @ApiProperty({ nullable: true, required: false }) prevCursor?: string | null;
 }
 
 const SamplingMethodApiSchema = z.enum([
@@ -54,7 +54,7 @@ export const DrawSampleSchema = z.object({
     description: z.string().min(1),
     units: z.array(PopulationUnitSchema).min(1),
   }),
-  /** Optional unit-id → numeric value map for MUS. */
+  /** Optional unit-id â†’ numeric value map for MUS. */
   values: z.record(z.string().min(1), z.number().nonnegative()).optional(),
 });
 export type DrawSampleDto = z.infer<typeof DrawSampleSchema>;

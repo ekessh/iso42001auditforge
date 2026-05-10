@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: BUSL-1.1
+﻿// SPDX-License-Identifier: BUSL-1.1
 import {
   Body, Controller, Delete, Get, Param, Patch, Post, Query, UsePipes, Req,
 } from '@nestjs/common';
@@ -42,7 +42,7 @@ export class PeerReviewController {
   async list(@Req() req: FastifyRequest, @Query() qRaw: unknown): Promise<PeerReviewPageDto> {
     const auth = requireAuth(req);
     const q = CursorPageQuerySchema.parse(qRaw);
-    return this.svc.list(auth.firmId, { cursor: q.cursor, limit: q.limit });
+    return this.svc.list(auth.firmId, { ...(q.cursor !== undefined ? { cursor: q.cursor } : {}), limit: q.limit });
   }
 
   @Get(':id')
@@ -95,7 +95,7 @@ export class PeerReviewController {
     @Param('id') id: string,
   ): Promise<PeerReviewCommentListDto> {
     const auth = requireAuth(req);
-    // Existence check on the package — also enforces RLS read.
+    // Existence check on the package â€” also enforces RLS read.
     await this.svc.get(auth.firmId, id);
     return { items: this.comments.list(auth.firmId, id) as unknown as PeerReviewCommentDto[] };
   }

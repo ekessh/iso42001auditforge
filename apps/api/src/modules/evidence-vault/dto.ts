@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: BUSL-1.1
+﻿// SPDX-License-Identifier: BUSL-1.1
 import { ApiProperty } from '@nestjs/swagger';
 import { z } from 'zod';
 
@@ -47,7 +47,7 @@ export class EvidenceDto {
 export class EvidencePageDto {
   @ApiProperty({ type: [EvidenceDto] }) items!: EvidenceDto[];
   @ApiProperty({ nullable: true }) nextCursor!: string | null;
-  @ApiProperty({ nullable: true }) prevCursor!: string | null;
+  @ApiProperty({ nullable: true, required: false }) prevCursor?: string | null;
 }
 
 export class DownloadUrlDto {

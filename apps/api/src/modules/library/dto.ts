@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: BUSL-1.1
+﻿// SPDX-License-Identifier: BUSL-1.1
 import { ApiProperty } from '@nestjs/swagger';
 import { z } from 'zod';
 
@@ -20,7 +20,7 @@ export type LibraryEntryKind = z.infer<typeof LibraryEntryKindSchema>;
  * concrete `LibraryEntryKind` set above:
  *   question         -> question
  *   clause           -> iso42001_clause
- *   probe            -> probe (synthetic — exposed via probe-engine descriptor)
+ *   probe            -> probe (synthetic â€” exposed via probe-engine descriptor)
  *   control-mapping  -> annex_a_control + framework_mappings
  */
 export const LibraryQuerySchema = z.object({
@@ -56,5 +56,5 @@ export class LibraryEntryDto {
 export class LibraryPageDto {
   @ApiProperty({ type: [LibraryEntryDto] }) items!: LibraryEntryDto[];
   @ApiProperty({ nullable: true }) nextCursor!: string | null;
-  @ApiProperty({ nullable: true }) prevCursor!: string | null;
+  @ApiProperty({ nullable: true, required: false }) prevCursor?: string | null;
 }

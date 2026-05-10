@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: BUSL-1.1
+﻿// SPDX-License-Identifier: BUSL-1.1
 import { ApiProperty } from '@nestjs/swagger';
 import { z } from 'zod';
 
@@ -7,7 +7,7 @@ export const EngagementStatus = z.enum(['planned', 'in_progress', 'reporting', '
 
 /**
  * ADR-0013: Engagement mode (audit vs readiness). Required at creation and
- * immutable thereafter — the service layer enforces immutability and maps
+ * immutable thereafter â€” the service layer enforces immutability and maps
  * any attempt to change `mode` to RFC 7807 / HTTP 409 Conflict.
  */
 export const EngagementMode = z.enum(['audit', 'readiness']);
@@ -35,7 +35,7 @@ export const UpdateEngagementSchema = CreateEngagementSchema
   .omit({ mode: true })
   .partial()
   // Strict so unknown keys (notably an attempt to set `mode`) are rejected
-  // at the validation boundary with a 400 — defence in depth alongside the
+  // at the validation boundary with a 400 â€” defence in depth alongside the
   // service-layer 409.
   .strict();
 export type UpdateEngagementDto = z.infer<typeof UpdateEngagementSchema>;
@@ -71,5 +71,5 @@ export class EngagementDto {
 export class EngagementPageDto {
   @ApiProperty({ type: [EngagementDto] }) items!: EngagementDto[];
   @ApiProperty({ nullable: true }) nextCursor!: string | null;
-  @ApiProperty({ nullable: true }) prevCursor!: string | null;
+  @ApiProperty({ nullable: true, required: false }) prevCursor?: string | null;
 }

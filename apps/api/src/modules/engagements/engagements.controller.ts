@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: BUSL-1.1
+﻿// SPDX-License-Identifier: BUSL-1.1
 import { Body, Controller, Get, Param, Patch, Post, Query, Req, UsePipes } from '@nestjs/common';
 import { ApiCreatedResponse, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import type { FastifyRequest } from 'fastify';
@@ -31,7 +31,7 @@ export class EngagementsController {
   list(@Req() req: FastifyRequest, @Query() qRaw: unknown): Promise<EngagementPageDto> {
     const auth = requireAuth(req);
     const q = CursorPageQuerySchema.parse(qRaw);
-    return this.svc.list(auth.firmId, { cursor: q.cursor, limit: q.limit });
+    return this.svc.list(auth.firmId, { ...(q.cursor !== undefined ? { cursor: q.cursor } : {}), limit: q.limit });
   }
 
   @Get(':id')

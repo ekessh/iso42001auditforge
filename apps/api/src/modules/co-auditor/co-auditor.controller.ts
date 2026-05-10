@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: BUSL-1.1
+﻿// SPDX-License-Identifier: BUSL-1.1
 import {
   Body, Controller, Delete, Get, Param, Patch, Post, Query, UsePipes, Req,
 } from '@nestjs/common';
@@ -24,7 +24,7 @@ export class CoAuditorController {
   async list(@Req() req: FastifyRequest, @Query() qRaw: unknown): Promise<CoAuditorPageDto> {
     const auth = requireAuth(req);
     const q = CursorPageQuerySchema.parse(qRaw);
-    return this.svc.list(auth.firmId, { cursor: q.cursor, limit: q.limit });
+    return this.svc.list(auth.firmId, { ...(q.cursor !== undefined ? { cursor: q.cursor } : {}), limit: q.limit });
   }
 
   @Get(':id')

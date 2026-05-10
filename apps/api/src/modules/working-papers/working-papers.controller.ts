@@ -28,7 +28,7 @@ export class WorkingPapersController {
   list(@Req() req: FastifyRequest, @Query() qRaw: unknown, @Query('engagementId') engagementId?: string): Promise<WorkingPaperPageDto> {
     const auth = requireAuth(req);
     const q = CursorPageQuerySchema.parse(qRaw);
-    return this.svc.list(auth.firmId, { ...(engagementId ? { engagementId } : {}), cursor: q.cursor, limit: q.limit });
+    return this.svc.list(auth.firmId, { ...(engagementId ? { engagementId } : {}), ...(q.cursor !== undefined ? { cursor: q.cursor } : {}), limit: q.limit });
   }
 
   @Get(':id')

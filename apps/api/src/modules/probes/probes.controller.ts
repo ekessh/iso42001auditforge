@@ -30,7 +30,7 @@ export class ProbesController {
   list(@Req() req: FastifyRequest, @Query() qRaw: unknown): Promise<ProbePageDto> {
     const auth = requireAuth(req);
     const q = CursorPageQuerySchema.parse(qRaw);
-    return this.svc.listDefinitions(auth.firmId, { cursor: q.cursor, limit: q.limit });
+    return this.svc.listDefinitions(auth.firmId, { ...(q.cursor !== undefined ? { cursor: q.cursor } : {}), limit: q.limit });
   }
 
   @Post()
@@ -65,7 +65,7 @@ export class ProbesController {
   listExecutions(@Req() req: FastifyRequest, @Query() qRaw: unknown, @Query('engagementId') engagementId?: string): Promise<ProbeExecutionPageDto> {
     const auth = requireAuth(req);
     const q = CursorPageQuerySchema.parse(qRaw);
-    return this.svc.listExecutions(auth.firmId, { ...(engagementId ? { engagementId } : {}), cursor: q.cursor, limit: q.limit });
+    return this.svc.listExecutions(auth.firmId, { ...(engagementId ? { engagementId } : {}), ...(q.cursor !== undefined ? { cursor: q.cursor } : {}), limit: q.limit });
   }
 
   @Get('executions/:executionId')
