@@ -280,15 +280,21 @@ export class DrizzleAuditorRepository implements AuditorRepository {
       .from(auditorWebauthnCredentials)
       .where(eq(auditorWebauthnCredentials.auditorId, row.id));
 
-    const credentials: StoredCredential[] = credRows.map((c) => ({
-      credentialId: c.credentialId,
-      // Decode the base64 public key stored in the legacy text column.
-      publicKey: new Uint8Array(Buffer.from(c.publicKey, 'base64')),
-      counter: c.counter,
-      transports: c.transports
-        ? (c.transports.split(',') as StoredCredential['transports'])
-        : undefined,
-    }));
+    const credentials: StoredCredential[] = credRows.map((c): StoredCredential => {
+      if (c.transports) {
+        return {
+          credentialId: c.credentialId,
+          publicKey: new Uint8Array(Buffer.from(c.publicKey, 'base64')),
+          counter: c.counter,
+          transports: c.transports.split(',') as NonNullable<StoredCredential['transports']>,
+        };
+      }
+      return {
+        credentialId: c.credentialId,
+        publicKey: new Uint8Array(Buffer.from(c.publicKey, 'base64')),
+        counter: c.counter,
+      };
+    });
 
     return toRecord(row, roles.length > 0 ? roles : ['lead_auditor'], credentials);
   }

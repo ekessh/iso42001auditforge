@@ -86,37 +86,67 @@ function makeRoleRow(role = 'lead_auditor') {
 function makeDb(rowsByCall: Array<unknown[]>) {
   let callIdx = 0;
 
-  const terminal = () => {
+  const consumeRows = () => {
     const rows = rowsByCall[callIdx++] ?? [];
-    return Promise.resolve(rows);
+    return rows;
   };
 
-  const chain: Record<string, unknown> = {};
-  const proxy = new Proxy(chain, {
-    get(_target, prop) {
-      if (prop === 'then') return undefined; // not a Promise itself
-      if (
-        prop === 'select' ||
-        prop === 'from' ||
-        prop === 'where' ||
-        prop === 'innerJoin' ||
-        prop === 'limit' ||
-        prop === 'insert' ||
-        prop === 'values' ||
-        prop === 'returning' ||
-        prop === 'update' ||
-        prop === 'set'
-      ) {
-        if (prop === 'limit' || prop === 'returning') {
-          return () => terminal();
+  // A single-call query-builder stub. Each chain step returns a new promise-like
+  // object that:
+  //   - resolves immediately with the next row set (for direct await after .where())
+  //   - supports further chaining (.limit() / .returning()) that re-resolves the same rows
+  function makeQueryProxy(): object {
+    let resolvedRows: unknown[] | undefined;
+
+    const resolve = () => {
+      if (resolvedRows === undefined) resolvedRows = consumeRows();
+      return resolvedRows;
+    };
+
+    const handler: ProxyHandler<object> = {
+      get(_target, prop) {
+        // Thenable support — allows `await queryProxy` to work.
+        if (prop === 'then') {
+          return (onFulfilled: (v: unknown) => unknown, onRejected?: (e: unknown) => unknown) =>
+            Promise.resolve(resolve()).then(onFulfilled, onRejected);
         }
-        return (..._args: unknown[]) => proxy;
+        // Terminal calls that also resolve the same rows.
+        if (prop === 'limit' || prop === 'returning') {
+          return () => Promise.resolve(resolve());
+        }
+        // Chaining calls — return the same proxy.
+        if (
+          prop === 'from' ||
+          prop === 'where' ||
+          prop === 'innerJoin'
+        ) {
+          return (..._args: unknown[]) => proxy;  // eslint-disable-line @typescript-eslint/no-use-before-define
+        }
+        return undefined;
+      },
+    };
+    const proxy = new Proxy({}, handler);
+    return proxy;
+  }
+
+  // Top-level DB proxy — .select(), .insert(), .update() each start a new chain.
+  const dbHandler: ProxyHandler<object> = {
+    get(_target, prop) {
+      if (prop === 'select') return () => makeQueryProxy();
+      if (prop === 'insert') {
+        // insert().values().returning() chain.
+        const inner = makeQueryProxy();
+        return () => ({ values: () => inner });
+      }
+      if (prop === 'update') {
+        // update().set().where() chain.
+        return () => ({ set: () => makeQueryProxy() });
       }
       return undefined;
     },
-  });
+  };
 
-  return proxy as unknown as import('drizzle-orm/postgres-js').PostgresJsDatabase;
+  return new Proxy({}, dbHandler) as unknown as import('drizzle-orm/postgres-js').PostgresJsDatabase;
 }
 
 // ── Tests ─────────────────────────────────────────────────────────────────────

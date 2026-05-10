@@ -10,7 +10,7 @@ import {
   WebAuthnService,
   type StoredCredential,
 } from '@auditforge/auth-core';
-import type { RegistrationResponseJSON, AuthenticationResponseJSON } from '@simplewebauthn/server';
+import type { RegistrationResponseJSON, AuthenticationResponseJSON } from '@simplewebauthn/types';
 import type { SessionDto } from './dto.js';
 import type { LedgerSink } from '../../common/auth.guard.js';
 import type {
