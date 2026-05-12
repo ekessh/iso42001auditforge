@@ -19,10 +19,10 @@ importers:
         version: 22.19.17
       '@typescript-eslint/eslint-plugin':
         specifier: ^8.6.0
-        version: 8.59.1(@typescript-eslint/parser@8.59.1(eslint@9.39.4(jiti@2.6.1))(typescript@5.9.3))(eslint@9.39.4(jiti@2.6.1))(typescript@5.9.3)
+        version: 8.59.3(@typescript-eslint/parser@8.59.3(eslint@9.39.4(jiti@2.6.1))(typescript@6.0.3))(eslint@9.39.4(jiti@2.6.1))(typescript@6.0.3)
       '@typescript-eslint/parser':
         specifier: ^8.6.0
-        version: 8.59.1(eslint@9.39.4(jiti@2.6.1))(typescript@5.9.3)
+        version: 8.59.3(eslint@9.39.4(jiti@2.6.1))(typescript@6.0.3)
       dotenv:
         specifier: ^16.4.5
         version: 16.6.1
@@ -36,11 +36,11 @@ importers:
         specifier: ^4.19.1
         version: 4.21.0
       typescript:
-        specifier: ^5.6.2
-        version: 5.9.3
+        specifier: ^6.0.3
+        version: 6.0.3
       vitest:
         specifier: ^2.1.1
-        version: 2.1.9(@types/node@22.19.17)(happy-dom@15.11.7)(lightningcss@1.32.0)(msw@2.14.2(@types/node@22.19.17)(typescript@5.9.3))(terser@5.46.2)
+        version: 2.1.9(@types/node@22.19.17)(happy-dom@15.11.7)(lightningcss@1.32.0)(msw@2.14.2(@types/node@22.19.17)(typescript@6.0.3))(terser@5.46.2)
 
   apps/api:
     dependencies:
@@ -269,7 +269,7 @@ importers:
         version: 10.4.9(@swc/core@1.15.33)
       '@nestjs/schematics':
         specifier: ^10.1.4
-        version: 10.2.3(chokidar@3.6.0)(typescript@5.9.3)
+        version: 10.2.3(chokidar@3.6.0)(typescript@6.0.3)
       '@nestjs/testing':
         specifier: ^10.4.4
         version: 10.4.22(@nestjs/common@10.4.22(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@10.4.22(@nestjs/common@10.4.22(reflect-metadata@0.2.2)(rxjs@7.8.2))(reflect-metadata@0.2.2)(rxjs@7.8.2))
@@ -278,7 +278,7 @@ importers:
         version: 11.0.0
       '@swc-node/register':
         specifier: ^1.10.10
-        version: 1.11.1(@emnapi/core@1.10.0)(@emnapi/runtime@1.10.0)(@swc/core@1.15.33)(@swc/types@0.1.26)(typescript@5.9.3)
+        version: 1.11.1(@emnapi/core@1.10.0)(@emnapi/runtime@1.10.0)(@swc/core@1.15.33)(@swc/types@0.1.26)(typescript@6.0.3)
       '@swc/core':
         specifier: ^1.7.40
         version: 1.15.33
@@ -299,7 +299,7 @@ importers:
         version: 8.18.1
       '@vitest/coverage-v8':
         specifier: ^2.1.1
-        version: 2.1.9(vitest@2.1.9(@types/node@22.19.17)(happy-dom@15.11.7)(lightningcss@1.32.0)(msw@2.14.2(@types/node@22.19.17)(typescript@5.9.3))(terser@5.46.2))
+        version: 2.1.9(vitest@2.1.9(@types/node@22.19.17)(happy-dom@15.11.7)(lightningcss@1.32.0)(msw@2.14.2(@types/node@22.19.17)(typescript@6.0.3))(terser@5.46.2))
       supertest:
         specifier: ^7.0.0
         version: 7.2.2
@@ -310,11 +310,11 @@ importers:
         specifier: ^4.19.1
         version: 4.21.0
       typescript:
-        specifier: ^5.6.2
-        version: 5.9.3
+        specifier: ^6.0.3
+        version: 6.0.3
       vitest:
         specifier: ^2.1.1
-        version: 2.1.9(@types/node@22.19.17)(happy-dom@15.11.7)(lightningcss@1.32.0)(msw@2.14.2(@types/node@22.19.17)(typescript@5.9.3))(terser@5.46.2)
+        version: 2.1.9(@types/node@22.19.17)(happy-dom@15.11.7)(lightningcss@1.32.0)(msw@2.14.2(@types/node@22.19.17)(typescript@6.0.3))(terser@5.46.2)
 
   apps/desktop:
     dependencies:
@@ -351,11 +351,11 @@ importers:
         specifier: ^22.7.0
         version: 22.19.17
       typescript:
-        specifier: ^5.6.2
-        version: 5.9.3
+        specifier: ^6.0.3
+        version: 6.0.3
       vitest:
         specifier: ^2.1.1
-        version: 2.1.9(@types/node@22.19.17)(happy-dom@15.11.7)(lightningcss@1.32.0)(msw@2.14.2(@types/node@22.19.17)(typescript@5.9.3))(terser@5.46.2)
+        version: 2.1.9(@types/node@22.19.17)(happy-dom@15.11.7)(lightningcss@1.32.0)(msw@2.14.2(@types/node@22.19.17)(typescript@6.0.3))(terser@5.46.2)
 
   apps/mobile:
     dependencies:
@@ -421,7 +421,7 @@ importers:
         version: 0.453.0(react@19.2.5)
       msw:
         specifier: ^2.4.9
-        version: 2.14.2(@types/node@22.19.17)(typescript@5.9.3)
+        version: 2.14.2(@types/node@22.19.17)(typescript@6.0.3)
       next:
         specifier: ^15.0.0
         version: 15.5.15(@babel/core@7.29.0)(@opentelemetry/api@1.9.1)(@playwright/test@1.59.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
@@ -473,7 +473,7 @@ importers:
         version: 4.11.3(playwright-core@1.59.1)
       '@storybook/react':
         specifier: ^8.3.5
-        version: 8.6.18(@storybook/test@8.6.18(storybook@8.6.18(prettier@3.8.3)))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(storybook@8.6.18(prettier@3.8.3))(typescript@5.9.3)
+        version: 8.6.18(@storybook/test@8.6.18(storybook@8.6.18(prettier@3.8.3)))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(storybook@8.6.18(prettier@3.8.3))(typescript@6.0.3)
       '@types/node':
         specifier: ^22.7.0
         version: 22.19.17
@@ -490,8 +490,8 @@ importers:
         specifier: ^8.4.47
         version: 8.5.13
       typescript:
-        specifier: ^5.6.2
-        version: 5.9.3
+        specifier: ^6.0.3
+        version: 6.0.3
 
   apps/worker:
     dependencies:
@@ -546,7 +546,7 @@ importers:
         version: 22.19.17
       '@vitest/coverage-v8':
         specifier: ^2.1.1
-        version: 2.1.9(vitest@2.1.9(@types/node@22.19.17)(happy-dom@15.11.7)(lightningcss@1.32.0)(msw@2.14.2(@types/node@22.19.17)(typescript@5.9.3))(terser@5.46.2))
+        version: 2.1.9(vitest@2.1.9(@types/node@22.19.17)(happy-dom@15.11.7)(lightningcss@1.32.0)(msw@2.14.2(@types/node@22.19.17)(typescript@6.0.3))(terser@5.46.2))
       testcontainers:
         specifier: ^10.13.1
         version: 10.28.0
@@ -554,11 +554,11 @@ importers:
         specifier: ^4.19.1
         version: 4.21.0
       typescript:
-        specifier: ^5.6.2
-        version: 5.9.3
+        specifier: ^6.0.3
+        version: 6.0.3
       vitest:
         specifier: ^2.1.1
-        version: 2.1.9(@types/node@22.19.17)(happy-dom@15.11.7)(lightningcss@1.32.0)(msw@2.14.2(@types/node@22.19.17)(typescript@5.9.3))(terser@5.46.2)
+        version: 2.1.9(@types/node@22.19.17)(happy-dom@15.11.7)(lightningcss@1.32.0)(msw@2.14.2(@types/node@22.19.17)(typescript@6.0.3))(terser@5.46.2)
 
   packages/ai-system-profiler:
     dependencies:
@@ -586,16 +586,16 @@ importers:
         version: 22.19.17
       '@vitest/coverage-v8':
         specifier: ^2.1.1
-        version: 2.1.9(vitest@2.1.9(@types/node@22.19.17)(happy-dom@15.11.7)(lightningcss@1.32.0)(msw@2.14.2(@types/node@22.19.17)(typescript@5.9.3))(terser@5.46.2))
+        version: 2.1.9(vitest@2.1.9(@types/node@22.19.17)(happy-dom@15.11.7)(lightningcss@1.32.0)(msw@2.14.2(@types/node@22.19.17)(typescript@6.0.3))(terser@5.46.2))
       fast-check:
         specifier: ^3.22.0
         version: 3.23.2
       typescript:
-        specifier: ^5.6.2
-        version: 5.9.3
+        specifier: ^6.0.3
+        version: 6.0.3
       vitest:
         specifier: ^2.1.1
-        version: 2.1.9(@types/node@22.19.17)(happy-dom@15.11.7)(lightningcss@1.32.0)(msw@2.14.2(@types/node@22.19.17)(typescript@5.9.3))(terser@5.46.2)
+        version: 2.1.9(@types/node@22.19.17)(happy-dom@15.11.7)(lightningcss@1.32.0)(msw@2.14.2(@types/node@22.19.17)(typescript@6.0.3))(terser@5.46.2)
 
   packages/api-client:
     dependencies:
@@ -607,8 +607,8 @@ importers:
         specifier: ^22.7.0
         version: 22.19.17
       typescript:
-        specifier: ^5.6.2
-        version: 5.9.3
+        specifier: ^6.0.3
+        version: 6.0.3
 
   packages/archive:
     dependencies:
@@ -617,11 +617,11 @@ importers:
         version: 3.25.76
     devDependencies:
       typescript:
-        specifier: ^5.6.2
-        version: 5.9.3
+        specifier: ^6.0.3
+        version: 6.0.3
       vitest:
         specifier: ^2.1.1
-        version: 2.1.9(@types/node@22.19.17)(happy-dom@15.11.7)(lightningcss@1.32.0)(msw@2.14.2(@types/node@22.19.17)(typescript@5.9.3))(terser@5.46.2)
+        version: 2.1.9(@types/node@22.19.17)(happy-dom@15.11.7)(lightningcss@1.32.0)(msw@2.14.2(@types/node@22.19.17)(typescript@6.0.3))(terser@5.46.2)
 
   packages/audit-engine:
     dependencies:
@@ -639,11 +639,11 @@ importers:
         specifier: ^3.22.0
         version: 3.23.2
       typescript:
-        specifier: ^5.6.2
-        version: 5.9.3
+        specifier: ^6.0.3
+        version: 6.0.3
       vitest:
         specifier: ^2.1.1
-        version: 2.1.9(@types/node@22.19.17)(happy-dom@15.11.7)(lightningcss@1.32.0)(msw@2.14.2(@types/node@22.19.17)(typescript@5.9.3))(terser@5.46.2)
+        version: 2.1.9(@types/node@22.19.17)(happy-dom@15.11.7)(lightningcss@1.32.0)(msw@2.14.2(@types/node@22.19.17)(typescript@6.0.3))(terser@5.46.2)
 
   packages/audit-memory:
     dependencies:
@@ -661,11 +661,11 @@ importers:
         specifier: ^22.7.0
         version: 22.19.17
       typescript:
-        specifier: ^5.6.2
-        version: 5.9.3
+        specifier: ^6.0.3
+        version: 6.0.3
       vitest:
         specifier: ^2.1.1
-        version: 2.1.9(@types/node@22.19.17)(happy-dom@15.11.7)(lightningcss@1.32.0)(msw@2.14.2(@types/node@22.19.17)(typescript@5.9.3))(terser@5.46.2)
+        version: 2.1.9(@types/node@22.19.17)(happy-dom@15.11.7)(lightningcss@1.32.0)(msw@2.14.2(@types/node@22.19.17)(typescript@6.0.3))(terser@5.46.2)
 
   packages/auth-core:
     dependencies:
@@ -698,11 +698,11 @@ importers:
         specifier: ^3.22.0
         version: 3.23.2
       typescript:
-        specifier: ^5.6.2
-        version: 5.9.3
+        specifier: ^6.0.3
+        version: 6.0.3
       vitest:
         specifier: ^2.1.1
-        version: 2.1.9(@types/node@22.19.17)(happy-dom@15.11.7)(lightningcss@1.32.0)(msw@2.14.2(@types/node@22.19.17)(typescript@5.9.3))(terser@5.46.2)
+        version: 2.1.9(@types/node@22.19.17)(happy-dom@15.11.7)(lightningcss@1.32.0)(msw@2.14.2(@types/node@22.19.17)(typescript@6.0.3))(terser@5.46.2)
 
   packages/billing:
     dependencies:
@@ -711,11 +711,11 @@ importers:
         version: 3.25.76
     devDependencies:
       typescript:
-        specifier: ^5.6.2
-        version: 5.9.3
+        specifier: ^6.0.3
+        version: 6.0.3
       vitest:
         specifier: ^2.1.1
-        version: 2.1.9(@types/node@22.19.17)(happy-dom@15.11.7)(lightningcss@1.32.0)(msw@2.14.2(@types/node@22.19.17)(typescript@5.9.3))(terser@5.46.2)
+        version: 2.1.9(@types/node@22.19.17)(happy-dom@15.11.7)(lightningcss@1.32.0)(msw@2.14.2(@types/node@22.19.17)(typescript@6.0.3))(terser@5.46.2)
 
   packages/capa:
     dependencies:
@@ -724,11 +724,11 @@ importers:
         version: 3.25.76
     devDependencies:
       typescript:
-        specifier: ^5.6.2
-        version: 5.9.3
+        specifier: ^6.0.3
+        version: 6.0.3
       vitest:
         specifier: ^2.1.1
-        version: 2.1.9(@types/node@22.19.17)(happy-dom@15.11.7)(lightningcss@1.32.0)(msw@2.14.2(@types/node@22.19.17)(typescript@5.9.3))(terser@5.46.2)
+        version: 2.1.9(@types/node@22.19.17)(happy-dom@15.11.7)(lightningcss@1.32.0)(msw@2.14.2(@types/node@22.19.17)(typescript@6.0.3))(terser@5.46.2)
 
   packages/catalogues:
     dependencies:
@@ -749,11 +749,11 @@ importers:
         specifier: ^4.19.1
         version: 4.21.0
       typescript:
-        specifier: ^5.6.2
-        version: 5.9.3
+        specifier: ^6.0.3
+        version: 6.0.3
       vitest:
         specifier: ^2.1.1
-        version: 2.1.9(@types/node@22.19.17)(happy-dom@15.11.7)(lightningcss@1.32.0)(msw@2.14.2(@types/node@22.19.17)(typescript@5.9.3))(terser@5.46.2)
+        version: 2.1.9(@types/node@22.19.17)(happy-dom@15.11.7)(lightningcss@1.32.0)(msw@2.14.2(@types/node@22.19.17)(typescript@6.0.3))(terser@5.46.2)
 
   packages/co-auditor:
     dependencies:
@@ -762,11 +762,11 @@ importers:
         version: 3.25.76
     devDependencies:
       typescript:
-        specifier: ^5.6.2
-        version: 5.9.3
+        specifier: ^6.0.3
+        version: 6.0.3
       vitest:
         specifier: ^2.1.1
-        version: 2.1.9(@types/node@22.19.17)(happy-dom@15.11.7)(lightningcss@1.32.0)(msw@2.14.2(@types/node@22.19.17)(typescript@5.9.3))(terser@5.46.2)
+        version: 2.1.9(@types/node@22.19.17)(happy-dom@15.11.7)(lightningcss@1.32.0)(msw@2.14.2(@types/node@22.19.17)(typescript@6.0.3))(terser@5.46.2)
 
   packages/consent-registry:
     dependencies:
@@ -784,11 +784,11 @@ importers:
         specifier: ^22.7.0
         version: 22.19.17
       typescript:
-        specifier: ^5.6.2
-        version: 5.9.3
+        specifier: ^6.0.3
+        version: 6.0.3
       vitest:
         specifier: ^2.1.1
-        version: 2.1.9(@types/node@22.19.17)(happy-dom@15.11.7)(lightningcss@1.32.0)(msw@2.14.2(@types/node@22.19.17)(typescript@5.9.3))(terser@5.46.2)
+        version: 2.1.9(@types/node@22.19.17)(happy-dom@15.11.7)(lightningcss@1.32.0)(msw@2.14.2(@types/node@22.19.17)(typescript@6.0.3))(terser@5.46.2)
 
   packages/conversational-engine:
     dependencies:
@@ -807,13 +807,13 @@ importers:
         version: 22.19.17
       '@vitest/coverage-v8':
         specifier: ^2.1.1
-        version: 2.1.9(vitest@2.1.9(@types/node@22.19.17)(happy-dom@15.11.7)(lightningcss@1.32.0)(msw@2.14.2(@types/node@22.19.17)(typescript@5.9.3))(terser@5.46.2))
+        version: 2.1.9(vitest@2.1.9(@types/node@22.19.17)(happy-dom@15.11.7)(lightningcss@1.32.0)(msw@2.14.2(@types/node@22.19.17)(typescript@6.0.3))(terser@5.46.2))
       typescript:
-        specifier: ^5.6.2
-        version: 5.9.3
+        specifier: ^6.0.3
+        version: 6.0.3
       vitest:
         specifier: ^2.1.1
-        version: 2.1.9(@types/node@22.19.17)(happy-dom@15.11.7)(lightningcss@1.32.0)(msw@2.14.2(@types/node@22.19.17)(typescript@5.9.3))(terser@5.46.2)
+        version: 2.1.9(@types/node@22.19.17)(happy-dom@15.11.7)(lightningcss@1.32.0)(msw@2.14.2(@types/node@22.19.17)(typescript@6.0.3))(terser@5.46.2)
 
   packages/cost-controller:
     dependencies:
@@ -828,11 +828,11 @@ importers:
         specifier: ^22.7.0
         version: 22.19.17
       typescript:
-        specifier: ^5.6.2
-        version: 5.9.3
+        specifier: ^6.0.3
+        version: 6.0.3
       vitest:
         specifier: ^2.1.1
-        version: 2.1.9(@types/node@22.19.17)(happy-dom@15.11.7)(lightningcss@1.32.0)(msw@2.14.2(@types/node@22.19.17)(typescript@5.9.3))(terser@5.46.2)
+        version: 2.1.9(@types/node@22.19.17)(happy-dom@15.11.7)(lightningcss@1.32.0)(msw@2.14.2(@types/node@22.19.17)(typescript@6.0.3))(terser@5.46.2)
 
   packages/coverage-dashboards:
     dependencies:
@@ -848,13 +848,13 @@ importers:
         version: 22.19.17
       '@vitest/coverage-v8':
         specifier: ^2.1.1
-        version: 2.1.9(vitest@2.1.9(@types/node@22.19.17)(happy-dom@15.11.7)(lightningcss@1.32.0)(msw@2.14.2(@types/node@22.19.17)(typescript@5.9.3))(terser@5.46.2))
+        version: 2.1.9(vitest@2.1.9(@types/node@22.19.17)(happy-dom@15.11.7)(lightningcss@1.32.0)(msw@2.14.2(@types/node@22.19.17)(typescript@6.0.3))(terser@5.46.2))
       typescript:
-        specifier: ^5.6.2
-        version: 5.9.3
+        specifier: ^6.0.3
+        version: 6.0.3
       vitest:
         specifier: ^2.1.1
-        version: 2.1.9(@types/node@22.19.17)(happy-dom@15.11.7)(lightningcss@1.32.0)(msw@2.14.2(@types/node@22.19.17)(typescript@5.9.3))(terser@5.46.2)
+        version: 2.1.9(@types/node@22.19.17)(happy-dom@15.11.7)(lightningcss@1.32.0)(msw@2.14.2(@types/node@22.19.17)(typescript@6.0.3))(terser@5.46.2)
 
   packages/cross-engagement-memory:
     dependencies:
@@ -866,11 +866,11 @@ importers:
         specifier: ^22.7.0
         version: 22.19.17
       typescript:
-        specifier: ^5.6.2
-        version: 5.9.3
+        specifier: ^6.0.3
+        version: 6.0.3
       vitest:
         specifier: ^2.1.1
-        version: 2.1.9(@types/node@22.19.17)(happy-dom@15.11.7)(lightningcss@1.32.0)(msw@2.14.2(@types/node@22.19.17)(typescript@5.9.3))(terser@5.46.2)
+        version: 2.1.9(@types/node@22.19.17)(happy-dom@15.11.7)(lightningcss@1.32.0)(msw@2.14.2(@types/node@22.19.17)(typescript@6.0.3))(terser@5.46.2)
 
   packages/cross-framework:
     dependencies:
@@ -879,11 +879,11 @@ importers:
         version: 3.25.76
     devDependencies:
       typescript:
-        specifier: ^5.6.2
-        version: 5.9.3
+        specifier: ^6.0.3
+        version: 6.0.3
       vitest:
         specifier: ^2.1.1
-        version: 2.1.9(@types/node@22.19.17)(happy-dom@15.11.7)(lightningcss@1.32.0)(msw@2.14.2(@types/node@22.19.17)(typescript@5.9.3))(terser@5.46.2)
+        version: 2.1.9(@types/node@22.19.17)(happy-dom@15.11.7)(lightningcss@1.32.0)(msw@2.14.2(@types/node@22.19.17)(typescript@6.0.3))(terser@5.46.2)
 
   packages/db:
     dependencies:
@@ -925,11 +925,11 @@ importers:
         specifier: ^4.19.1
         version: 4.21.0
       typescript:
-        specifier: ^5.6.2
-        version: 5.9.3
+        specifier: ^6.0.3
+        version: 6.0.3
       vitest:
         specifier: ^2.1.1
-        version: 2.1.9(@types/node@22.19.17)(happy-dom@15.11.7)(lightningcss@1.32.0)(msw@2.14.2(@types/node@22.19.17)(typescript@5.9.3))(terser@5.46.2)
+        version: 2.1.9(@types/node@22.19.17)(happy-dom@15.11.7)(lightningcss@1.32.0)(msw@2.14.2(@types/node@22.19.17)(typescript@6.0.3))(terser@5.46.2)
 
   packages/diarization:
     dependencies:
@@ -945,13 +945,13 @@ importers:
         version: 22.19.17
       '@vitest/coverage-v8':
         specifier: ^2.1.1
-        version: 2.1.9(vitest@2.1.9(@types/node@22.19.17)(happy-dom@15.11.7)(lightningcss@1.32.0)(msw@2.14.2(@types/node@22.19.17)(typescript@5.9.3))(terser@5.46.2))
+        version: 2.1.9(vitest@2.1.9(@types/node@22.19.17)(happy-dom@15.11.7)(lightningcss@1.32.0)(msw@2.14.2(@types/node@22.19.17)(typescript@6.0.3))(terser@5.46.2))
       typescript:
-        specifier: ^5.6.2
-        version: 5.9.3
+        specifier: ^6.0.3
+        version: 6.0.3
       vitest:
         specifier: ^2.1.1
-        version: 2.1.9(@types/node@22.19.17)(happy-dom@15.11.7)(lightningcss@1.32.0)(msw@2.14.2(@types/node@22.19.17)(typescript@5.9.3))(terser@5.46.2)
+        version: 2.1.9(@types/node@22.19.17)(happy-dom@15.11.7)(lightningcss@1.32.0)(msw@2.14.2(@types/node@22.19.17)(typescript@6.0.3))(terser@5.46.2)
 
   packages/engagement:
     dependencies:
@@ -966,11 +966,11 @@ importers:
         specifier: ^3.22.0
         version: 3.23.2
       typescript:
-        specifier: ^5.6.2
-        version: 5.9.3
+        specifier: ^6.0.3
+        version: 6.0.3
       vitest:
         specifier: ^2.1.1
-        version: 2.1.9(@types/node@22.19.17)(happy-dom@15.11.7)(lightningcss@1.32.0)(msw@2.14.2(@types/node@22.19.17)(typescript@5.9.3))(terser@5.46.2)
+        version: 2.1.9(@types/node@22.19.17)(happy-dom@15.11.7)(lightningcss@1.32.0)(msw@2.14.2(@types/node@22.19.17)(typescript@6.0.3))(terser@5.46.2)
 
   packages/evidence-vault:
     dependencies:
@@ -979,11 +979,11 @@ importers:
         version: 3.25.76
     devDependencies:
       typescript:
-        specifier: ^5.6.2
-        version: 5.9.3
+        specifier: ^6.0.3
+        version: 6.0.3
       vitest:
         specifier: ^2.1.1
-        version: 2.1.9(@types/node@22.19.17)(happy-dom@15.11.7)(lightningcss@1.32.0)(msw@2.14.2(@types/node@22.19.17)(typescript@5.9.3))(terser@5.46.2)
+        version: 2.1.9(@types/node@22.19.17)(happy-dom@15.11.7)(lightningcss@1.32.0)(msw@2.14.2(@types/node@22.19.17)(typescript@6.0.3))(terser@5.46.2)
 
   packages/findings:
     dependencies:
@@ -1001,11 +1001,11 @@ importers:
         specifier: ^3.22.0
         version: 3.23.2
       typescript:
-        specifier: ^5.6.2
-        version: 5.9.3
+        specifier: ^6.0.3
+        version: 6.0.3
       vitest:
         specifier: ^2.1.1
-        version: 2.1.9(@types/node@22.19.17)(happy-dom@15.11.7)(lightningcss@1.32.0)(msw@2.14.2(@types/node@22.19.17)(typescript@5.9.3))(terser@5.46.2)
+        version: 2.1.9(@types/node@22.19.17)(happy-dom@15.11.7)(lightningcss@1.32.0)(msw@2.14.2(@types/node@22.19.17)(typescript@6.0.3))(terser@5.46.2)
 
   packages/interview-library:
     dependencies:
@@ -1020,11 +1020,11 @@ importers:
         specifier: ^22.7.0
         version: 22.19.17
       typescript:
-        specifier: ^5.6.2
-        version: 5.9.3
+        specifier: ^6.0.3
+        version: 6.0.3
       vitest:
         specifier: ^2.1.1
-        version: 2.1.9(@types/node@22.19.17)(happy-dom@15.11.7)(lightningcss@1.32.0)(msw@2.14.2(@types/node@22.19.17)(typescript@5.9.3))(terser@5.46.2)
+        version: 2.1.9(@types/node@22.19.17)(happy-dom@15.11.7)(lightningcss@1.32.0)(msw@2.14.2(@types/node@22.19.17)(typescript@6.0.3))(terser@5.46.2)
 
   packages/interviews:
     dependencies:
@@ -1042,11 +1042,11 @@ importers:
         specifier: ^3.22.0
         version: 3.23.2
       typescript:
-        specifier: ^5.6.2
-        version: 5.9.3
+        specifier: ^6.0.3
+        version: 6.0.3
       vitest:
         specifier: ^2.1.1
-        version: 2.1.9(@types/node@22.19.17)(happy-dom@15.11.7)(lightningcss@1.32.0)(msw@2.14.2(@types/node@22.19.17)(typescript@5.9.3))(terser@5.46.2)
+        version: 2.1.9(@types/node@22.19.17)(happy-dom@15.11.7)(lightningcss@1.32.0)(msw@2.14.2(@types/node@22.19.17)(typescript@6.0.3))(terser@5.46.2)
 
   packages/live-interview:
     dependencies:
@@ -1065,13 +1065,13 @@ importers:
         version: 22.19.17
       '@vitest/coverage-v8':
         specifier: ^2.1.1
-        version: 2.1.9(vitest@2.1.9(@types/node@22.19.17)(happy-dom@15.11.7)(lightningcss@1.32.0)(msw@2.14.2(@types/node@22.19.17)(typescript@5.9.3))(terser@5.46.2))
+        version: 2.1.9(vitest@2.1.9(@types/node@22.19.17)(happy-dom@15.11.7)(lightningcss@1.32.0)(msw@2.14.2(@types/node@22.19.17)(typescript@6.0.3))(terser@5.46.2))
       typescript:
-        specifier: ^5.6.2
-        version: 5.9.3
+        specifier: ^6.0.3
+        version: 6.0.3
       vitest:
         specifier: ^2.1.1
-        version: 2.1.9(@types/node@22.19.17)(happy-dom@15.11.7)(lightningcss@1.32.0)(msw@2.14.2(@types/node@22.19.17)(typescript@5.9.3))(terser@5.46.2)
+        version: 2.1.9(@types/node@22.19.17)(happy-dom@15.11.7)(lightningcss@1.32.0)(msw@2.14.2(@types/node@22.19.17)(typescript@6.0.3))(terser@5.46.2)
 
   packages/llm-cloud:
     dependencies:
@@ -1090,13 +1090,13 @@ importers:
         version: 22.19.17
       '@vitest/coverage-v8':
         specifier: ^2.1.1
-        version: 2.1.9(vitest@2.1.9(@types/node@22.19.17)(happy-dom@15.11.7)(lightningcss@1.32.0)(msw@2.14.2(@types/node@22.19.17)(typescript@5.9.3))(terser@5.46.2))
+        version: 2.1.9(vitest@2.1.9(@types/node@22.19.17)(happy-dom@15.11.7)(lightningcss@1.32.0)(msw@2.14.2(@types/node@22.19.17)(typescript@6.0.3))(terser@5.46.2))
       typescript:
-        specifier: ^5.6.2
-        version: 5.9.3
+        specifier: ^6.0.3
+        version: 6.0.3
       vitest:
         specifier: ^2.1.1
-        version: 2.1.9(@types/node@22.19.17)(happy-dom@15.11.7)(lightningcss@1.32.0)(msw@2.14.2(@types/node@22.19.17)(typescript@5.9.3))(terser@5.46.2)
+        version: 2.1.9(@types/node@22.19.17)(happy-dom@15.11.7)(lightningcss@1.32.0)(msw@2.14.2(@types/node@22.19.17)(typescript@6.0.3))(terser@5.46.2)
 
   packages/llm-local:
     dependencies:
@@ -1112,13 +1112,13 @@ importers:
         version: 22.19.17
       '@vitest/coverage-v8':
         specifier: ^2.1.1
-        version: 2.1.9(vitest@2.1.9(@types/node@22.19.17)(happy-dom@15.11.7)(lightningcss@1.32.0)(msw@2.14.2(@types/node@22.19.17)(typescript@5.9.3))(terser@5.46.2))
+        version: 2.1.9(vitest@2.1.9(@types/node@22.19.17)(happy-dom@15.11.7)(lightningcss@1.32.0)(msw@2.14.2(@types/node@22.19.17)(typescript@6.0.3))(terser@5.46.2))
       typescript:
-        specifier: ^5.6.2
-        version: 5.9.3
+        specifier: ^6.0.3
+        version: 6.0.3
       vitest:
         specifier: ^2.1.1
-        version: 2.1.9(@types/node@22.19.17)(happy-dom@15.11.7)(lightningcss@1.32.0)(msw@2.14.2(@types/node@22.19.17)(typescript@5.9.3))(terser@5.46.2)
+        version: 2.1.9(@types/node@22.19.17)(happy-dom@15.11.7)(lightningcss@1.32.0)(msw@2.14.2(@types/node@22.19.17)(typescript@6.0.3))(terser@5.46.2)
 
   packages/llm-provider:
     dependencies:
@@ -1148,11 +1148,11 @@ importers:
         specifier: ^4.76.0
         version: 4.104.0(ws@8.20.0)(zod@3.25.76)
       typescript:
-        specifier: ^5.6.2
-        version: 5.9.3
+        specifier: ^6.0.3
+        version: 6.0.3
       vitest:
         specifier: ^2.1.1
-        version: 2.1.9(@types/node@22.19.17)(happy-dom@15.11.7)(lightningcss@1.32.0)(msw@2.14.2(@types/node@22.19.17)(typescript@5.9.3))(terser@5.46.2)
+        version: 2.1.9(@types/node@22.19.17)(happy-dom@15.11.7)(lightningcss@1.32.0)(msw@2.14.2(@types/node@22.19.17)(typescript@6.0.3))(terser@5.46.2)
 
   packages/mcp-tools:
     dependencies:
@@ -1164,11 +1164,11 @@ importers:
         specifier: ^22.7.0
         version: 22.19.17
       typescript:
-        specifier: ^5.6.2
-        version: 5.9.3
+        specifier: ^6.0.3
+        version: 6.0.3
       vitest:
         specifier: ^2.1.1
-        version: 2.1.9(@types/node@22.19.17)(happy-dom@15.11.7)(lightningcss@1.32.0)(msw@2.14.2(@types/node@22.19.17)(typescript@5.9.3))(terser@5.46.2)
+        version: 2.1.9(@types/node@22.19.17)(happy-dom@15.11.7)(lightningcss@1.32.0)(msw@2.14.2(@types/node@22.19.17)(typescript@6.0.3))(terser@5.46.2)
 
   packages/nc-drafter:
     dependencies:
@@ -1187,13 +1187,13 @@ importers:
         version: 22.19.17
       '@vitest/coverage-v8':
         specifier: ^2.1.1
-        version: 2.1.9(vitest@2.1.9(@types/node@22.19.17)(happy-dom@15.11.7)(lightningcss@1.32.0)(msw@2.14.2(@types/node@22.19.17)(typescript@5.9.3))(terser@5.46.2))
+        version: 2.1.9(vitest@2.1.9(@types/node@22.19.17)(happy-dom@15.11.7)(lightningcss@1.32.0)(msw@2.14.2(@types/node@22.19.17)(typescript@6.0.3))(terser@5.46.2))
       typescript:
-        specifier: ^5.6.2
-        version: 5.9.3
+        specifier: ^6.0.3
+        version: 6.0.3
       vitest:
         specifier: ^2.1.1
-        version: 2.1.9(@types/node@22.19.17)(happy-dom@15.11.7)(lightningcss@1.32.0)(msw@2.14.2(@types/node@22.19.17)(typescript@5.9.3))(terser@5.46.2)
+        version: 2.1.9(@types/node@22.19.17)(happy-dom@15.11.7)(lightningcss@1.32.0)(msw@2.14.2(@types/node@22.19.17)(typescript@6.0.3))(terser@5.46.2)
 
   packages/observability:
     dependencies:
@@ -1235,11 +1235,11 @@ importers:
         specifier: ^22.7.0
         version: 22.19.17
       typescript:
-        specifier: ^5.6.2
-        version: 5.9.3
+        specifier: ^6.0.3
+        version: 6.0.3
       vitest:
         specifier: ^2.1.1
-        version: 2.1.9(@types/node@22.19.17)(happy-dom@15.11.7)(lightningcss@1.32.0)(msw@2.14.2(@types/node@22.19.17)(typescript@5.9.3))(terser@5.46.2)
+        version: 2.1.9(@types/node@22.19.17)(happy-dom@15.11.7)(lightningcss@1.32.0)(msw@2.14.2(@types/node@22.19.17)(typescript@6.0.3))(terser@5.46.2)
 
   packages/peer-review:
     dependencies:
@@ -1254,11 +1254,11 @@ importers:
         specifier: ^22.7.0
         version: 22.19.17
       typescript:
-        specifier: ^5.6.2
-        version: 5.9.3
+        specifier: ^6.0.3
+        version: 6.0.3
       vitest:
         specifier: ^2.1.1
-        version: 2.1.9(@types/node@22.19.17)(happy-dom@15.11.7)(lightningcss@1.32.0)(msw@2.14.2(@types/node@22.19.17)(typescript@5.9.3))(terser@5.46.2)
+        version: 2.1.9(@types/node@22.19.17)(happy-dom@15.11.7)(lightningcss@1.32.0)(msw@2.14.2(@types/node@22.19.17)(typescript@6.0.3))(terser@5.46.2)
 
   packages/probe-engine:
     dependencies:
@@ -1273,11 +1273,11 @@ importers:
         specifier: ^22.7.0
         version: 22.19.17
       typescript:
-        specifier: ^5.6.2
-        version: 5.9.3
+        specifier: ^6.0.3
+        version: 6.0.3
       vitest:
         specifier: ^2.1.1
-        version: 2.1.9(@types/node@22.19.17)(happy-dom@15.11.7)(lightningcss@1.32.0)(msw@2.14.2(@types/node@22.19.17)(typescript@5.9.3))(terser@5.46.2)
+        version: 2.1.9(@types/node@22.19.17)(happy-dom@15.11.7)(lightningcss@1.32.0)(msw@2.14.2(@types/node@22.19.17)(typescript@6.0.3))(terser@5.46.2)
 
   packages/qa-checklist:
     dependencies:
@@ -1292,11 +1292,11 @@ importers:
         specifier: ^22.7.0
         version: 22.19.17
       typescript:
-        specifier: ^5.6.2
-        version: 5.9.3
+        specifier: ^6.0.3
+        version: 6.0.3
       vitest:
         specifier: ^2.1.1
-        version: 2.1.9(@types/node@22.19.17)(happy-dom@15.11.7)(lightningcss@1.32.0)(msw@2.14.2(@types/node@22.19.17)(typescript@5.9.3))(terser@5.46.2)
+        version: 2.1.9(@types/node@22.19.17)(happy-dom@15.11.7)(lightningcss@1.32.0)(msw@2.14.2(@types/node@22.19.17)(typescript@6.0.3))(terser@5.46.2)
 
   packages/report-engine:
     dependencies:
@@ -1323,11 +1323,11 @@ importers:
         specifier: ^3.22.0
         version: 3.23.2
       typescript:
-        specifier: ^5.6.2
-        version: 5.9.3
+        specifier: ^6.0.3
+        version: 6.0.3
       vitest:
         specifier: ^2.1.1
-        version: 2.1.9(@types/node@22.19.17)(happy-dom@15.11.7)(lightningcss@1.32.0)(msw@2.14.2(@types/node@22.19.17)(typescript@5.9.3))(terser@5.46.2)
+        version: 2.1.9(@types/node@22.19.17)(happy-dom@15.11.7)(lightningcss@1.32.0)(msw@2.14.2(@types/node@22.19.17)(typescript@6.0.3))(terser@5.46.2)
 
   packages/risks:
     dependencies:
@@ -1336,11 +1336,11 @@ importers:
         version: 3.25.76
     devDependencies:
       typescript:
-        specifier: ^5.6.2
-        version: 5.9.3
+        specifier: ^6.0.3
+        version: 6.0.3
       vitest:
         specifier: ^2.1.1
-        version: 2.1.9(@types/node@22.19.17)(happy-dom@15.11.7)(lightningcss@1.32.0)(msw@2.14.2(@types/node@22.19.17)(typescript@5.9.3))(terser@5.46.2)
+        version: 2.1.9(@types/node@22.19.17)(happy-dom@15.11.7)(lightningcss@1.32.0)(msw@2.14.2(@types/node@22.19.17)(typescript@6.0.3))(terser@5.46.2)
 
   packages/sampling:
     dependencies:
@@ -1358,11 +1358,11 @@ importers:
         specifier: ^3.22.0
         version: 3.23.2
       typescript:
-        specifier: ^5.6.2
-        version: 5.9.3
+        specifier: ^6.0.3
+        version: 6.0.3
       vitest:
         specifier: ^2.1.1
-        version: 2.1.9(@types/node@22.19.17)(happy-dom@15.11.7)(lightningcss@1.32.0)(msw@2.14.2(@types/node@22.19.17)(typescript@5.9.3))(terser@5.46.2)
+        version: 2.1.9(@types/node@22.19.17)(happy-dom@15.11.7)(lightningcss@1.32.0)(msw@2.14.2(@types/node@22.19.17)(typescript@6.0.3))(terser@5.46.2)
 
   packages/search:
     dependencies:
@@ -1383,11 +1383,11 @@ importers:
         specifier: ^22.7.0
         version: 22.19.17
       typescript:
-        specifier: ^5.6.2
-        version: 5.9.3
+        specifier: ^6.0.3
+        version: 6.0.3
       vitest:
         specifier: ^2.1.1
-        version: 2.1.9(@types/node@22.19.17)(happy-dom@15.11.7)(lightningcss@1.32.0)(msw@2.14.2(@types/node@22.19.17)(typescript@5.9.3))(terser@5.46.2)
+        version: 2.1.9(@types/node@22.19.17)(happy-dom@15.11.7)(lightningcss@1.32.0)(msw@2.14.2(@types/node@22.19.17)(typescript@6.0.3))(terser@5.46.2)
 
   packages/shared:
     dependencies:
@@ -1402,11 +1402,11 @@ importers:
         specifier: ^3.22.0
         version: 3.23.2
       typescript:
-        specifier: ^5.6.2
-        version: 5.9.3
+        specifier: ^6.0.3
+        version: 6.0.3
       vitest:
         specifier: ^2.1.1
-        version: 2.1.9(@types/node@22.19.17)(happy-dom@15.11.7)(lightningcss@1.32.0)(msw@2.14.2(@types/node@22.19.17)(typescript@5.9.3))(terser@5.46.2)
+        version: 2.1.9(@types/node@22.19.17)(happy-dom@15.11.7)(lightningcss@1.32.0)(msw@2.14.2(@types/node@22.19.17)(typescript@6.0.3))(terser@5.46.2)
 
   packages/signing:
     dependencies:
@@ -1421,11 +1421,11 @@ importers:
         specifier: ^3.22.0
         version: 3.23.2
       typescript:
-        specifier: ^5.6.2
-        version: 5.9.3
+        specifier: ^6.0.3
+        version: 6.0.3
       vitest:
         specifier: ^2.1.1
-        version: 2.1.9(@types/node@22.19.17)(happy-dom@15.11.7)(lightningcss@1.32.0)(msw@2.14.2(@types/node@22.19.17)(typescript@5.9.3))(terser@5.46.2)
+        version: 2.1.9(@types/node@22.19.17)(happy-dom@15.11.7)(lightningcss@1.32.0)(msw@2.14.2(@types/node@22.19.17)(typescript@6.0.3))(terser@5.46.2)
 
   packages/soa:
     dependencies:
@@ -1443,11 +1443,11 @@ importers:
         specifier: ^22.7.0
         version: 22.19.17
       typescript:
-        specifier: ^5.6.2
-        version: 5.9.3
+        specifier: ^6.0.3
+        version: 6.0.3
       vitest:
         specifier: ^2.1.1
-        version: 2.1.9(@types/node@22.19.17)(happy-dom@15.11.7)(lightningcss@1.32.0)(msw@2.14.2(@types/node@22.19.17)(typescript@5.9.3))(terser@5.46.2)
+        version: 2.1.9(@types/node@22.19.17)(happy-dom@15.11.7)(lightningcss@1.32.0)(msw@2.14.2(@types/node@22.19.17)(typescript@6.0.3))(terser@5.46.2)
 
   packages/surveillance:
     dependencies:
@@ -1462,11 +1462,11 @@ importers:
         specifier: ^22.7.0
         version: 22.19.17
       typescript:
-        specifier: ^5.6.2
-        version: 5.9.3
+        specifier: ^6.0.3
+        version: 6.0.3
       vitest:
         specifier: ^2.1.1
-        version: 2.1.9(@types/node@22.19.17)(happy-dom@15.11.7)(lightningcss@1.32.0)(msw@2.14.2(@types/node@22.19.17)(typescript@5.9.3))(terser@5.46.2)
+        version: 2.1.9(@types/node@22.19.17)(happy-dom@15.11.7)(lightningcss@1.32.0)(msw@2.14.2(@types/node@22.19.17)(typescript@6.0.3))(terser@5.46.2)
 
   packages/tenancy-core:
     dependencies:
@@ -1481,11 +1481,11 @@ importers:
         specifier: ^22.7.0
         version: 22.19.17
       typescript:
-        specifier: ^5.6.2
-        version: 5.9.3
+        specifier: ^6.0.3
+        version: 6.0.3
       vitest:
         specifier: ^2.1.1
-        version: 2.1.9(@types/node@22.19.17)(happy-dom@15.11.7)(lightningcss@1.32.0)(msw@2.14.2(@types/node@22.19.17)(typescript@5.9.3))(terser@5.46.2)
+        version: 2.1.9(@types/node@22.19.17)(happy-dom@15.11.7)(lightningcss@1.32.0)(msw@2.14.2(@types/node@22.19.17)(typescript@6.0.3))(terser@5.46.2)
 
   packages/test-helpers:
     dependencies:
@@ -1497,11 +1497,11 @@ importers:
         specifier: ^22.7.0
         version: 22.19.17
       typescript:
-        specifier: ^5.6.2
-        version: 5.9.3
+        specifier: ^6.0.3
+        version: 6.0.3
       vitest:
         specifier: ^2.1.1
-        version: 2.1.9(@types/node@22.19.17)(happy-dom@15.11.7)(lightningcss@1.32.0)(msw@2.14.2(@types/node@22.19.17)(typescript@5.9.3))(terser@5.46.2)
+        version: 2.1.9(@types/node@22.19.17)(happy-dom@15.11.7)(lightningcss@1.32.0)(msw@2.14.2(@types/node@22.19.17)(typescript@6.0.3))(terser@5.46.2)
 
   packages/trace-analyzer:
     dependencies:
@@ -1526,16 +1526,16 @@ importers:
         version: 1.7.8
       '@vitest/coverage-v8':
         specifier: ^2.1.1
-        version: 2.1.9(vitest@2.1.9(@types/node@22.19.17)(happy-dom@15.11.7)(lightningcss@1.32.0)(msw@2.14.2(@types/node@22.19.17)(typescript@5.9.3))(terser@5.46.2))
+        version: 2.1.9(vitest@2.1.9(@types/node@22.19.17)(happy-dom@15.11.7)(lightningcss@1.32.0)(msw@2.14.2(@types/node@22.19.17)(typescript@6.0.3))(terser@5.46.2))
       fast-check:
         specifier: ^3.22.0
         version: 3.23.2
       typescript:
-        specifier: ^5.6.2
-        version: 5.9.3
+        specifier: ^6.0.3
+        version: 6.0.3
       vitest:
         specifier: ^2.1.1
-        version: 2.1.9(@types/node@22.19.17)(happy-dom@15.11.7)(lightningcss@1.32.0)(msw@2.14.2(@types/node@22.19.17)(typescript@5.9.3))(terser@5.46.2)
+        version: 2.1.9(@types/node@22.19.17)(happy-dom@15.11.7)(lightningcss@1.32.0)(msw@2.14.2(@types/node@22.19.17)(typescript@6.0.3))(terser@5.46.2)
 
   packages/transcription:
     dependencies:
@@ -1548,13 +1548,13 @@ importers:
         version: 22.19.17
       '@vitest/coverage-v8':
         specifier: ^2.1.1
-        version: 2.1.9(vitest@2.1.9(@types/node@22.19.17)(happy-dom@15.11.7)(lightningcss@1.32.0)(msw@2.14.2(@types/node@22.19.17)(typescript@5.9.3))(terser@5.46.2))
+        version: 2.1.9(vitest@2.1.9(@types/node@22.19.17)(happy-dom@15.11.7)(lightningcss@1.32.0)(msw@2.14.2(@types/node@22.19.17)(typescript@6.0.3))(terser@5.46.2))
       typescript:
-        specifier: ^5.6.2
-        version: 5.9.3
+        specifier: ^6.0.3
+        version: 6.0.3
       vitest:
         specifier: ^2.1.1
-        version: 2.1.9(@types/node@22.19.17)(happy-dom@15.11.7)(lightningcss@1.32.0)(msw@2.14.2(@types/node@22.19.17)(typescript@5.9.3))(terser@5.46.2)
+        version: 2.1.9(@types/node@22.19.17)(happy-dom@15.11.7)(lightningcss@1.32.0)(msw@2.14.2(@types/node@22.19.17)(typescript@6.0.3))(terser@5.46.2)
 
   packages/tsa:
     dependencies:
@@ -1566,11 +1566,11 @@ importers:
         specifier: ^22.7.0
         version: 22.19.17
       typescript:
-        specifier: ^5.6.2
-        version: 5.9.3
+        specifier: ^6.0.3
+        version: 6.0.3
       vitest:
         specifier: ^2.1.1
-        version: 2.1.9(@types/node@22.19.17)(happy-dom@15.11.7)(lightningcss@1.32.0)(msw@2.14.2(@types/node@22.19.17)(typescript@5.9.3))(terser@5.46.2)
+        version: 2.1.9(@types/node@22.19.17)(happy-dom@15.11.7)(lightningcss@1.32.0)(msw@2.14.2(@types/node@22.19.17)(typescript@6.0.3))(terser@5.46.2)
 
   packages/ui-kit:
     dependencies:
@@ -1688,10 +1688,10 @@ importers:
         version: 8.6.14(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(storybook@8.6.18(prettier@3.8.3))
       '@storybook/nextjs':
         specifier: ^8.3.5
-        version: 8.6.18(esbuild@0.25.12)(next@15.5.15(@babel/core@7.29.0)(@opentelemetry/api@1.9.1)(@playwright/test@1.59.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(storybook@8.6.18(prettier@3.8.3))(type-fest@2.19.0)(typescript@5.9.3)(webpack-hot-middleware@2.26.1)(webpack@5.106.2(esbuild@0.25.12))
+        version: 8.6.18(esbuild@0.25.12)(next@15.5.15(@babel/core@7.29.0)(@opentelemetry/api@1.9.1)(@playwright/test@1.59.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(storybook@8.6.18(prettier@3.8.3))(type-fest@2.19.0)(typescript@6.0.3)(webpack-hot-middleware@2.26.1)(webpack@5.106.2(esbuild@0.25.12))
       '@storybook/react':
         specifier: ^8.3.5
-        version: 8.6.18(@storybook/test@8.6.18(storybook@8.6.18(prettier@3.8.3)))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(storybook@8.6.18(prettier@3.8.3))(typescript@5.9.3)
+        version: 8.6.18(@storybook/test@8.6.18(storybook@8.6.18(prettier@3.8.3)))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(storybook@8.6.18(prettier@3.8.3))(typescript@6.0.3)
       '@testing-library/jest-dom':
         specifier: ^6.5.0
         version: 6.9.1
@@ -1738,11 +1738,11 @@ importers:
         specifier: ^1.0.7
         version: 1.0.7(tailwindcss@3.4.19(tsx@4.21.0)(yaml@2.8.4))
       typescript:
-        specifier: ^5.6.2
-        version: 5.9.3
+        specifier: ^6.0.3
+        version: 6.0.3
       vitest:
         specifier: ^2.1.1
-        version: 2.1.9(@types/node@22.19.17)(happy-dom@15.11.7)(lightningcss@1.32.0)(msw@2.14.2(@types/node@22.19.17)(typescript@5.9.3))(terser@5.46.2)
+        version: 2.1.9(@types/node@22.19.17)(happy-dom@15.11.7)(lightningcss@1.32.0)(msw@2.14.2(@types/node@22.19.17)(typescript@6.0.3))(terser@5.46.2)
 
   packages/vlm-extraction:
     dependencies:
@@ -1755,13 +1755,13 @@ importers:
         version: 22.19.17
       '@vitest/coverage-v8':
         specifier: ^2.1.1
-        version: 2.1.9(vitest@2.1.9(@types/node@22.19.17)(happy-dom@15.11.7)(lightningcss@1.32.0)(msw@2.14.2(@types/node@22.19.17)(typescript@5.9.3))(terser@5.46.2))
+        version: 2.1.9(vitest@2.1.9(@types/node@22.19.17)(happy-dom@15.11.7)(lightningcss@1.32.0)(msw@2.14.2(@types/node@22.19.17)(typescript@6.0.3))(terser@5.46.2))
       typescript:
-        specifier: ^5.6.2
-        version: 5.9.3
+        specifier: ^6.0.3
+        version: 6.0.3
       vitest:
         specifier: ^2.1.1
-        version: 2.1.9(@types/node@22.19.17)(happy-dom@15.11.7)(lightningcss@1.32.0)(msw@2.14.2(@types/node@22.19.17)(typescript@5.9.3))(terser@5.46.2)
+        version: 2.1.9(@types/node@22.19.17)(happy-dom@15.11.7)(lightningcss@1.32.0)(msw@2.14.2(@types/node@22.19.17)(typescript@6.0.3))(terser@5.46.2)
 
   packages/working-papers:
     dependencies:
@@ -1782,11 +1782,11 @@ importers:
         specifier: ^22.7.0
         version: 22.19.17
       typescript:
-        specifier: ^5.6.2
-        version: 5.9.3
+        specifier: ^6.0.3
+        version: 6.0.3
       vitest:
         specifier: ^2.1.1
-        version: 2.1.9(@types/node@22.19.17)(happy-dom@15.11.7)(lightningcss@1.32.0)(msw@2.14.2(@types/node@22.19.17)(typescript@5.9.3))(terser@5.46.2)
+        version: 2.1.9(@types/node@22.19.17)(happy-dom@15.11.7)(lightningcss@1.32.0)(msw@2.14.2(@types/node@22.19.17)(typescript@6.0.3))(terser@5.46.2)
 
   tests/conversational-engine:
     devDependencies:
@@ -1797,11 +1797,11 @@ importers:
         specifier: ^4.19.1
         version: 4.21.0
       typescript:
-        specifier: ^5.6.2
-        version: 5.9.3
+        specifier: ^6.0.3
+        version: 6.0.3
       vitest:
         specifier: ^2.1.1
-        version: 2.1.9(@types/node@22.19.17)(happy-dom@15.11.7)(lightningcss@1.32.0)(msw@2.14.2(@types/node@22.19.17)(typescript@5.9.3))(terser@5.46.2)
+        version: 2.1.9(@types/node@22.19.17)(happy-dom@15.11.7)(lightningcss@1.32.0)(msw@2.14.2(@types/node@22.19.17)(typescript@6.0.3))(terser@5.46.2)
       zod:
         specifier: ^3.23.8
         version: 3.25.76
@@ -1821,8 +1821,8 @@ importers:
         specifier: ^16.4.5
         version: 16.6.1
       typescript:
-        specifier: ^5.6.2
-        version: 5.9.3
+        specifier: ^6.0.3
+        version: 6.0.3
 
   tests/load: {}
 
@@ -1839,11 +1839,11 @@ importers:
         specifier: ^22.7.0
         version: 22.19.17
       typescript:
-        specifier: ^5.6.2
-        version: 5.9.3
+        specifier: ^6.0.3
+        version: 6.0.3
       vitest:
         specifier: ^2.1.1
-        version: 2.1.9(@types/node@22.19.17)(happy-dom@15.11.7)(lightningcss@1.32.0)(msw@2.14.2(@types/node@22.19.17)(typescript@5.9.3))(terser@5.46.2)
+        version: 2.1.9(@types/node@22.19.17)(happy-dom@15.11.7)(lightningcss@1.32.0)(msw@2.14.2(@types/node@22.19.17)(typescript@6.0.3))(terser@5.46.2)
       zod:
         specifier: ^3.23.8
         version: 3.25.76
@@ -1854,11 +1854,11 @@ importers:
         specifier: ^22.7.0
         version: 22.19.17
       typescript:
-        specifier: ^5.6.2
-        version: 5.9.3
+        specifier: ^6.0.3
+        version: 6.0.3
       vitest:
         specifier: ^2.1.1
-        version: 2.1.9(@types/node@22.19.17)(happy-dom@15.11.7)(lightningcss@1.32.0)(msw@2.14.2(@types/node@22.19.17)(typescript@5.9.3))(terser@5.46.2)
+        version: 2.1.9(@types/node@22.19.17)(happy-dom@15.11.7)(lightningcss@1.32.0)(msw@2.14.2(@types/node@22.19.17)(typescript@6.0.3))(terser@5.46.2)
       zod:
         specifier: ^3.23.8
         version: 3.25.76
@@ -6348,63 +6348,63 @@ packages:
   '@types/ws@8.18.1':
     resolution: {integrity: sha512-ThVF6DCVhA8kUGy+aazFQ4kXQ7E1Ty7A3ypFOe0IcJV8O/M511G99AW24irKrW56Wt44yG9+ij8FaqoBGkuBXg==}
 
-  '@typescript-eslint/eslint-plugin@8.59.1':
-    resolution: {integrity: sha512-BOziFIfE+6osHO9FoJG4zjoHUcvI7fTNBSpdAwrNH0/TLvzjsk2oo8XSSOT2HhqUyhZPfHv4UOffoJ9oEEQ7Ag==}
+  '@typescript-eslint/eslint-plugin@8.59.3':
+    resolution: {integrity: sha512-PwFvSKsXGShKGW6n5bZOhGHEcCZXM8HofLK9fNsEwZXzFRjoY+XT1Vsf1zgyXdwTr0ZYz1/2tkZ0DBTT9jZjhw==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
     peerDependencies:
-      '@typescript-eslint/parser': ^8.59.1
+      '@typescript-eslint/parser': ^8.59.3
       eslint: ^8.57.0 || ^9.0.0 || ^10.0.0
       typescript: '>=4.8.4 <6.1.0'
 
-  '@typescript-eslint/parser@8.59.1':
-    resolution: {integrity: sha512-HDQH9O/47Dxi1ceDhBXdaldtf/WV9yRYMjbjCuNk3qnaTD564qwv61Y7+gTxwxRKzSrgO5uhtw584igXVuuZkA==}
-    engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
-    peerDependencies:
-      eslint: ^8.57.0 || ^9.0.0 || ^10.0.0
-      typescript: '>=4.8.4 <6.1.0'
-
-  '@typescript-eslint/project-service@8.59.1':
-    resolution: {integrity: sha512-+MuHQlHiEr00Of/IQbE/MmEoi44znZHbR/Pz7Opq4HryUOlRi+/44dro9Ycy8Fyo+/024IWtw8m4JUMCGTYxDg==}
-    engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
-    peerDependencies:
-      typescript: '>=4.8.4 <6.1.0'
-
-  '@typescript-eslint/scope-manager@8.59.1':
-    resolution: {integrity: sha512-LwuHQI4pDOYVKvmH2dkaJo6YZCSgouVgnS/z7yBPKBMvgtBvyLqiLy9Z6b7+m/TRcX1NFYUqZetI5Y+aT4GEfg==}
-    engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
-
-  '@typescript-eslint/tsconfig-utils@8.59.1':
-    resolution: {integrity: sha512-/0nEyPbX7gRsk0Uwfe4ALwwgxuA66d/l2mhRDNlAvaj4U3juhUtJNq0DsY8M2AYwwb9rEq2hrC3IcIcEt++iJA==}
-    engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
-    peerDependencies:
-      typescript: '>=4.8.4 <6.1.0'
-
-  '@typescript-eslint/type-utils@8.59.1':
-    resolution: {integrity: sha512-klWPBR2ciQHS3f++ug/mVnWKPjBUo7icEL3FAO1lhAR1Z1i5NQYZ1EannMSRYcq5qCv5wNALlXr6fksRHyYl7w==}
+  '@typescript-eslint/parser@8.59.3':
+    resolution: {integrity: sha512-HPwA+hVkfcriajbNvTmZv4VRauibay+cWArYUYq7u7W7PmGShMxbPxLvrwDme55a6d5alG3nrYfhyJ/G28XlLg==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
     peerDependencies:
       eslint: ^8.57.0 || ^9.0.0 || ^10.0.0
       typescript: '>=4.8.4 <6.1.0'
 
-  '@typescript-eslint/types@8.59.1':
-    resolution: {integrity: sha512-ZDCjgccSdYPw5Bxh+my4Z0lJU96ZDN7jbBzvmEn0FZx3RtU1C7VWl6NbDx94bwY3V5YsgwRzJPOgeY2Q/nLG8A==}
-    engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
-
-  '@typescript-eslint/typescript-estree@8.59.1':
-    resolution: {integrity: sha512-OUd+vJS05sSkOip+BkZ/2NS8RMxrAAJemsC6vU3kmfLyeaJT0TftHkV9mcx2107MmsBVXXexhVu4F0TZXyMl4g==}
+  '@typescript-eslint/project-service@8.59.3':
+    resolution: {integrity: sha512-ECiUWa/KYRGDFUqTNehaRgzDshnJfkTABJxVemHk4ko22gcr0ukloKjWvyQ64g8YCV/UI47kN1dbmjf/GaQYng==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
     peerDependencies:
       typescript: '>=4.8.4 <6.1.0'
 
-  '@typescript-eslint/utils@8.59.1':
-    resolution: {integrity: sha512-3pIeoXhCeYH9FSCBI8P3iNwJlGuzPlYKkTlen2O9T1DSeeg8UG8jstq6BLk+Mda0qup7mgk4z4XL4OzRaxZ8LA==}
+  '@typescript-eslint/scope-manager@8.59.3':
+    resolution: {integrity: sha512-t2LvZnoEfzKtnPjgeEu41xw5gxq9mQVfYy4OoZ4Vlt0sk3JwxmhCca/AR7DwOiHrjWgjAj6as4AhRLKSDfvZIA==}
+    engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
+
+  '@typescript-eslint/tsconfig-utils@8.59.3':
+    resolution: {integrity: sha512-PcIJHjmaREXLgIAIzLnSY9VucEzz8FKXsRgFa1DmdGCK/5tJpW03TKJF01Q6VZd1lLdz2sIKPWaDUZN9dp//dw==}
+    engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
+    peerDependencies:
+      typescript: '>=4.8.4 <6.1.0'
+
+  '@typescript-eslint/type-utils@8.59.3':
+    resolution: {integrity: sha512-g71d8QD8UaiHGvrJwyIS1hCX5r63w6Jll+4VEYhEAHXTDIqX1JgxhTAbEHtKntL9kuc4jRo7/GWw5xfCepSccQ==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
     peerDependencies:
       eslint: ^8.57.0 || ^9.0.0 || ^10.0.0
       typescript: '>=4.8.4 <6.1.0'
 
-  '@typescript-eslint/visitor-keys@8.59.1':
-    resolution: {integrity: sha512-LdDNl6C5iJExcM0Yh0PwAIBb9PrSiCsWamF/JyEZawm3kFDnRoaq3LGE4bpyRao/fWeGKKyw7icx0YxrLFC5Cg==}
+  '@typescript-eslint/types@8.59.3':
+    resolution: {integrity: sha512-ePFoH0g4ludssdRFqqDxQePCxU4WQyRa9+XVwjm7yLn0FKhMeoetC+qBEEI1Eyb1pGSDveTIT09Bvw2WhlGayg==}
+    engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
+
+  '@typescript-eslint/typescript-estree@8.59.3':
+    resolution: {integrity: sha512-CbRjVRAf7Lr9Kr8RopKcbY45p2VfmmHrm0ygOCYFi7oU8q19m0Fs/6iHS7kNOmwpp+ob07ZVcAqlxUod9lYdmg==}
+    engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
+    peerDependencies:
+      typescript: '>=4.8.4 <6.1.0'
+
+  '@typescript-eslint/utils@8.59.3':
+    resolution: {integrity: sha512-JAvT14goBzRzzzZyqq3P9BLArIxTtQURUtFgQ/V7FO+eU+Gg6ES+5ymOPP1wRxXcxAYeivCk4uS3jCKWI1K8Zg==}
+    engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
+    peerDependencies:
+      eslint: ^8.57.0 || ^9.0.0 || ^10.0.0
+      typescript: '>=4.8.4 <6.1.0'
+
+  '@typescript-eslint/visitor-keys@8.59.3':
+    resolution: {integrity: sha512-f1UQF7ggd42YiwI5wGrRaPsa+P0CINBlrkLPmGfpq/u/I/oVtecoEIfFR9ag/oa1sLOsRNZ6xehf6qMZhQGBDg==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
 
   '@vitejs/plugin-react@4.7.0':
@@ -6924,8 +6924,8 @@ packages:
   brace-expansion@2.1.0:
     resolution: {integrity: sha512-TN1kCZAgdgweJhWWpgKYrQaMNHcDULHkWwQIspdtjV4Y5aurRdZpjAqn6yX3FPqTA9ngHCc4hJxMAMgGfve85w==}
 
-  brace-expansion@5.0.5:
-    resolution: {integrity: sha512-VZznLgtwhn+Mact9tfiwx64fA9erHH/MCXEUfB/0bX/6Fz6ny5EGTXYltMocqg4xFAQZtnO3DHWWXi8RiuN7cQ==}
+  brace-expansion@5.0.6:
+    resolution: {integrity: sha512-kLpxurY4Z4r9sgMsyG0Z9uzsBlgiU/EFKhj/h91/8yHu0edo7XuixOIH3VcJ8kkxs6/jPzoI6U9Vj3WqbMQ94g==}
     engines: {node: 18 || 20 || >=22}
 
   braces@3.0.3:
@@ -10499,6 +10499,11 @@ packages:
     engines: {node: '>=10'}
     hasBin: true
 
+  semver@7.8.0:
+    resolution: {integrity: sha512-AcM7dV/5ul4EekoQ29Agm5vri8JNqRyj39o0qpX6vDF2GZrtutZl5RwgD1XnZjiTAfncsJhMI48QQH3sN87YNA==}
+    engines: {node: '>=10'}
+    hasBin: true
+
   send@1.2.1:
     resolution: {integrity: sha512-1gnZf7DFcoIcajTjTwjwuDjzuz4PPcY2StKPlsGAQ1+YH20IRVrBaXSWmdjowTJ6u8Rc01PoYOGHXfP1mYcZNQ==}
     engines: {node: '>= 18'}
@@ -11116,8 +11121,8 @@ packages:
     engines: {node: '>=14.17'}
     hasBin: true
 
-  typescript@5.9.3:
-    resolution: {integrity: sha512-jl1vZzPDinLr9eUt3J/t7V6FgNEw9QjvBPdysz9KfQDD41fQrC2Y4vKQdiaUpFT4bXlb1RHhLpp8wtm6M5TgSw==}
+  typescript@6.0.3:
+    resolution: {integrity: sha512-y2TvuxSZPDyQakkFRPZHKFm+KKVqIisdg9/CZwm9ftvKXLP8NRWj38/ODjNbr43SsoXqNuAisEf1GdCxqWcdBw==}
     engines: {node: '>=14.17'}
     hasBin: true
 
@@ -13490,14 +13495,14 @@ snapshots:
     transitivePeerDependencies:
       - chokidar
 
-  '@nestjs/schematics@10.2.3(chokidar@3.6.0)(typescript@5.9.3)':
+  '@nestjs/schematics@10.2.3(chokidar@3.6.0)(typescript@6.0.3)':
     dependencies:
       '@angular-devkit/core': 17.3.11(chokidar@3.6.0)
       '@angular-devkit/schematics': 17.3.11(chokidar@3.6.0)
       comment-json: 4.2.5
       jsonc-parser: 3.3.1
       pluralize: 8.0.0
-      typescript: 5.9.3
+      typescript: 6.0.3
     transitivePeerDependencies:
       - chokidar
 
@@ -15245,7 +15250,7 @@ snapshots:
       react: 19.2.5
       react-dom: 19.2.5(react@19.2.5)
 
-  '@storybook/builder-webpack5@8.6.18(esbuild@0.25.12)(storybook@8.6.18(prettier@3.8.3))(typescript@5.9.3)':
+  '@storybook/builder-webpack5@8.6.18(esbuild@0.25.12)(storybook@8.6.18(prettier@3.8.3))(typescript@6.0.3)':
     dependencies:
       '@storybook/core-webpack': 8.6.18(storybook@8.6.18(prettier@3.8.3))
       '@types/semver': 7.7.1
@@ -15255,7 +15260,7 @@ snapshots:
       constants-browserify: 1.0.0
       css-loader: 6.11.0(webpack@5.106.2(esbuild@0.25.12))
       es-module-lexer: 1.7.0
-      fork-ts-checker-webpack-plugin: 8.0.0(typescript@5.9.3)(webpack@5.106.2(esbuild@0.25.12))
+      fork-ts-checker-webpack-plugin: 8.0.0(typescript@6.0.3)(webpack@5.106.2(esbuild@0.25.12))
       html-webpack-plugin: 5.6.7(webpack@5.106.2(esbuild@0.25.12))
       magic-string: 0.30.21
       path-browserify: 1.0.1
@@ -15273,7 +15278,7 @@ snapshots:
       webpack-hot-middleware: 2.26.1
       webpack-virtual-modules: 0.6.2
     optionalDependencies:
-      typescript: 5.9.3
+      typescript: 6.0.3
     transitivePeerDependencies:
       - '@rspack/core'
       - '@swc/core'
@@ -15339,7 +15344,7 @@ snapshots:
     dependencies:
       storybook: 8.6.18(prettier@3.8.3)
 
-  '@storybook/nextjs@8.6.18(esbuild@0.25.12)(next@15.5.15(@babel/core@7.29.0)(@opentelemetry/api@1.9.1)(@playwright/test@1.59.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(storybook@8.6.18(prettier@3.8.3))(type-fest@2.19.0)(typescript@5.9.3)(webpack-hot-middleware@2.26.1)(webpack@5.106.2(esbuild@0.25.12))':
+  '@storybook/nextjs@8.6.18(esbuild@0.25.12)(next@15.5.15(@babel/core@7.29.0)(@opentelemetry/api@1.9.1)(@playwright/test@1.59.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(storybook@8.6.18(prettier@3.8.3))(type-fest@2.19.0)(typescript@6.0.3)(webpack-hot-middleware@2.26.1)(webpack@5.106.2(esbuild@0.25.12))':
     dependencies:
       '@babel/core': 7.29.0
       '@babel/plugin-syntax-bigint': 7.8.3(@babel/core@7.29.0)
@@ -15355,9 +15360,9 @@ snapshots:
       '@babel/preset-typescript': 7.28.5(@babel/core@7.29.0)
       '@babel/runtime': 7.29.2
       '@pmmmwh/react-refresh-webpack-plugin': 0.5.17(react-refresh@0.14.2)(type-fest@2.19.0)(webpack-hot-middleware@2.26.1)(webpack@5.106.2(esbuild@0.25.12))
-      '@storybook/builder-webpack5': 8.6.18(esbuild@0.25.12)(storybook@8.6.18(prettier@3.8.3))(typescript@5.9.3)
-      '@storybook/preset-react-webpack': 8.6.18(@storybook/test@8.6.18(storybook@8.6.18(prettier@3.8.3)))(esbuild@0.25.12)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(storybook@8.6.18(prettier@3.8.3))(typescript@5.9.3)
-      '@storybook/react': 8.6.18(@storybook/test@8.6.18(storybook@8.6.18(prettier@3.8.3)))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(storybook@8.6.18(prettier@3.8.3))(typescript@5.9.3)
+      '@storybook/builder-webpack5': 8.6.18(esbuild@0.25.12)(storybook@8.6.18(prettier@3.8.3))(typescript@6.0.3)
+      '@storybook/preset-react-webpack': 8.6.18(@storybook/test@8.6.18(storybook@8.6.18(prettier@3.8.3)))(esbuild@0.25.12)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(storybook@8.6.18(prettier@3.8.3))(typescript@6.0.3)
+      '@storybook/react': 8.6.18(@storybook/test@8.6.18(storybook@8.6.18(prettier@3.8.3)))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(storybook@8.6.18(prettier@3.8.3))(typescript@6.0.3)
       '@storybook/test': 8.6.18(storybook@8.6.18(prettier@3.8.3))
       '@types/semver': 7.7.1
       babel-loader: 9.2.1(@babel/core@7.29.0)(webpack@5.106.2(esbuild@0.25.12))
@@ -15367,9 +15372,9 @@ snapshots:
       loader-utils: 3.3.1
       next: 15.5.15(@babel/core@7.29.0)(@opentelemetry/api@1.9.1)(@playwright/test@1.59.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
       node-polyfill-webpack-plugin: 2.0.1(webpack@5.106.2(esbuild@0.25.12))
-      pnp-webpack-plugin: 1.7.0(typescript@5.9.3)
+      pnp-webpack-plugin: 1.7.0(typescript@6.0.3)
       postcss: 8.5.13
-      postcss-loader: 8.2.1(postcss@8.5.13)(typescript@5.9.3)(webpack@5.106.2(esbuild@0.25.12))
+      postcss-loader: 8.2.1(postcss@8.5.13)(typescript@6.0.3)(webpack@5.106.2(esbuild@0.25.12))
       react: 19.2.5
       react-dom: 19.2.5(react@19.2.5)
       react-refresh: 0.14.2
@@ -15384,7 +15389,7 @@ snapshots:
       tsconfig-paths-webpack-plugin: 4.2.0
     optionalDependencies:
       sharp: 0.33.5
-      typescript: 5.9.3
+      typescript: 6.0.3
       webpack: 5.106.2(esbuild@0.25.12)
     transitivePeerDependencies:
       - '@rspack/core'
@@ -15404,11 +15409,11 @@ snapshots:
       - webpack-hot-middleware
       - webpack-plugin-serve
 
-  '@storybook/preset-react-webpack@8.6.18(@storybook/test@8.6.18(storybook@8.6.18(prettier@3.8.3)))(esbuild@0.25.12)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(storybook@8.6.18(prettier@3.8.3))(typescript@5.9.3)':
+  '@storybook/preset-react-webpack@8.6.18(@storybook/test@8.6.18(storybook@8.6.18(prettier@3.8.3)))(esbuild@0.25.12)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(storybook@8.6.18(prettier@3.8.3))(typescript@6.0.3)':
     dependencies:
       '@storybook/core-webpack': 8.6.18(storybook@8.6.18(prettier@3.8.3))
-      '@storybook/react': 8.6.18(@storybook/test@8.6.18(storybook@8.6.18(prettier@3.8.3)))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(storybook@8.6.18(prettier@3.8.3))(typescript@5.9.3)
-      '@storybook/react-docgen-typescript-plugin': 1.0.6--canary.9.0c3f3b7.0(typescript@5.9.3)(webpack@5.106.2(esbuild@0.25.12))
+      '@storybook/react': 8.6.18(@storybook/test@8.6.18(storybook@8.6.18(prettier@3.8.3)))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(storybook@8.6.18(prettier@3.8.3))(typescript@6.0.3)
+      '@storybook/react-docgen-typescript-plugin': 1.0.6--canary.9.0c3f3b7.0(typescript@6.0.3)(webpack@5.106.2(esbuild@0.25.12))
       '@types/semver': 7.7.1
       find-up: 5.0.0
       magic-string: 0.30.21
@@ -15421,7 +15426,7 @@ snapshots:
       tsconfig-paths: 4.2.0
       webpack: 5.106.2(esbuild@0.25.12)
     optionalDependencies:
-      typescript: 5.9.3
+      typescript: 6.0.3
     transitivePeerDependencies:
       - '@storybook/test'
       - '@swc/core'
@@ -15434,16 +15439,16 @@ snapshots:
     dependencies:
       storybook: 8.6.18(prettier@3.8.3)
 
-  '@storybook/react-docgen-typescript-plugin@1.0.6--canary.9.0c3f3b7.0(typescript@5.9.3)(webpack@5.106.2(esbuild@0.25.12))':
+  '@storybook/react-docgen-typescript-plugin@1.0.6--canary.9.0c3f3b7.0(typescript@6.0.3)(webpack@5.106.2(esbuild@0.25.12))':
     dependencies:
       debug: 4.4.3
       endent: 2.1.0
       find-cache-dir: 3.3.2
       flat-cache: 3.2.0
       micromatch: 4.0.8
-      react-docgen-typescript: 2.4.0(typescript@5.9.3)
+      react-docgen-typescript: 2.4.0(typescript@6.0.3)
       tslib: 2.8.1
-      typescript: 5.9.3
+      typescript: 6.0.3
       webpack: 5.106.2(esbuild@0.25.12)
     transitivePeerDependencies:
       - supports-color
@@ -15460,7 +15465,7 @@ snapshots:
       react-dom: 19.2.5(react@19.2.5)
       storybook: 8.6.18(prettier@3.8.3)
 
-  '@storybook/react@8.6.18(@storybook/test@8.6.18(storybook@8.6.18(prettier@3.8.3)))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(storybook@8.6.18(prettier@3.8.3))(typescript@5.9.3)':
+  '@storybook/react@8.6.18(@storybook/test@8.6.18(storybook@8.6.18(prettier@3.8.3)))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(storybook@8.6.18(prettier@3.8.3))(typescript@6.0.3)':
     dependencies:
       '@storybook/components': 8.6.18(storybook@8.6.18(prettier@3.8.3))
       '@storybook/global': 5.0.0
@@ -15473,7 +15478,7 @@ snapshots:
       storybook: 8.6.18(prettier@3.8.3)
     optionalDependencies:
       '@storybook/test': 8.6.18(storybook@8.6.18(prettier@3.8.3))
-      typescript: 5.9.3
+      typescript: 6.0.3
 
   '@storybook/test@8.6.14(storybook@8.6.18(prettier@3.8.3))':
     dependencies:
@@ -15513,7 +15518,7 @@ snapshots:
       '@swc/core': 1.15.33
       '@swc/types': 0.1.26
 
-  '@swc-node/register@1.11.1(@emnapi/core@1.10.0)(@emnapi/runtime@1.10.0)(@swc/core@1.15.33)(@swc/types@0.1.26)(typescript@5.9.3)':
+  '@swc-node/register@1.11.1(@emnapi/core@1.10.0)(@emnapi/runtime@1.10.0)(@swc/core@1.15.33)(@swc/types@0.1.26)(typescript@6.0.3)':
     dependencies:
       '@swc-node/core': 1.14.1(@swc/core@1.15.33)(@swc/types@0.1.26)
       '@swc-node/sourcemap-support': 0.6.1
@@ -15523,7 +15528,7 @@ snapshots:
       oxc-resolver: 11.19.1(@emnapi/core@1.10.0)(@emnapi/runtime@1.10.0)
       pirates: 4.0.7
       tslib: 2.8.1
-      typescript: 5.9.3
+      typescript: 6.0.3
     transitivePeerDependencies:
       - '@emnapi/core'
       - '@emnapi/runtime'
@@ -16202,95 +16207,95 @@ snapshots:
     dependencies:
       '@types/node': 22.19.17
 
-  '@typescript-eslint/eslint-plugin@8.59.1(@typescript-eslint/parser@8.59.1(eslint@9.39.4(jiti@2.6.1))(typescript@5.9.3))(eslint@9.39.4(jiti@2.6.1))(typescript@5.9.3)':
+  '@typescript-eslint/eslint-plugin@8.59.3(@typescript-eslint/parser@8.59.3(eslint@9.39.4(jiti@2.6.1))(typescript@6.0.3))(eslint@9.39.4(jiti@2.6.1))(typescript@6.0.3)':
     dependencies:
       '@eslint-community/regexpp': 4.12.2
-      '@typescript-eslint/parser': 8.59.1(eslint@9.39.4(jiti@2.6.1))(typescript@5.9.3)
-      '@typescript-eslint/scope-manager': 8.59.1
-      '@typescript-eslint/type-utils': 8.59.1(eslint@9.39.4(jiti@2.6.1))(typescript@5.9.3)
-      '@typescript-eslint/utils': 8.59.1(eslint@9.39.4(jiti@2.6.1))(typescript@5.9.3)
-      '@typescript-eslint/visitor-keys': 8.59.1
+      '@typescript-eslint/parser': 8.59.3(eslint@9.39.4(jiti@2.6.1))(typescript@6.0.3)
+      '@typescript-eslint/scope-manager': 8.59.3
+      '@typescript-eslint/type-utils': 8.59.3(eslint@9.39.4(jiti@2.6.1))(typescript@6.0.3)
+      '@typescript-eslint/utils': 8.59.3(eslint@9.39.4(jiti@2.6.1))(typescript@6.0.3)
+      '@typescript-eslint/visitor-keys': 8.59.3
       eslint: 9.39.4(jiti@2.6.1)
       ignore: 7.0.5
       natural-compare: 1.4.0
-      ts-api-utils: 2.5.0(typescript@5.9.3)
-      typescript: 5.9.3
+      ts-api-utils: 2.5.0(typescript@6.0.3)
+      typescript: 6.0.3
     transitivePeerDependencies:
       - supports-color
 
-  '@typescript-eslint/parser@8.59.1(eslint@9.39.4(jiti@2.6.1))(typescript@5.9.3)':
+  '@typescript-eslint/parser@8.59.3(eslint@9.39.4(jiti@2.6.1))(typescript@6.0.3)':
     dependencies:
-      '@typescript-eslint/scope-manager': 8.59.1
-      '@typescript-eslint/types': 8.59.1
-      '@typescript-eslint/typescript-estree': 8.59.1(typescript@5.9.3)
-      '@typescript-eslint/visitor-keys': 8.59.1
+      '@typescript-eslint/scope-manager': 8.59.3
+      '@typescript-eslint/types': 8.59.3
+      '@typescript-eslint/typescript-estree': 8.59.3(typescript@6.0.3)
+      '@typescript-eslint/visitor-keys': 8.59.3
       debug: 4.4.3
       eslint: 9.39.4(jiti@2.6.1)
-      typescript: 5.9.3
+      typescript: 6.0.3
     transitivePeerDependencies:
       - supports-color
 
-  '@typescript-eslint/project-service@8.59.1(typescript@5.9.3)':
+  '@typescript-eslint/project-service@8.59.3(typescript@6.0.3)':
     dependencies:
-      '@typescript-eslint/tsconfig-utils': 8.59.1(typescript@5.9.3)
-      '@typescript-eslint/types': 8.59.1
+      '@typescript-eslint/tsconfig-utils': 8.59.3(typescript@6.0.3)
+      '@typescript-eslint/types': 8.59.3
       debug: 4.4.3
-      typescript: 5.9.3
+      typescript: 6.0.3
     transitivePeerDependencies:
       - supports-color
 
-  '@typescript-eslint/scope-manager@8.59.1':
+  '@typescript-eslint/scope-manager@8.59.3':
     dependencies:
-      '@typescript-eslint/types': 8.59.1
-      '@typescript-eslint/visitor-keys': 8.59.1
+      '@typescript-eslint/types': 8.59.3
+      '@typescript-eslint/visitor-keys': 8.59.3
 
-  '@typescript-eslint/tsconfig-utils@8.59.1(typescript@5.9.3)':
+  '@typescript-eslint/tsconfig-utils@8.59.3(typescript@6.0.3)':
     dependencies:
-      typescript: 5.9.3
+      typescript: 6.0.3
 
-  '@typescript-eslint/type-utils@8.59.1(eslint@9.39.4(jiti@2.6.1))(typescript@5.9.3)':
+  '@typescript-eslint/type-utils@8.59.3(eslint@9.39.4(jiti@2.6.1))(typescript@6.0.3)':
     dependencies:
-      '@typescript-eslint/types': 8.59.1
-      '@typescript-eslint/typescript-estree': 8.59.1(typescript@5.9.3)
-      '@typescript-eslint/utils': 8.59.1(eslint@9.39.4(jiti@2.6.1))(typescript@5.9.3)
+      '@typescript-eslint/types': 8.59.3
+      '@typescript-eslint/typescript-estree': 8.59.3(typescript@6.0.3)
+      '@typescript-eslint/utils': 8.59.3(eslint@9.39.4(jiti@2.6.1))(typescript@6.0.3)
       debug: 4.4.3
       eslint: 9.39.4(jiti@2.6.1)
-      ts-api-utils: 2.5.0(typescript@5.9.3)
-      typescript: 5.9.3
+      ts-api-utils: 2.5.0(typescript@6.0.3)
+      typescript: 6.0.3
     transitivePeerDependencies:
       - supports-color
 
-  '@typescript-eslint/types@8.59.1': {}
+  '@typescript-eslint/types@8.59.3': {}
 
-  '@typescript-eslint/typescript-estree@8.59.1(typescript@5.9.3)':
+  '@typescript-eslint/typescript-estree@8.59.3(typescript@6.0.3)':
     dependencies:
-      '@typescript-eslint/project-service': 8.59.1(typescript@5.9.3)
-      '@typescript-eslint/tsconfig-utils': 8.59.1(typescript@5.9.3)
-      '@typescript-eslint/types': 8.59.1
-      '@typescript-eslint/visitor-keys': 8.59.1
+      '@typescript-eslint/project-service': 8.59.3(typescript@6.0.3)
+      '@typescript-eslint/tsconfig-utils': 8.59.3(typescript@6.0.3)
+      '@typescript-eslint/types': 8.59.3
+      '@typescript-eslint/visitor-keys': 8.59.3
       debug: 4.4.3
       minimatch: 10.2.5
-      semver: 7.7.4
+      semver: 7.8.0
       tinyglobby: 0.2.16
-      ts-api-utils: 2.5.0(typescript@5.9.3)
-      typescript: 5.9.3
+      ts-api-utils: 2.5.0(typescript@6.0.3)
+      typescript: 6.0.3
     transitivePeerDependencies:
       - supports-color
 
-  '@typescript-eslint/utils@8.59.1(eslint@9.39.4(jiti@2.6.1))(typescript@5.9.3)':
+  '@typescript-eslint/utils@8.59.3(eslint@9.39.4(jiti@2.6.1))(typescript@6.0.3)':
     dependencies:
       '@eslint-community/eslint-utils': 4.9.1(eslint@9.39.4(jiti@2.6.1))
-      '@typescript-eslint/scope-manager': 8.59.1
-      '@typescript-eslint/types': 8.59.1
-      '@typescript-eslint/typescript-estree': 8.59.1(typescript@5.9.3)
+      '@typescript-eslint/scope-manager': 8.59.3
+      '@typescript-eslint/types': 8.59.3
+      '@typescript-eslint/typescript-estree': 8.59.3(typescript@6.0.3)
       eslint: 9.39.4(jiti@2.6.1)
-      typescript: 5.9.3
+      typescript: 6.0.3
     transitivePeerDependencies:
       - supports-color
 
-  '@typescript-eslint/visitor-keys@8.59.1':
+  '@typescript-eslint/visitor-keys@8.59.3':
     dependencies:
-      '@typescript-eslint/types': 8.59.1
+      '@typescript-eslint/types': 8.59.3
       eslint-visitor-keys: 5.0.1
 
   '@vitejs/plugin-react@4.7.0(vite@5.4.21(@types/node@22.19.17)(lightningcss@1.32.0)(terser@5.46.2))':
@@ -16305,7 +16310,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@vitest/coverage-v8@2.1.9(vitest@2.1.9(@types/node@22.19.17)(happy-dom@15.11.7)(lightningcss@1.32.0)(msw@2.14.2(@types/node@22.19.17)(typescript@5.9.3))(terser@5.46.2))':
+  '@vitest/coverage-v8@2.1.9(vitest@2.1.9(@types/node@22.19.17)(happy-dom@15.11.7)(lightningcss@1.32.0)(msw@2.14.2(@types/node@22.19.17)(typescript@6.0.3))(terser@5.46.2))':
     dependencies:
       '@ampproject/remapping': 2.3.0
       '@bcoe/v8-coverage': 0.2.3
@@ -16319,7 +16324,7 @@ snapshots:
       std-env: 3.10.0
       test-exclude: 7.0.2
       tinyrainbow: 1.2.0
-      vitest: 2.1.9(@types/node@22.19.17)(happy-dom@15.11.7)(lightningcss@1.32.0)(msw@2.14.2(@types/node@22.19.17)(typescript@5.9.3))(terser@5.46.2)
+      vitest: 2.1.9(@types/node@22.19.17)(happy-dom@15.11.7)(lightningcss@1.32.0)(msw@2.14.2(@types/node@22.19.17)(typescript@6.0.3))(terser@5.46.2)
     transitivePeerDependencies:
       - supports-color
 
@@ -16337,13 +16342,13 @@ snapshots:
       chai: 5.3.3
       tinyrainbow: 1.2.0
 
-  '@vitest/mocker@2.1.9(msw@2.14.2(@types/node@22.19.17)(typescript@5.9.3))(vite@5.4.21(@types/node@22.19.17)(lightningcss@1.32.0)(terser@5.46.2))':
+  '@vitest/mocker@2.1.9(msw@2.14.2(@types/node@22.19.17)(typescript@6.0.3))(vite@5.4.21(@types/node@22.19.17)(lightningcss@1.32.0)(terser@5.46.2))':
     dependencies:
       '@vitest/spy': 2.1.9
       estree-walker: 3.0.3
       magic-string: 0.30.21
     optionalDependencies:
-      msw: 2.14.2(@types/node@22.19.17)(typescript@5.9.3)
+      msw: 2.14.2(@types/node@22.19.17)(typescript@6.0.3)
       vite: 5.4.21(@types/node@22.19.17)(lightningcss@1.32.0)(terser@5.46.2)
 
   '@vitest/pretty-format@2.0.5':
@@ -16891,7 +16896,7 @@ snapshots:
     dependencies:
       balanced-match: 1.0.2
 
-  brace-expansion@5.0.5:
+  brace-expansion@5.0.6:
     dependencies:
       balanced-match: 4.0.4
 
@@ -16987,7 +16992,7 @@ snapshots:
       ioredis: 5.10.1
       lodash: 4.18.1
       msgpackr: 1.11.12
-      semver: 7.7.4
+      semver: 7.8.0
       uuid: 8.3.2
     transitivePeerDependencies:
       - supports-color
@@ -17263,14 +17268,14 @@ snapshots:
     optionalDependencies:
       typescript: 5.7.2
 
-  cosmiconfig@9.0.1(typescript@5.9.3):
+  cosmiconfig@9.0.1(typescript@6.0.3):
     dependencies:
       env-paths: 2.2.1
       import-fresh: 3.3.1
       js-yaml: 4.1.1
       parse-json: 5.2.0
     optionalDependencies:
-      typescript: 5.9.3
+      typescript: 6.0.3
 
   cpu-features@0.0.10:
     dependencies:
@@ -18313,7 +18318,7 @@ snapshots:
       cross-spawn: 7.0.6
       signal-exit: 4.1.0
 
-  fork-ts-checker-webpack-plugin@8.0.0(typescript@5.9.3)(webpack@5.106.2(esbuild@0.25.12)):
+  fork-ts-checker-webpack-plugin@8.0.0(typescript@6.0.3)(webpack@5.106.2(esbuild@0.25.12)):
     dependencies:
       '@babel/code-frame': 7.29.0
       chalk: 4.1.2
@@ -18327,7 +18332,7 @@ snapshots:
       schema-utils: 3.3.0
       semver: 7.7.4
       tapable: 2.3.3
-      typescript: 5.9.3
+      typescript: 6.0.3
       webpack: 5.106.2(esbuild@0.25.12)
 
   fork-ts-checker-webpack-plugin@9.0.2(typescript@5.7.2)(webpack@5.97.1(@swc/core@1.15.33)):
@@ -19339,7 +19344,7 @@ snapshots:
 
   make-dir@4.0.0:
     dependencies:
-      semver: 7.7.4
+      semver: 7.8.0
 
   map-or-similar@1.5.0: {}
 
@@ -19416,7 +19421,7 @@ snapshots:
 
   minimatch@10.2.5:
     dependencies:
-      brace-expansion: 5.0.5
+      brace-expansion: 5.0.6
 
   minimatch@3.1.5:
     dependencies:
@@ -19484,7 +19489,7 @@ snapshots:
     optionalDependencies:
       msgpackr-extract: 3.0.3
 
-  msw@2.14.2(@types/node@22.19.17)(typescript@5.9.3):
+  msw@2.14.2(@types/node@22.19.17)(typescript@6.0.3):
     dependencies:
       '@inquirer/confirm': 6.0.12(@types/node@22.19.17)
       '@mswjs/interceptors': 0.41.8
@@ -19505,7 +19510,7 @@ snapshots:
       until-async: 3.0.2
       yargs: 17.7.2
     optionalDependencies:
-      typescript: 5.9.3
+      typescript: 6.0.3
     transitivePeerDependencies:
       - '@types/node'
 
@@ -20025,9 +20030,9 @@ snapshots:
 
   pluralize@8.0.0: {}
 
-  pnp-webpack-plugin@1.7.0(typescript@5.9.3):
+  pnp-webpack-plugin@1.7.0(typescript@6.0.3):
     dependencies:
-      ts-pnp: 1.2.0(typescript@5.9.3)
+      ts-pnp: 1.2.0(typescript@6.0.3)
     transitivePeerDependencies:
       - typescript
 
@@ -20058,9 +20063,9 @@ snapshots:
       tsx: 4.21.0
       yaml: 2.8.4
 
-  postcss-loader@8.2.1(postcss@8.5.13)(typescript@5.9.3)(webpack@5.106.2(esbuild@0.25.12)):
+  postcss-loader@8.2.1(postcss@8.5.13)(typescript@6.0.3)(webpack@5.106.2(esbuild@0.25.12)):
     dependencies:
-      cosmiconfig: 9.0.1(typescript@5.9.3)
+      cosmiconfig: 9.0.1(typescript@6.0.3)
       jiti: 2.6.1
       postcss: 8.5.13
       semver: 7.7.4
@@ -20386,9 +20391,9 @@ snapshots:
       date-fns-jalali: 4.1.0-0
       react: 19.2.5
 
-  react-docgen-typescript@2.4.0(typescript@5.9.3):
+  react-docgen-typescript@2.4.0(typescript@6.0.3):
     dependencies:
-      typescript: 5.9.3
+      typescript: 6.0.3
 
   react-docgen@7.1.1:
     dependencies:
@@ -20797,6 +20802,8 @@ snapshots:
   semver@6.3.1: {}
 
   semver@7.7.4: {}
+
+  semver@7.8.0: {}
 
   send@1.2.1:
     dependencies:
@@ -21494,17 +21501,17 @@ snapshots:
 
   tree-kill@1.2.2: {}
 
-  ts-api-utils@2.5.0(typescript@5.9.3):
+  ts-api-utils@2.5.0(typescript@6.0.3):
     dependencies:
-      typescript: 5.9.3
+      typescript: 6.0.3
 
   ts-dedent@2.2.0: {}
 
   ts-interface-checker@0.1.13: {}
 
-  ts-pnp@1.2.0(typescript@5.9.3):
+  ts-pnp@1.2.0(typescript@6.0.3):
     optionalDependencies:
-      typescript: 5.9.3
+      typescript: 6.0.3
 
   tsconfig-paths-webpack-plugin@4.2.0:
     dependencies:
@@ -21589,7 +21596,7 @@ snapshots:
 
   typescript@5.7.2: {}
 
-  typescript@5.9.3: {}
+  typescript@6.0.3: {}
 
   uc.micro@2.1.0: {}
 
@@ -21753,10 +21760,10 @@ snapshots:
       lightningcss: 1.32.0
       terser: 5.46.2
 
-  vitest@2.1.9(@types/node@22.19.17)(happy-dom@15.11.7)(lightningcss@1.32.0)(msw@2.14.2(@types/node@22.19.17)(typescript@5.9.3))(terser@5.46.2):
+  vitest@2.1.9(@types/node@22.19.17)(happy-dom@15.11.7)(lightningcss@1.32.0)(msw@2.14.2(@types/node@22.19.17)(typescript@6.0.3))(terser@5.46.2):
     dependencies:
       '@vitest/expect': 2.1.9
-      '@vitest/mocker': 2.1.9(msw@2.14.2(@types/node@22.19.17)(typescript@5.9.3))(vite@5.4.21(@types/node@22.19.17)(lightningcss@1.32.0)(terser@5.46.2))
+      '@vitest/mocker': 2.1.9(msw@2.14.2(@types/node@22.19.17)(typescript@6.0.3))(vite@5.4.21(@types/node@22.19.17)(lightningcss@1.32.0)(terser@5.46.2))
       '@vitest/pretty-format': 2.1.9
       '@vitest/runner': 2.1.9
       '@vitest/snapshot': 2.1.9
