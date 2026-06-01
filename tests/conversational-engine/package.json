@@ -14,7 +14,7 @@
     "bench:release-gate:update-baseline": "tsx runners/release-gate.ts --update-baseline"
   },
   "devDependencies": {
-    "vitest": "^2.1.1",
+    "vitest": "^4.1.0",
     "typescript": "^5.6.2",
     "tsx": "^4.19.1",
     "@types/node": "^22.7.0",
